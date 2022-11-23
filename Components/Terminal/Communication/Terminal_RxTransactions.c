@@ -11,7 +11,7 @@ void TransactionGetTime(xRxRequestManagerT* manager)
 {
 	extern uint32_t WorkTime;
 	
-	xRxRequestListener(manager->RxLine, xRxRequestPutInResponseBuffer, (uint32_t)&WorkTime, sizeof(WorkTime));
+	xRxPutInResponseBuffer(manager->RxLine, &WorkTime, sizeof(WorkTime));
 }
 //------------------------------------------------------------------------------
 void TransactionTryResetTime(xRxRequestManagerT* manager)
@@ -21,8 +21,8 @@ void TransactionTryResetTime(xRxRequestManagerT* manager)
 	
 	WorkTime = 0;
 	
-	xRxRequestListener(manager->RxLine, xRxRequestPutInResponseBuffer, (uint32_t)&result, sizeof(result));
-	xRxRequestListener(manager->RxLine, xRxRequestPutInResponseBuffer, (uint32_t)&WorkTime, sizeof(WorkTime));
+	xRxPutInResponseBuffer(manager->RxLine, &result, sizeof(result));
+	xRxPutInResponseBuffer(manager->RxLine, &WorkTime, sizeof(WorkTime));
 }
 //------------------------------------------------------------------------------
 void TransactionSetTime(xRxRequestManagerT* manager, int* request, uint16_t request_size)
@@ -32,8 +32,8 @@ void TransactionSetTime(xRxRequestManagerT* manager, int* request, uint16_t requ
 	
 	WorkTime = *request;
 	
-	xRxRequestListener(manager->RxLine, xRxRequestPutInResponseBuffer, (uint32_t)&result, sizeof(result));
-	xRxRequestListener(manager->RxLine, xRxRequestPutInResponseBuffer, (uint32_t)&WorkTime, sizeof(WorkTime));
+	xRxPutInResponseBuffer(manager->RxLine, &result, sizeof(result));
+	xRxPutInResponseBuffer(manager->RxLine, &WorkTime, sizeof(WorkTime));
 }
 //==============================================================================
 const xRxTransactionT TerminalRxTransactions[] =

@@ -10,60 +10,59 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Common/xTypes.h"
+#include "Components_Types.h"
 //==============================================================================
 //types:
 
 typedef enum
 {
-	TCPServerAdapterTxIRQ = 1U,
-	TCPServerAdapterEventEndLine,
-	TCPServerAdapterEventReceiverBufferIsFull
+	TCPServerAdapterEventIdle,
 	
 } TCPServerAdapterEventSelector;
 //------------------------------------------------------------------------------
 
 typedef enum
 {
-	TCPServerAdapterRequestDelay = 1U,
+	TCPServerAdapterRequestIdle,
 	
 } TCPServerAdapterRequestSelector;
 //------------------------------------------------------------------------------
 
 typedef enum
 {
-	TCPServerAdapterValueTransmitterStatus = 1U,
+	TCPServerAdapterValueIdle,
 	
 } TCPServerAdapterValueSelector;
 //------------------------------------------------------------------------------
+DEFINITION_HANDLER_TYPE(TCPServerAdapter);
 
-typedef void (*TCPServerAdapterHandlerT)(void* device);
+DEFINITION_IRQ_LISTENER_TYPE(TCPServerAdapter);
+DEFINITION_EVENT_LISTENER_TYPE(TCPServerAdapter, TCPServerAdapterEventSelector);
+DEFINITION_REQUEST_LISTENER_TYPE(TCPServerAdapter, TCPServerAdapterRequestSelector);
 
-typedef void (*TCPServerAdapterEventListenerT)(void* device, TCPServerAdapterEventSelector event, uint32_t args, uint32_t count);
-typedef xResult (*TCPServerAdapterRequestListenerT)(void* device, TCPServerAdapterRequestSelector event, uint32_t args, uint32_t count);
-
-typedef uint32_t (*TCPServerAdapterActionGetValueT)(void* device, TCPServerAdapterValueSelector event);
-typedef xResult (*TCPServerAdapterActionSetValueT)(void* device,TCPServerAdapterValueSelector event, uint32_t value);
+DEFINITION_GET_VALUE_ACTION_TYPE(TCPServerAdapter, TCPServerAdapterValueSelector);
+DEFINITION_SET_VALUE_ACTION_TYPE(TCPServerAdapter, TCPServerAdapterValueSelector);
 //------------------------------------------------------------------------------
 
 typedef struct
 {
-	TCPServerAdapterHandlerT Handler;
-	
-	TCPServerAdapterEventListenerT EventListener;
-	TCPServerAdapterRequestListenerT RequestListener;
-	
-	TCPServerAdapterActionGetValueT GetValue;
-	TCPServerAdapterActionSetValueT SetValue;
+	DECLARE_HANDLER(TCPServerAdapter);
+
+	DECLARE_IRQ_LISTENER(TCPServerAdapter);
+
+	DECLARE_EVENT_LISTENER(TCPServerAdapter);
+	DECLARE_REQUEST_LISTENER(TCPServerAdapter);
 	
 } TCPServerAdapterInterfaceT;
 //------------------------------------------------------------------------------
 
 typedef struct
 {
-	OBJECT_HEADER;
+	ObjectBaseT Object;
 	
 	void* Child;
+
+	void* Register;
 
 	TCPServerAdapterInterfaceT* Interface;
 	

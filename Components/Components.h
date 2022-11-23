@@ -20,14 +20,25 @@ extern "C" {
 #ifdef SERIAL_PORT_COMPONENT_ENABLE
 #include "SerialPort/SerialPort_Component.h"
 #endif
+
+#ifdef TCP_SERVER_COMPONENT_ENABLE
+#include "TCPServer/TCPServer_Component.h"
+#endif
 //==============================================================================
 //functions:
 
-int ComponentsInit(void* parent);
+xResult ComponentsInit(void* parent);
 void ComponentsTimeSynchronization();
 void ComponentsHandler();
+
+void ComponentsEventListener(ComponentObjectBaseT* object, int selector, void* arg, ...);
+void ComponentsRequestListener(ComponentObjectBaseT* object, int selector, void* arg, ...);
 //==============================================================================
 //export:
+
+
+//==============================================================================
+//override:
 
 //==============================================================================
 #ifdef __cplusplus

@@ -56,6 +56,7 @@ void USART2_IRQHandler(void);
 void USART3_IRQHandler(void);
 void DMA2_Stream2_IRQHandler(void);
 void ETH_IRQHandler(void);
+void ETH_WKUP_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

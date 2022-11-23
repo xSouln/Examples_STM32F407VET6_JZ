@@ -1,6 +1,13 @@
 //==============================================================================
-#ifndef _TERMINAL_INFO_H
-#define _TERMINAL_INFO_H
+//module enable:
+
+#include "TCPServer/Adapters/TCPServer_AdapterConfig.h"
+#ifdef TCP_SERVER_LWIP_ADAPTER_ENABLE
+//==============================================================================
+//header:
+
+#ifndef _TCP_SERVER_LWIP_TX_ADAPTER_H
+#define _TCP_SERVER_LWIP_TX_ADAPTER_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -8,14 +15,15 @@ extern "C" {
 //==============================================================================
 //includes:
 
-
+#include "TCPServer_LWIP_Adapter.h"
 //==============================================================================
-//defines:
+//functions:
 
-#define TERMINAL_DEVICE_KEY 0x45389560
+xResult TCPServerLWIPTxAdapterInit(TCPServerT* server, TCPServerLWIPAdapterT* adapter);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif
+#endif //_TCP_SERVER_LWIP_TX_ADAPTER_H
+#endif //TCP_SERVER_LWIP_ADAPTER_ENABLE

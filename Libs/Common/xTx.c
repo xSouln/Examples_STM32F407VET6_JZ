@@ -1,52 +1,51 @@
 //==============================================================================
+//includes:
+
 #include <string.h>
 #include "xTx.h"
 //==============================================================================
-inline void xTxHandler(xTxT* tx)
+//variables:
+
+static const ObjectDescriptionT xTxObjectDescription =
 {
-	tx->Interface->Handler(tx);
-}
-//------------------------------------------------------------------------------
-inline void xTxEventListener(xTxT* tx, xTxEventSelector event, uint32_t args, uint32_t count)
-{
-	tx->Interface->EventListener(tx, event, args, count);
-}
-//------------------------------------------------------------------------------
-inline xResult xTxRequestListener(xTxT* tx, xTxRequestSelector selector, uint32_t args, uint32_t count)
-{
-	return tx->Interface->RequestListener(tx, selector, args, count);
-}
-//------------------------------------------------------------------------------
-inline xResult xTxSetValue(xTxT* tx, xTxValueSelector selector, uint32_t value)
-{
-	return tx->Interface->SetValue(tx, selector, value);
-}
-//------------------------------------------------------------------------------
-inline int xTxGetValue(xTxT* tx, xTxValueSelector selector)
-{
-	return tx->Interface->GetValue(tx, selector);
-}
-//------------------------------------------------------------------------------
-inline int xTxTransmitData(xTxT* tx, void* data, uint32_t data_size)
+	.Key = OBJECT_DESCRIPTION_KEY,
+	.ObjectId = X_TX_OBJECT_ID,
+	.Type = "xTxT"
+};
+//==============================================================================
+//functions:
+/*
+inline int xTxTransmitData(xTxT* tx, uint8_t* data, uint32_t data_size)
 {
 	return tx->Interface->RequestListener(tx, xTxRequestTransmitData, (uint32_t)data, data_size);
 }
+*/
 //------------------------------------------------------------------------------
-inline int xTxTransmitWord(xTxT* tx, uint32_t data)
+xResult _xTxTransmitData()
 {
-	return tx->Interface->RequestListener(tx, xTxRequestTransmitData, (uint32_t)&data, sizeof(data));
-}
-//==============================================================================
-inline int xTxTransmitByte(xTxT *tx, uint8_t byte)
-{
-	return tx->Interface->RequestListener(tx, xTxRequestTransmitData, (uint32_t)&byte, sizeof(byte));
+	return xResultAccept;
 }
 //------------------------------------------------------------------------------
-inline int xTxTransmitString(xTxT *tx, char* str)
+
+xResult _xTxTransmitWord(xTxT* tx, uint32_t data)
 {
-	return tx->Interface->RequestListener(tx, xTxRequestTransmitData, (uint32_t)str, strlen(str));
+	return xTxTransmitData(tx, (uint8_t*)&data, sizeof(data));
+}
+//------------------------------------------------------------------------------
+
+xResult _xTxTransmitByte(xTxT *tx, uint8_t byte)
+{
+	return xTxTransmitData(tx, &byte, sizeof(byte));
+}
+//------------------------------------------------------------------------------
+
+xResult _xTxTransmitString(xTxT *tx, char* str)
+{
+	return xTxTransmitData(tx, (uint8_t*)str, strlen(str));
 }
 //==============================================================================
+//initialization:
+
 xResult xTxInit(xTxT* tx,
 								void* parent,
 								xTxAdapterT* adapter,
@@ -54,8 +53,8 @@ xResult xTxInit(xTxT* tx,
 {
   if (tx && interface && adapter)
   {
-		tx->Description = "xTxT";
-		tx->Parent = parent;
+		tx->Object.Description = &xTxObjectDescription;
+		tx->Object.Parent = parent;
 		
 		tx->Interface = interface;
 		tx->Adapter = adapter;

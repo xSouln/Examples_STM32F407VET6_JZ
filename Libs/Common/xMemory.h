@@ -3,11 +3,15 @@
 #define X_MEMORY_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
- extern "C" {
-#endif 
+extern "C" {
+#endif
 //==============================================================================
+//includes:
+
 #include "xTypes.h"
 //==============================================================================
+//functions:
+
 int xMemoryCopy(void* destiny, void* data, uint32_t size);
 int xMemoryCompare(void* data1, void* data2, uint32_t size);
 int xMemoryCheckLincs(void* links, uint32_t size);
@@ -17,4 +21,4 @@ int xMemorySet(void* destiny, uint8_t value, uint32_t size);
 }
 #endif
 //------------------------------------------------------------------------------
-#endif /* X_MEMORY_H */
+#endif //X_MEMORY_H

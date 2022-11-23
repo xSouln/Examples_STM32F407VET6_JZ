@@ -7,37 +7,84 @@
 //includes:
 
 #include "SerialPort_Component.h"
+
+#ifdef TERMINAL_COMPONENT_ENABLE
+#include "Terminal/Controls/Terminal.h"
+#endif
 //==============================================================================
+
+static void _SerialPortComponentEventListener(SerialPortT* port, SerialPortEventSelector selector, void* arg, ...)
+{
+	switch((int)selector)
+	{
+		case SerialPortEventEndLine:
+			#ifdef TERMINAL_COMPONENT_ENABLE
+			TerminalReceiveData(&port->Rx,
+								((SerialPortReceivedDataT*)arg)->Data,
+								((SerialPortReceivedDataT*)arg)->Size);
+			#endif
+			break;
+
+		case SerialPortEventBufferIsFull:
+			#ifdef TERMINAL_COMPONENT_ENABLE
+			TerminalReceiveData(&port->Rx,
+								((SerialPortReceivedDataT*)arg)->Data,
+								((SerialPortReceivedDataT*)arg)->Size);
+			#endif
+			break;
+
+		default: break;
+	}
+}
+//------------------------------------------------------------------------------
+
+static xResult _SerialPortComponentRequestListener(SerialPortT* port, SerialPortRequestSelector selector, void* arg, ...)
+{
+	switch((int)selector)
+	{
+		default: return xResultRequestIsNotFound;
+	}
+
+	return xResultAccept;
+}
+//------------------------------------------------------------------------------
+
+void _SerialPortComponentIRQListener(SerialPortT* port)
+{
+	SerialPortIRQListener(port);
+}
+//------------------------------------------------------------------------------
 /**
  * @brief main handler
  */
-inline void SerialPortComponentHandler()
+void _SerialPortComponentHandler(SerialPortT* port)
 {
-	#ifdef SERIAL_PORT_UART_COMPONENT_ENABLE
-	SerialPortUARTComponentHandler();
-	#endif
+	SerialPortHandler(port);
 }
 //------------------------------------------------------------------------------
 /**
  * @brief time synchronization of time-dependent processes
  */
-inline void SerialPortComponentTimeSynchronization()
+void _SerialPortComponentTimeSynchronization(SerialPortT* port)
 {
-	#ifdef SERIAL_PORT_UART_COMPONENT_ENABLE
-	SerialPortUARTComponentTimeSynchronization();
-	#endif
+	SerialPortTimeSynchronization(port);
 }
+//==============================================================================
+
+static SerialPortInterfaceT SerialPortInterface =
+{
+	INITIALIZATION_EVENT_LISTENER(SerialPort, _SerialPortComponentEventListener),
+	INITIALIZATION_REQUEST_LISTENER(SerialPort, _SerialPortComponentRequestListener)
+};
 //------------------------------------------------------------------------------
 /**
  * @brief initializing the component
  * @param parent binding to the parent object
  * @return int
  */
-int SerialPortComponentInit(void* parent)
+xResult _SerialPortComponentInit(SerialPortT* port, void* parent)
 {
-	#ifdef SERIAL_PORT_UART_COMPONENT_ENABLE
-	SerialPortUARTComponentInit(parent);
-	#endif
+	SerialPortInit(port, parent, &SerialPortInterface);
 
 	return 0;
 }

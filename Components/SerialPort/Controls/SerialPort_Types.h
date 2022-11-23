@@ -1,6 +1,6 @@
 //==============================================================================
-#ifndef SERIAL_PORT_TYPES_H
-#define SERIAL_PORT_TYPES_H
+#ifndef _SERIAL_PORT_TYPES_H
+#define _SERIAL_PORT_TYPES_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -11,8 +11,13 @@ extern "C" {
 #include "Components_Types.h"
 #include "Common/xTx.h"
 #include "Common/xRx.h"
+#include "Common/xRxReceiver.h"
 #include "SerialPort_Config.h"
 #include "SerialPort_Info.h"
+#include "SerialPort/Adapters/SerialPort_AdapterBase.h"
+//==============================================================================
+//defines:
+
 //==============================================================================
 //types:
 
@@ -21,36 +26,34 @@ typedef enum
 	SerialPortEventIdle,
 
 	SerialPortEventEndLine,
-	SerialPortEventReceiverBufferIsFull,
+	SerialPortEventBufferIsFull,
 	
 } SerialPortEventSelector;
 //------------------------------------------------------------------------------
 
-#define SERIAL_PORT_EVENT_BASE\
-	SerialPortEventSelector Selector
+typedef struct
+{
+	uint8_t* Data;
+	uint32_t Size;
+
+} SerialPortReceivedDataT;
+//------------------------------------------------------------------------------
+
+typedef enum
+{
+	SerialPortRequestIdle,
+
+} SerialPortRequestSelector;
+//------------------------------------------------------------------------------
+DEFINITION_EVENT_LISTENER_TYPE(SerialPort, SerialPortEventSelector);
+DEFINITION_REQUEST_LISTENER_TYPE(SerialPort, SerialPortRequestSelector);
 //------------------------------------------------------------------------------
 
 typedef struct
 {
-	SERIAL_PORT_EVENT_BASE;
+	DECLARE_EVENT_LISTENER(SerialPort);
+	DECLARE_REQUEST_LISTENER(SerialPort);
 
-} SerialPortEventBaseT;
-//------------------------------------------------------------------------------
-
-typedef void (*SerialPortEventListenerT)(void* rx, SerialPortEventBaseT* event);
-//------------------------------------------------------------------------------
-
-typedef struct
-{
-	SerialPortEventListenerT EventListener;
-	  
-} SerialPortAdapterInterfaceT;
-//------------------------------------------------------------------------------
-
-typedef struct
-{
-	SerialPortEventListenerT EventListener;
-	  
 } SerialPortInterfaceT;
 //------------------------------------------------------------------------------
 
@@ -72,9 +75,9 @@ typedef union
 
 typedef struct
 {
-	OBJECT_HEADER;
+	ObjectBaseT Object;
 	
-	void* Adapter;
+	SerialPortAdapterBaseT Adapter;
 	
 	SerialPortInterfaceT* Interface;
 	
@@ -89,4 +92,4 @@ typedef struct
 }
 #endif
 //------------------------------------------------------------------------------
-#endif /* SERIAL_PORT_TYPES_H */
+#endif //_SERIAL_PORT_TYPES_H

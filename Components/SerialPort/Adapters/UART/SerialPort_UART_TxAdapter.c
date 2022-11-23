@@ -8,112 +8,119 @@
 
 #include "SerialPort_UART_TxAdapter.h"
 //==============================================================================
-static void Handler(xTxT *tx)
+//functions:
+
+static void PrivateHandler(xTxT *tx)
 {
 	SerialPortUART_AdapterT* adapter = tx->Adapter;
 	
 	if (!adapter->Usart->Control1.TxEmptyInterruptEnable
-		&& adapter->TxCircleBuffer.TotalIndex != adapter->TxCircleBuffer.HandlerIndex)
+	&& adapter->TxCircleBuffer.TotalIndex != adapter->TxCircleBuffer.HandlerIndex)
 	{
 		adapter->Usart->Control1.TxEmptyInterruptEnable = true;
 	}
 	
 	tx->Status.Transmitter = (adapter->Usart->Control1.TxEmptyInterruptEnable > 0)
-														? xTxStatusIsTransmits : xTxStatusIdle;
+							? xTxStatusIsTransmits : xTxStatusIdle;
 }
 //------------------------------------------------------------------------------
-static void EventListener(xTxT *tx, xTxEventSelector event, uint32_t args, uint32_t count)
+
+static void PrivateEventListener(xTxT *tx, xTxEventSelector event, void* arg, ...)
 {
-	SerialPortUART_AdapterT* adapter = tx->Adapter;
+	//SerialPortUART_AdapterT* adapter = tx->Adapter;
 	
-	switch ((uint32_t)event)
+	switch ((int)event)
 	{
-		case xTxEventIRQ :
-		{
-			if (adapter->Usart->Control1.TxEmptyInterruptEnable && adapter->Usart->Status.TxEmpty)
-			{
-				if (adapter->TxCircleBuffer.HandlerIndex != adapter->TxCircleBuffer.TotalIndex)
-				{
-					adapter->Usart->Data = xCircleBufferGet(&adapter->TxCircleBuffer);
-				}
-				else
-				{
-					adapter->Usart->Control1.TxEmptyInterruptEnable = false;
-				}
-			}
-		}
-		break;
-		
 		default : break;
 	}
 }
 //------------------------------------------------------------------------------
-static xResult RequestListener(xTxT* tx, xTxRequestSelector selector, uint32_t args, uint32_t count)
+
+static void PrivateIRQListener(xTxT *tx)
 {
 	SerialPortUART_AdapterT* adapter = tx->Adapter;
-	
+
+	if (adapter->Usart->Control1.TxEmptyInterruptEnable && adapter->Usart->Status.TxEmpty)
+	{
+		if (adapter->TxCircleBuffer.HandlerIndex != adapter->TxCircleBuffer.TotalIndex)
+		{
+			adapter->Usart->Data = xCircleBufferGet(&adapter->TxCircleBuffer);
+		}
+		else
+		{
+			adapter->Usart->Control1.TxEmptyInterruptEnable = false;
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+
+static xResult PrivateRequestListener(xTxT* tx, xTxRequestSelector selector, void* arg, ...)
+{
+	SerialPortUART_AdapterT* adapter = tx->Adapter;
+
 	switch ((uint32_t)selector)
 	{
-		case xTxRequestTransmitData :
-			if (xCircleBufferGetFreeSize(&adapter->TxCircleBuffer) >= count)
-			{
-				xCircleBufferAdd(&adapter->TxCircleBuffer, (uint8_t*)args, count);
-				return xResultAccept;
-			}
-			return xResultError;
-		
-		case xTxRequestEnableTransmitter :
+		case xTxRequestEnableTransmitter:
 			adapter->Usart->Control1.TxEmptyInterruptEnable = true;
 			break;
-			
-			
+
+		case xTxRequestUpdateTransmitterStatus:
+			tx->Status.Transmitter = adapter->Usart->Control1.TxEmptyInterruptEnable
+			? xTxStatusIsTransmits : xTxStatusIdle;
+			break;
+
 		default : return xResultRequestIsNotFound;
 	}
-	
-	return xResultRequestIsNotFound;
+
+	return xResultAccept;
 }
 //------------------------------------------------------------------------------
-static int GetValue(xTxT* tx, xTxValueSelector selector)
+
+static xResult PrivateTransmitData(xTxT* tx, void* data, uint32_t size)
 {
 	SerialPortUART_AdapterT* adapter = tx->Adapter;
-	
-	switch ((uint32_t)selector)
+
+	if (xCircleBufferGetFreeSize(&adapter->TxCircleBuffer) >= size)
 	{
-		case xTxValueTransmitterStatus:
-			tx->Status.Transmitter = adapter->Usart->Control1.TxEmptyInterruptEnable ? xTxStatusIsTransmits : xTxStatusIdle;
-			return tx->Status.Transmitter;
-		
-		case xTxValueBufferSize:
-			return (adapter->TxCircleBuffer.SizeMask + 1);
-		
-		case xTxValueFreeBufferSize:
-			return xCircleBufferGetFreeSize(&adapter->TxCircleBuffer);
-		
-		default : return 0;
+		xCircleBufferAdd(&adapter->TxCircleBuffer, (uint8_t*)data, size);
+		return xResultAccept;
 	}
+	return xResultError;
 }
 //------------------------------------------------------------------------------
-static xResult SetValue(xTxT* tx, xTxValueSelector selector, uint32_t value)
+
+static uint32_t PrivateGetBufferSize(xTxT* tx)
 {
-	//SerialPortUART_AdapterT* adapter = tx->Adapter;
-	
-	switch ((uint32_t)selector)
-	{
-		default : return xResultValueIsNotFound;
-	}
-	
-	return xResultValueIsNotFound;
+	SerialPortUART_AdapterT* adapter = tx->Adapter;
+
+	return adapter->TxCircleBuffer.SizeMask + 1;
 }
 //------------------------------------------------------------------------------
-static xTxInterfaceT interface =
+
+static uint32_t PrivateGetFreeBufferSize(xTxT* tx)
 {
-	.Handler = (xTxHandlerT)Handler,
-	.EventListener = (xTxEventListenerT)EventListener,
-	.RequestListener = (xTxRequestListenerT)RequestListener,
-	.GetValue = (xTxActionGetValueT)GetValue,
-	.SetValue = (xTxActionSetValueT)SetValue
-};
+	SerialPortUART_AdapterT* adapter = tx->Adapter;
+
+	return xCircleBufferGetFreeSize(&adapter->TxCircleBuffer);
+}
 //==============================================================================
+//initialization:
+
+static xTxInterfaceT PrivateSerialPortUART_TxAdapterInterface =
+{
+	INITIALIZATION_HANDLER(xTx, PrivateHandler),
+	INITIALIZATION_EVENT_LISTENER(xTx, PrivateEventListener),
+	INITIALIZATION_IRQ_LISTENER(xTx, PrivateIRQListener),
+	INITIALIZATION_REQUEST_LISTENER(xTx, PrivateRequestListener),
+
+	.TransmitData = (xTxTransmitDataT)PrivateTransmitData,
+
+	.GetBufferSize = (xTxGetBufferSizeActionT)PrivateGetBufferSize,
+	.GetFreeBufferSize = (xTxGetFreeBufferSizeActionT)PrivateGetFreeBufferSize
+};
+//------------------------------------------------------------------------------
+
 xResult SerialPortUART_TxAdapterInit(SerialPortT* serial_port, SerialPortUART_AdapterT* adapter)
 {
 	if (serial_port && adapter)
@@ -122,7 +129,7 @@ xResult SerialPortUART_TxAdapterInit(SerialPortT* serial_port, SerialPortUART_Ad
 		adapter->Usart->Control1.TxCompleteInterruptEnable = false;
 		adapter->Usart->Control1.TxEmptyInterruptEnable = false;
 		
-		return xTxInit(&serial_port->Tx, serial_port, adapter, &interface);
+		return xTxInit(&serial_port->Tx, serial_port, adapter, &PrivateSerialPortUART_TxAdapterInterface);
 	}
 	
 	return xResultError;

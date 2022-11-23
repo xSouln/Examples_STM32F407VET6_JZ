@@ -18,11 +18,10 @@ extern "C" {
 //==============================================================================
 //defines:
 
-#define SERIAL_PORT_UART_COMPONENT_ENABLE 1
 //==============================================================================
 //selector:
 
-#include "SerialPort/Executions/SerialPort_UART_ComponentConfig.h"
+#include "SerialPort/Executions/SerialPort_UART_ComponentDependencies.h"
 //==============================================================================
 #ifdef __cplusplus
 }

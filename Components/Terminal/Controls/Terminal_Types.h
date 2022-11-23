@@ -11,6 +11,8 @@ extern "C" {
 #include "Components_Types.h"
 #include "Terminal_Config.h"
 #include "Terminal_Info.h"
+#include "Common/xTxTransfer.h"
+#include "Common/xRxRequest.h"
 //==============================================================================
 //types:
 
@@ -18,6 +20,8 @@ typedef enum
 {
 	TerminalEventIdle,
 	
+	TerminalEventTime_1000ms,
+
 } TerminalEventSelector;
 //------------------------------------------------------------------------------
 
@@ -25,7 +29,18 @@ typedef enum
 {
 	TerminalRequestIdle,
 	
+	TerminalRequestReceiveData,
+
+
 } TerminalRequestSelector;
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	uint8_t* Data;
+	uint32_t Size;
+
+} TerminalRequestReceiveDataArgT;
 //------------------------------------------------------------------------------
 
 typedef enum
@@ -35,46 +50,49 @@ typedef enum
 } TerminalValueSelector;
 //------------------------------------------------------------------------------
 
-typedef void (*TerminalHandlerT)(void* device);
-typedef void (*TerminalEventListenerT)(void* device, TerminalEventSelector event, uint32_t args, uint32_t count);
-
-typedef xResult (*TerminalRequestListenerT)(void* device, TerminalRequestSelector event, uint32_t args, uint32_t count);
+DEFINITION_HANDLER_TYPE(Terminal);
+DEFINITION_EVENT_LISTENER_TYPE(Terminal, TerminalEventSelector);
+DEFINITION_REQUEST_LISTENER_TYPE(Terminal, TerminalRequestSelector);
+//------------------------------------------------------------------------------
 
 typedef struct
 {
-	TerminalHandlerT Handler;
+	DECLARE_HANDLER(Terminal);
 	
-	TerminalEventListenerT EventListener;
-	TerminalRequestListenerT RequestListener;
+	DECLARE_EVENT_LISTENER(Terminal);
+	DECLARE_REQUEST_LISTENER(Terminal);
 	
 } TerminalInterfaceT;
 //------------------------------------------------------------------------------
 
-typedef enum
+typedef struct
 {
-	DeviceEventIdle,
+	ObjectBaseT* Object;
+	xRxRequestT* Requests;
 	
-} DeviceEventSelector;
-//------------------------------------------------------------------------------
-typedef enum
-{
-	DeviceRequestIdle,
-	
-} DeviceRequestSelector;
-//------------------------------------------------------------------------------
-
-typedef enum
-{
-	DeviceValueDeviceInfo,
-	
-} DeviceValueSelector;
+} TerminalDeviceT;
 //------------------------------------------------------------------------------
 
 typedef struct
 {
-	OBJECT_HEADER;
+	TerminalDeviceT* Devices;
+	uint16_t DevicesCount;
+	
+} TerminalDeviceControlT;
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	ObjectBaseT Object;
 
 	TerminalInterfaceT Interface;
+
+	TerminalDeviceT* Devices;
+	uint16_t DevicesCount;
+
+	xDataBufferT ResponseBuffer;
+
+	xTxTransferT Transfer;
 
 } TerminalT;
 //==============================================================================
@@ -82,4 +100,4 @@ typedef struct
 }
 #endif
 //------------------------------------------------------------------------------
-#endif /* TYPES_H */
+#endif //_TERMINAL_TYPES_H

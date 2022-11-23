@@ -3,12 +3,12 @@
 #define _TERMINAL_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
- extern "C" {
-#endif 
+extern "C" {
+#endif
 //==============================================================================
 //includes:
 
-#include "Terminal/Terminal_Types.h"
+#include "Terminal_Types.h"
 #include "Terminal/Adapters/Terminal_Adapters.h"
 //==============================================================================
 //types:
@@ -19,6 +19,13 @@
 xResult TerminalInit(void* parent);
 void TerminalHandler();
 void TerminalTimeSynchronization();
+
+void _TerminalReceiveData(xRxT* rx, uint8_t* data, uint32_t size);
+void _TerminalRequestReceiver(TerminalT* terminal, TerminalRequestSelector selector, void* arg, ...);
+//==============================================================================
+//override:
+
+#define TerminalReceiveData(rx, data, size) _TerminalReceiveData(rx, data, size)
 //==============================================================================
 //export:
 

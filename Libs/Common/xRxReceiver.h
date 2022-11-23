@@ -6,33 +6,45 @@
 extern "C" {
 #endif
 //==============================================================================
+//includes:
+
 #include "xTypes.h"
 #include "xCircleBuffer.h"
 #include "xRx.h"
 //==============================================================================
+//defines:
+
+#define X_RX_RECEIVER_OBJECT_ID 0xDAD6678E
+//==============================================================================
+//types:
+
 typedef enum
 {
-  xRxReceiverEventEndLine = 1U,
+	xRxReceiverEventIdle,
+
+	xRxReceiverEventEndLine,
 	xRxReceiverEventBufferIsFull
 	
 } xRxReceiverEventSelector;
 //------------------------------------------------------------------------------
+
 typedef enum
 {
-	xPacketReceiverValue = 1U
+	xRxPacketReceiverValueIdle
 	
 } xRxReceiverValueSelector;
 //------------------------------------------------------------------------------
-typedef void (*xRxReceiverEventListener)(void* receiver, xRxReceiverEventSelector event, uint32_t args, uint32_t count);
-typedef uint32_t (*xRxReceiverGetValue)(void* rx, xRxReceiverValueSelector selector);
-typedef int (*xRxReceiverSetValue)(void* rx, xRxReceiverValueSelector selector, uint32_t value);
+
+DEFINITION_EVENT_LISTENER_TYPE(xRxReceiver, xTxEventSelector);
 //------------------------------------------------------------------------------
+
 typedef struct
 {
-	xRxReceiverEventListener EventListener;
+	DECLARE_EVENT_LISTENER(xRxReceiver);
 	
 } xRxReceiverInterfaceT;
 //------------------------------------------------------------------------------
+
 typedef union
 {
 	struct
@@ -43,31 +55,34 @@ typedef union
 	
 } xRxReceiverStatusT;
 //------------------------------------------------------------------------------
+
 typedef struct
 {
-	char* Description;
+	const void* Description;
 	xRxT* Parent;
 	
 	xRxReceiverStatusT Status;
 	xRxReceiverInterfaceT* Interface;
 	
-  uint8_t* Buffer;
-  uint32_t BufferSize;
-  uint32_t BytesReceived;
+	uint8_t* Buffer;
+	uint32_t BufferSize;
+	uint32_t BytesReceived;
 	
 } xRxReceiverT;
 //==============================================================================
+//functions:
+
 void xRxReceiverReceive(xRxReceiverT* receiver, uint8_t *data, uint32_t data_size);
 void xRxReceiverRead(xRxReceiverT* receiver, xCircleBufferT* circle_buffer);
 
 int xRxReceiverInit(xRxReceiverT* receiver,
-										xRxT* parent,
-										xRxReceiverInterfaceT* interface,
-										uint8_t* buffer,
-										uint32_t buffer_size);
+						xRxT* parent,
+						xRxReceiverInterfaceT* interface,
+						uint8_t* buffer,
+						uint32_t buffer_size);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif /* X_RX_RECEIVER_H */
+#endif //X_RX_RECEIVER_H

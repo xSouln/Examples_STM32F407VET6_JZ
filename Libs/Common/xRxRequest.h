@@ -2,13 +2,18 @@
 #ifndef X_RX_REQUEST_H
 #define X_RX_REQUEST_H
 //==============================================================================
+//includes:
+
 #include "xTypes.h"
 #include "xRx.h"
 //==============================================================================
+//types:
+
 typedef xResult (*xRxRequestReceiverT)(xObject manager, //xRequestManagerT
-																				xObject object,
-																				uint16_t object_size);
+										xObject object,
+										uint16_t object_size);
 //------------------------------------------------------------------------------
+
 typedef struct
 {
   void* Header;
@@ -18,22 +23,27 @@ typedef struct
    
 } xRxRequestT;
 //------------------------------------------------------------------------------
+
 typedef struct
 {
 	void* Device;
 	
 	void* Adapter;
 	
-  xRxRequestT* Requests;
+	xRxRequestT* Requests;
 	xRxRequestT* FoundRequest;
 	
 	xRxT* RxLine;
    
 } xRxRequestManagerT;
 //==============================================================================
+//functions:
+
 xRxRequestT* xRxRequestIdentify(xRxT* rx, void* device, xRxRequestT* requests, uint8_t data[], uint16_t data_size);
 xResult xRxRequestManagerInit(xRxRequestManagerT* manager, void* device, xRxRequestT* requests);
 //==============================================================================
+//templates:
+
 #define NEW_RX_REQUEST0(header, request)\
 {\
   .Header = (char*)header,\
@@ -41,6 +51,7 @@ xResult xRxRequestManagerInit(xRxRequestManagerT* manager, void* device, xRxRequ
   .Action = (xRxRequestReceiverT)request\
 }
 //------------------------------------------------------------------------------
+
 #define NEW_RX_REQUEST1(header, request)\
 {\
   .Header = (char*)&header,\
@@ -48,4 +59,4 @@ xResult xRxRequestManagerInit(xRxRequestManagerT* manager, void* device, xRxRequ
   .Action = (xRxRequestReceiverT)request\
 }
 //==============================================================================
-#endif /* X_RECEIVER_REQUEST_H */
+#endif //X_RX_REQUEST_H

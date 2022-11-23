@@ -15,66 +15,94 @@ extern "C" {
 //types:
 
 #define xtx_word_t uint32_t
+
+#define X_TX_OBJECT_ID 0x642BF0
 //------------------------------------------------------------------------------
 
 typedef enum
 {
-	xTxStateDisable,
-	xTxStateEnable,
-	
-} xTxState;
-//------------------------------------------------------------------------------
+	xTxEventIdle,
 
-typedef enum
-{
-	xTxEventIRQ = 1U,
-	xTxEventTransmissionComplete
+	xTxEventStartTransmission,
+	xTxEventStopTransmission,
+	xTxEventAbortTransmission,
+	xTxEventTransmissionComplete,
+
+	xTxEventsCount
 	
 } xTxEventSelector;
 //------------------------------------------------------------------------------
 
 typedef enum
 {
-	xTxRequestTransmitData = 1U,
+	xTxRequestIdle,
+
+	//xTxRequestTransmitData,
+	xTxRequestUpdateTransmitterStatus,
+
 	xTxRequestEnableTransmitter,
 	xTxRequestDisableTransmitter,
 	
-	xTxRequestStartTransmission,
-	xTxRequestStopTransmission,
-	xTxRequestAbortTransmission,
-	
 	xTxRequestClearBuffer,
 	
-	xTxRequestAddToIntermediateBuffer
-	
+	xTxRequestCount
+
 } xTxRequestSelector;
 //------------------------------------------------------------------------------
 
 typedef enum
 {
-	xTxValueTransmitterStatus = 1U,
-	xTxValueBufferSize,
-	xTxValueFreeBufferSize,
+	xTxValueIdle,
+
+	//xTxValueTransmitterStatus,
+	//xTxValueBufferSize,
+	//xTxValueFreeBufferSize,
 	
+	xTxValuesCount
+
 } xTxValueSelector;
-//------------------------------------------------------------------------------
-
-typedef void (*xTxHandlerT)(void* tx);
-
-typedef void (*xTxEventListenerT)(void* tx, xTxEventSelector event, uint32_t args, uint32_t count);
-typedef xResult (*xTxRequestListenerT)(void* tx, xTxRequestSelector selector, uint32_t args, uint32_t count);
-
-typedef int (*xTxActionGetValueT)(void* tx, xTxValueSelector selector);
-typedef xResult (*xTxActionSetValueT)(void* tx, xTxValueSelector selector, uint32_t value);
 //------------------------------------------------------------------------------
 
 typedef enum
 {
 	xTxStatusIdle,
+
 	xTxStatusIsTransmits,
 	xTxStatusError
-	
+
 } xTxTransmitterStatus;
+//------------------------------------------------------------------------------
+
+DEFINITION_HANDLER_TYPE(xTx);
+
+DEFINITION_EVENT_LISTENER_TYPE(xTx, xTxEventSelector);
+DEFINITION_IRQ_LISTENER_TYPE(xTx);
+DEFINITION_REQUEST_LISTENER_TYPE(xTx, xTxRequestSelector);
+
+DEFINITION_GET_VALUE_ACTION_TYPE(xTx, xTxValueSelector);
+DEFINITION_SET_VALUE_ACTION_TYPE(xTx, xTxValueSelector);
+
+typedef xResult (*xTxTransmitDataT)(void* tx, void* data, uint32_t data_size);
+
+typedef uint32_t (*xTxGetBufferSizeActionT)(void* tx);
+typedef uint32_t (*xTxGetFreeBufferSizeActionT)(void* tx);
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	DECLARE_HANDLER(xTx);
+
+	DECLARE_IRQ_LISTENER(xTx);
+
+	DECLARE_EVENT_LISTENER(xTx);
+	DECLARE_REQUEST_LISTENER(xTx);
+
+	xTxTransmitDataT TransmitData;
+
+	xTxGetBufferSizeActionT GetBufferSize;
+	xTxGetFreeBufferSizeActionT GetFreeBufferSize;
+
+} xTxInterfaceT;
 //------------------------------------------------------------------------------
 
 typedef union
@@ -97,7 +125,7 @@ typedef union
   {
 		uint32_t IsInit : 1;
 		
-    xTxTransmitterStatus Transmitter : 4;
+		xTxTransmitterStatus Transmitter : 4;
   };
 	
   uint32_t Value;
@@ -105,51 +133,55 @@ typedef union
 } xTxStatusT;
 //------------------------------------------------------------------------------
 
-typedef struct
-{
-	xTxHandlerT Handler;
-	
-	xTxEventListenerT EventListener;
-	xTxRequestListenerT RequestListener;
-	
-	xTxActionGetValueT GetValue;
-	xTxActionSetValueT SetValue;
-	
-} xTxInterfaceT;
-//------------------------------------------------------------------------------
-
 typedef void xTxAdapterT;
 //------------------------------------------------------------------------------
 
 typedef struct
 {
-  OBJECT_HEADER;
+	ObjectBaseT Object;
 	
-  xTxHandleT Handle;
+	xTxHandleT Handle;
 	xTxStatusT Status;
 	
 	xTxAdapterT* Adapter;
-	xTxInterfaceT* Interface;
+	const xTxInterfaceT* Interface;
 	
 } xTxT;
-//==============================================================================								
-extern void xTxHandler(xTxT* tx);
+//==============================================================================
+//functions:
 
-extern void xTxEventListener(xTxT* tx, xTxEventSelector event, uint32_t args, uint32_t count);
-extern xResult xTxRequestListener(xTxT* tx, xTxRequestSelector selector, uint32_t args, uint32_t count);
+xResult _xTxTransmitByte(xTxT *tx, uint8_t byte);
+xResult _xTxTransmitWord(xTxT* tx, uint32_t data);
+xResult _xTxTransmitString(xTxT *tx, char* str);
 
-extern xResult xTxSetValue(xTxT* tx, xTxValueSelector selector, uint32_t value);
-extern int xTxGetValue(xTxT* tx, xTxValueSelector selector);
+xResult xTxInit(xTxT* tx, void* parent, xTxAdapterT* adapter, xTxInterfaceT* interface);
+//==============================================================================
+//macros:
 
-extern int xTxTransmitData(xTxT* tx, void* data, uint32_t data_size);
-extern int xTxTransmitByte(xTxT* tx, uint8_t byte);
-extern int xTxTransmitWord(xTxT* tx, uint32_t data);
-extern int xTxTransmitString(xTxT* tx, char* str);
+#define xTxHandler(tx) ((xTxT*)tx)->Interface->Handler(tx)
 
-xResult xTxInit(xTxT* tx,
-								void* parent,
-								xTxAdapterT* adapter,
-								xTxInterfaceT* interface);
+#define xTxIRQListener(tx) ((xTxT*)tx)->Interface->IRQListener(tx)
+
+#define xTxEventListener(tx, event, arg, ...) ((xTxT*)tx)->Interface->EventListener(tx, event, arg, ##__VA_ARGS__)
+#define xTxRequestListener(tx, selector, arg, ...) ((xTxT*)tx)->Interface->RequestListener(tx, selector, arg, ##__VA_ARGS__)
+
+#define xTxSetValue(tx, selector, value) ((xTxT*)tx)->Interface->SetValue(tx, selector, value)
+//#define xTxGetValue(tx, selector, value) ((xTxT*)tx)->Interface->GetValue(tx, selector, value)
+//------------------------------------------------------------------------------
+
+#define xTxTransmitData(tx, data, data_size) ((xTxT*)tx)->Interface->TransmitData(tx, data, data_size)
+
+#define xTxTransmitByte(tx, data) _xTxTransmitByte(tx, data)
+#define xTxTransmitWord(tx, data) _xTxTransmitWord(tx, data)
+#define xTxTransmitString(tx, str) _xTxTransmitString(tx, str)
+
+#define xTxGetBuffer(tx) ((xTxT*)tx)->Interface->GetBuffer(tx)
+#define xTxGetBufferSize(tx) ((xTxT*)tx)->Interface->GetBufferSize(tx)
+#define xTxGetFreeBufferSize(tx) ((xTxT*)tx)->Interface->GetFreeBufferSize(tx)
+
+#define xTxUpdateTransmitterStatus(tx) ((xTxT*)tx)->Interface->RequestListener(tx, xTxRequestUpdateTransmitterStatus, 0)
+
+#define xTxClearBuffer(tx) ((xTxT*)tx)->Interface->RequestListener(tx, xTxRequestClearBuffer, 0)
 //==============================================================================
 #ifdef __cplusplus
 }

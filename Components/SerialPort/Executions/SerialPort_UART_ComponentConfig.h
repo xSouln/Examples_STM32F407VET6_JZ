@@ -16,15 +16,12 @@ extern "C" {
 //includes:
 
 #include "Components_Types.h"
-#include "Components_Config.h"
 //==============================================================================
 //import:
 
 extern DMA_HandleTypeDef hdma_usart3_rx;
 //==============================================================================
 //defines:
-
-#define SERIAL_PORT_UART_ADAPTER_ENABLE 1
 
 #define SERIAL_PORT_UART_RX_CIRCLE_BUF_SIZE_MASK 0x1ff
 #define SERIAL_PORT_UART_RX_OBJECT_BUF_SIZE 0x200

@@ -3,14 +3,22 @@
 #define X_CIRCLE_BUFFER_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
- extern "C" {
-#endif 
+extern "C" {
+#endif
 //==============================================================================
+//includes:
+
 #include "xTypes.h"
 //==============================================================================
+//defines:
+
+#define X_CIRCLE_BUFFER_OBJECT_ID 0xC502FE33
+//==============================================================================
+//types:
+
 typedef struct
 {
-	OBJECT_HEADER;
+	ObjectBaseT Object;
 	
 	uint8_t* Buffer;
 	uint32_t TotalIndex;
@@ -19,6 +27,7 @@ typedef struct
 	
 } xCircleBufferT;
 //------------------------------------------------------------------------------
+
 uint32_t xCircleBufferAdd(xCircleBufferT* buffer, uint8_t* data, uint32_t size);
 uint8_t xCircleBufferGet(xCircleBufferT* buffer);
 
@@ -33,4 +42,4 @@ xResult xCircleBufferInit(xCircleBufferT* circle_buffer,
 }
 #endif
 //------------------------------------------------------------------------------
-#endif /* X_CIRCLE_BUFFER_H */
+#endif //X_CIRCLE_BUFFER_H

@@ -1,6 +1,19 @@
 //==============================================================================
+//includes:
+
 #include "xCircleBuffer.h"
 //==============================================================================
+//variables:
+
+static const ObjectDescriptionT xCircleBufferObjectDescription =
+{
+	.Key = OBJECT_DESCRIPTION_KEY,
+	.ObjectId = X_CIRCLE_BUFFER_OBJECT_ID,
+	.Type = "xCircleBufferT"
+};
+//==============================================================================
+//functions:
+
 uint32_t xCircleBufferAdd(xCircleBufferT* buffer, uint8_t* data, uint32_t size)
 {
 	if (data)
@@ -39,8 +52,8 @@ xResult xCircleBufferInit(xCircleBufferT* circle_buffer,
 {
   if (circle_buffer && buffer && buffer_size_mask)
   {
-		circle_buffer->Description = "xCircleBufferT";
-		circle_buffer->Parent = parent;
+		circle_buffer->Object.Description = &xCircleBufferObjectDescription;
+		circle_buffer->Object.Parent = parent;
 		
 		circle_buffer->Buffer = buffer;
 		circle_buffer->SizeMask = buffer_size_mask;

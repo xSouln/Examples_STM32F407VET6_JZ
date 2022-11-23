@@ -8,37 +8,65 @@
 
 #include "TCPServer_Component.h"
 //==============================================================================
+//functions:
+
+static void _TCPServerComponentEventListener(TCPServerT* port, TCPServerEventSelector selector, void* arg, ...)
+{
+	switch((int)selector)
+	{
+		default: break;
+	}
+}
+//------------------------------------------------------------------------------
+
+static xResult _TCPServerComponentRequestListener(TCPServerT* port, TCPServerRequestSelector selector, void* arg, ...)
+{
+	switch((int)selector)
+	{
+		default: return xResultRequestIsNotFound;
+	}
+
+	return xResultAccept;
+}
+//------------------------------------------------------------------------------
+
+void _TCPServerComponentIRQListener(TCPServerT* server)
+{
+	TCPServerIRQListener(server);
+}
+//------------------------------------------------------------------------------
 /**
  * @brief main handler
  */
-inline void TCPServerComponentHandler()
+void _TCPServerComponentHandler(TCPServerT* server)
 {
-	#ifdef TCP_SERVER_WIZ_SPI_COMPONENT_ENABLE
-	SerialPortUARTComponentHandler();
-	#endif
+	TCPServerHandler(server);
 }
 //------------------------------------------------------------------------------
 /**
  * @brief time synchronization of time-dependent processes
  */
-inline void TCPServerComponentTimeSynchronization()
+void _TCPServerComponentTimeSynchronization(TCPServerT* server)
 {
-	#ifdef TCP_SERVER_WIZ_SPI_COMPONENT_ENABLE
-	SerialPortUARTComponentTimeSynchronization();
-	#endif
+	TCPServerTimeSynchronization(server);
 }
+//==============================================================================
+//initializations:
+/*
+static TCPServerInterfaceT TCPServerInterface =
+{
+	INITIALIZATION_EVENT_LISTENER(TCPServer, _TCPServerComponentEventListener),
+	INITIALIZATION_REQUEST_LISTENER(TCPServer, _TCPServerComponentRequestListener)
+};
+*/
 //------------------------------------------------------------------------------
 /**
  * @brief initializing the component
  * @param parent binding to the parent object
  * @return int
  */
-int TCPServerComponentInit(void* parent)
+xResult _TCPServerComponentInit(TCPServerT* server, void* parent)
 {
-	#ifdef TCP_SERVER_WIZ_SPI_COMPONENT_ENABLE
-	SerialPortUARTComponentInit(parent);
-	#endif
-
 	return 0;
 }
 //==============================================================================

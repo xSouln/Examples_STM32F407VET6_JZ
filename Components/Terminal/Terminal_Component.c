@@ -1,10 +1,28 @@
 //==============================================================================
 #include "Terminal_Component.h"
 //==============================================================================
+
+void _TerminalComponentRequestListener(TerminalT* terminal, TerminalRequestSelector selector, void* arg, ...)
+{
+	switch((int)selector)
+	{
+		default: return;
+	}
+}
+//------------------------------------------------------------------------------
+
+void _TerminalComponentEventListener(TerminalT* terminal, TerminalEventSelector selector, void* arg, ...)
+{
+	switch((int)selector)
+	{
+		default: return;
+	}
+}
+//------------------------------------------------------------------------------
 /**
  * @brief main handler
  */
-inline void TerminalComponentHandler()
+inline void _TerminalComponentHandler()
 {
 	TerminalHandler();
 }
@@ -12,7 +30,7 @@ inline void TerminalComponentHandler()
 /**
  * @brief time synchronization of time-dependent processes
  */
-inline void TerminalComponentTimeSynchronization()
+inline void _TerminalComponentTimeSynchronization()
 {
 	TerminalTimeSynchronization();
 }
@@ -22,7 +40,7 @@ inline void TerminalComponentTimeSynchronization()
  * @param parent binding to the parent object
  * @return xResult
  */
-xResult TerminalComponentInit(void* parent)
+xResult _TerminalComponentInit(void* parent)
 {
 	TerminalInit(parent);
 

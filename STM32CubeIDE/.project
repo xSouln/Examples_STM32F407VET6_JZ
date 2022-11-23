@@ -34,7 +34,7 @@
 		<link>
 			<name>Components</name>
 			<type>2</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Components</locationURI>
+			<location>C:/Users/Afhib/Desktop/Projects/Examples_JZ-STM32F407VET6/Components</location>
 		</link>
 		<link>
 			<name>JZ_STM32F407VET6.ioc</name>
@@ -44,7 +44,7 @@
 		<link>
 			<name>Libs</name>
 			<type>2</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Libs</locationURI>
+			<location>C:/Users/Afhib/Desktop/Projects/Examples_JZ-STM32F407VET6/Libs</location>
 		</link>
 		<link>
 			<name>Drivers/CMSIS/system_stm32f4xx.c</name>

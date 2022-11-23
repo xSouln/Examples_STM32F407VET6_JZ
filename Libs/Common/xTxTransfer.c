@@ -1,6 +1,19 @@
 //==============================================================================
+//includes:
+
 #include "xTxTransfer.h"
 //==============================================================================
+//variables:
+
+static const ObjectDescriptionT xTxTransferObjectDescription =
+{
+	.Key = OBJECT_DESCRIPTION_KEY,
+	.ObjectId = X_TX_TRANSFER_OBJECT_ID,
+	.Type = "xTxTransferT"
+};
+//==============================================================================
+//functions:
+
 void xTxTransferHandler(xTxTransferT* layer)
 {
 	if (layer && layer->Interface && layer->Interface->Handler)
@@ -65,7 +78,8 @@ xResult xTxTransferInit(xTxTransferT* layer,
 {
 	if (layer && max_content_size && buffer_filling)
 	{
-		layer->Description = "xTxTransferT";
+		layer->Object.Description = &xTxTransferObjectDescription;
+
 		layer->MinContentSize = min_content_size;
 		layer->MaxContentSize = max_content_size;
 		layer->BufferFilling = buffer_filling;

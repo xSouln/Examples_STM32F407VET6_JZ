@@ -1,7 +1,20 @@
 //==============================================================================
+//includes:
+
 #include <string.h>
 #include "xDataBuffer.h"
 //==============================================================================
+//variables:
+
+static const ObjectDescriptionT xDataBufferObjectDescription =
+{
+	.Key = OBJECT_DESCRIPTION_KEY,
+	.ObjectId = X_DATA_BUFFER_OBJECT_ID,
+	.Type = "xDataBufferT"
+};
+//==============================================================================
+//functions:
+
 void xDataBufferAdd(xDataBufferT* buffer, xObject object, uint32_t object_size)
 {
 	if (buffer && object)
@@ -15,7 +28,8 @@ void xDataBufferAdd(xDataBufferT* buffer, xObject object, uint32_t object_size)
 		}
 	}
 }
-//==============================================================================
+//------------------------------------------------------------------------------
+
 void xDataBufferClear(xDataBufferT* buffer)
 {
 	if (buffer)
@@ -24,6 +38,8 @@ void xDataBufferClear(xDataBufferT* buffer)
 	}
 }
 //==============================================================================
+//initialization:
+
 xResult xDataBufferInit(xDataBufferT* buffer,
 												void* parent,
 												xDataBufferControlT* control,
@@ -32,8 +48,8 @@ xResult xDataBufferInit(xDataBufferT* buffer,
 {
 	if (buffer && buf && buf_size)
 	{
-		buffer->Description = "xDataBufferT";
-		buffer->Parent = parent;
+		buffer->Object.Description = &xDataBufferObjectDescription;
+		buffer->Object.Parent = parent;
 		
 		buffer->Data = buf;
 		buffer->Size = buf_size;

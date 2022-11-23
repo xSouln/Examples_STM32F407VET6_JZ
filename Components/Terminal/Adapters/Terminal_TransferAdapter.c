@@ -10,8 +10,6 @@ static void Handler(xTxTransferT* layer)
 	static const int min_size = sizeof_str(end);
 	
 	TerminalTransferAdapterT* adapter = layer->Adapter;
-	int free_size;
-	int buffer_size;
 	int packet_size;
 	int buffer_filling;
 	
@@ -22,8 +20,8 @@ static void Handler(xTxTransferT* layer)
 		return;
 	}
 	
-	free_size = xTxGetValue(layer->Tx, xTxValueFreeBufferSize);
-	buffer_size = xTxGetValue(layer->Tx, xTxValueBufferSize);
+	int free_size = xTxGetFreeBufferSize(layer->Tx);
+	int buffer_size = xTxGetBufferSize(layer->Tx);
 	buffer_filling = buffer_size - buffer_size * layer->BufferFilling;
 	
 	free_size -= (buffer_filling + min_size);

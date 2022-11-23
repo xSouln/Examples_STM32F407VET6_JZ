@@ -1,18 +1,68 @@
 //==============================================================================
+//includes:
+
 #include "Common/xMemory.h"
 #include "TCPServer.h"
 //==============================================================================
-void TCPServerHandler(TCPServerT* server)
+//functions:
+
+void _TCPServerHandler(TCPServerT* server)
 {
 	server->Adapter.Interface->Handler(server);
+
+	xRxHandler(&server->Rx);
+	xTxHandler(&server->Tx);
 }
+//------------------------------------------------------------------------------
+
+void _TCPServerTimeSynchronization(TCPServerT* server)
+{
+
+}
+//------------------------------------------------------------------------------
+void _TCPServerEventListener(TCPServerT* server, TCPServerEventSelector selector, void* arg, ...)
+{
+	//SerialPortComponentEventListener(port, selector, arg);
+
+	switch((uint8_t)selector)
+	{
+		default: break;
+	}
+}
+//------------------------------------------------------------------------------
+
+xResult _TCPServerRequestListener(TCPServerT* server, TCPServerRequestSelector selector, void* arg, ...)
+{
+	switch((uint8_t)selector)
+	{
+		default: return xResultRequestIsNotFound;
+	}
+
+	return xResultAccept;
+}
+//------------------------------------------------------------------------------
+
+void _TCPServerIRQListener(TCPServerT* server)
+{
+
+}
+//==============================================================================
+//initialization:
+
+static const ObjectDescriptionT TCPServerObjectDescription =
+{
+	.Key = OBJECT_DESCRIPTION_KEY,
+	.ObjectId = TCP_SERVER_OBJECT_ID,
+	.Type = "SerialPortT"
+};
 //------------------------------------------------------------------------------
 xResult TCPServerInit(TCPServerT* server, void* parent, TCPServerInterfaceT* interface)
 {
 	if (server && interface)
 	{
-		server->Description = "TCPServerT";
-		server->Parent = parent;
+		server->Object.Description = &TCPServerObjectDescription;
+		server->Object.Parent = parent;
+
 		server->Interface = interface;
 		
 		xMemoryCopy(&server->Options.Ip, (uint8_t*)TCP_SERVER_DEFAULT_IP, sizeof(server->Options.Ip));
@@ -21,8 +71,6 @@ xResult TCPServerInit(TCPServerT* server, void* parent, TCPServerInterfaceT* int
 		xMemoryCopy(&server->Options.Mac, (uint8_t*)TCP_SERVER_DEFAULT_MAC_ADDRESS, sizeof(server->Options.Mac));
 		
 		server->Sock.Port = TCP_SERVER_DEFAULT_PORT;
-		
-		server->Status.InitResult = xResultAccept;
 		
 		return xResultAccept;
 	}

@@ -4,23 +4,43 @@
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 //==============================================================================
 //includes:
 
 #include "SerialPort/Controls/SerialPort_Types.h"
 //==============================================================================
+//macros:
+
+#define SerialPortEventTxIRQ(port) xTxIRQListener(&port.Tx)
+#define SerialPortEventRxIRQ(port) xTxIRQEventListener(&port.Rx)
+//==============================================================================
 //functions:
 
-void SerialPortHandler(SerialPortT* serial_port);
+xResult SerialPortInit(SerialPortT* port, void* parent, SerialPortInterfaceT* interface);
 
-xResult SerialPortInit(SerialPortT* serial_port, void* parent, SerialPortInterfaceT* interface);
+void _SerialPortHandler(SerialPortT* port);
+void _SerialPortTimeSynchronization(SerialPortT* port);
+void _SerialPortIRQListener(SerialPortT* serial_port);
+void _SerialPortEventListener(SerialPortT* port, SerialPortEventSelector selector, void* arg, ...);
+xResult _SerialPortRequestListener(SerialPortT* port, SerialPortRequestSelector selector, void* arg, ...);
+//==============================================================================
+//import:
 
-void SerialPortEventTxIRQ(SerialPortT* serial_port);
-void SerialPortEventRxIRQ(SerialPortT* serial_port);
+
+//==============================================================================
+//override:
+
+#define SerialPortHandler(port) _SerialPortHandler(port)
+#define SerialPortTimeSynchronization(port) _SerialPortTimeSynchronization(port)
+
+#define SerialPortIRQListener(port) _SerialPortIRQListener(port)
+
+#define SerialPortEventListener(port, selector, arg, ...) ((SerialPortT*)port)->Interface->EventListener(port, selector, arg, ##__VA_ARGS__)
+#define SerialPortRequestListener(port, selector, arg, ...) ((SerialPortT*)port)->Interface->RequestListener(port, selector, arg, ##__VA_ARGS__)
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif /* SERIAL_PORT_H_ */
+#endif //SERIAL_PORT_H_

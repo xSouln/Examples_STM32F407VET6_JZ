@@ -37,7 +37,7 @@ xResult xRxTransactionTransmitEvent(xTxT* tx, uint32_t device_id, uint16_t trans
 	};
 	
 	//start transmission logic implementation selected "tx" line
-	xTxRequestListener(tx, xTxRequestStartTransmission, 0, 0);
+	xTxEventListener(tx, xTxEventStartTransmission, 0);
 	
 	//Packet header start
 	xTxTransmitWord(tx, TRANSACTION_EVENT_IDENTIFICATOR);
@@ -54,10 +54,10 @@ xResult xRxTransactionTransmitEvent(xTxT* tx, uint32_t device_id, uint16_t trans
 	xTxTransmitData(tx, TRANSACTION_END_IDENTIFICATOR, SIZE_STRING(TRANSACTION_END_IDENTIFICATOR));
 	
 	//transmission logic implementation selected "tx" line
-	xTxRequestListener(tx, xTxRequestStopTransmission, 0, 0);
+	xTxEventListener(tx, xTxEventStopTransmission, 0);
 	
 	//generate event
-	xTxEventListener(tx, xTxEventTransmissionComplete, 0, 0);
+	xTxEventListener(tx, xTxEventTransmissionComplete, 0);
 	
 	return xResultAccept;
 }
@@ -94,13 +94,17 @@ xResult xRxTransactionRequestReceiver(xRxRequestManagerT* manager, uint8_t* obje
     if(result->Action)
     {
 		//clearing the data buffer
-    	xRxRequestListener(manager->RxLine, xRxRequestClearResponseBuffer, 0, 0);
+    	xRxClearResponseBuffer(manager->RxLine);
 
 		//function call corresponding to the request ActionKey
     	result->Action(manager, object, size);
 
-		uint8_t* content_data = (uint8_t*)xRxGetValue(manager->RxLine, xRxValueResponseData);
-		int content_data_size = xRxGetValue(manager->RxLine, xRxValueResponseDataSize);
+    	uint8_t* content_data = xRxGetResponseBuffer(manager->RxLine);
+    	int content_data_size = xRxGetBytesCountInResponseBuffer(manager->RxLine);
+
+		//xRxGetValue(manager->RxLine, xRxValueResponseBuffer, &content_data);
+		//xRxGetValue(manager->RxLine, xRxValueResponseBufferSize, &content_data_size);
+
 
 		if (tx)
 		{
@@ -117,7 +121,7 @@ xResult xRxTransactionRequestReceiver(xRxRequestManagerT* manager, uint8_t* obje
 			//Packet end packet marker: [\r]
 
 			//start transmission logic implementation selected "tx" line
-			xTxRequestListener(tx, xTxRequestStartTransmission, 0, 0);
+			xTxEventListener(tx, xTxEventStartTransmission, 0);
 
 			//Packet header start
 			xTxTransmitWord(tx, TRANSACTION_RESPONSE_IDENTIFICATOR);
@@ -134,10 +138,10 @@ xResult xRxTransactionRequestReceiver(xRxRequestManagerT* manager, uint8_t* obje
 			xTxTransmitData(tx, TRANSACTION_END_IDENTIFICATOR, SIZE_STRING(TRANSACTION_END_IDENTIFICATOR));
 			
 			//transmission logic implementation selected "tx" line
-			xTxRequestListener(tx, xTxRequestStopTransmission, 0, 0);
+			xTxEventListener(tx, xTxEventStopTransmission, 0);
 			
 			//generate event
-			xTxEventListener(tx, xTxEventTransmissionComplete, 0, 0);
+			xTxEventListener(tx, xTxEventTransmissionComplete, 0);
 		}
     }
   }

@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef TCP_SERVER_TYPES_H
-#define TCP_SERVER_TYPES_H
+#ifndef _TCP_SERVER_TYPES_H
+#define _TCP_SERVER_TYPES_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -11,15 +11,11 @@ extern "C" {
 //includes:
 
 #include "Components_Types.h"
-#include "TCPServer_Config.h"
 #include "TCPServer_Info.h"
+#include "TCPServer_Config.h"
 
-#include "Common/xTypes.h"
 #include "Common/xTx.h"
 #include "Common/xRx.h"
-
-#include "W5500/w5500.h"
-#include "WIZ/socket.h"
 
 #include "TCPServer/Adapters/TCPServer_AdapterBase.h"
 //==============================================================================
@@ -27,81 +23,132 @@ extern "C" {
 
 typedef enum
 {
-	TCPServerEventUpdateState = 1U,
+	TCPServerEventIdle,
+
+	TCPServerEventUpdateState,
 	TCPServerEventEndLine,
-	TCPServerEventReceiverBufferIsFull
+	TCPServerEventBufferIsFull
 	
 } TCPServerEventSelector;
 //------------------------------------------------------------------------------
 
 typedef enum
 {
-	TCPServerRequestDelay = 1U,
+	TCPServerRequestIdle,
+
+	TCPServerRequestDelay,
 	
 } TCPServerRequestSelector;
 //------------------------------------------------------------------------------
 
 typedef enum
 {
-	TCPServerValueTransmitterStatus = 1U,
+	TCPServerValueIdle,
+
+	TCPServerValueTransmitterStatus,
 	
 } TCPServerValueSelector;
 //------------------------------------------------------------------------------
 
-typedef union
+typedef enum
 {
-  struct
-	{
-    uint32_t Connected : 1;
-    uint32_t IsOpen : 1;
-    uint32_t Update : 1;
-  };
-  uint32_t Value;
-	
-} TCPServerSockStatusT;
+	TCPServerSockDisconnect,
+	TCPServerSockConnecting,
+	TCPServerSockConnected,
+	TCPServerSockDisconnecting,
+
+} TCPServerSockStates;
 //------------------------------------------------------------------------------
 
-typedef struct
+typedef enum
 {
-  TCPServerSockStatusT Status;
-  uint8_t Number;
-  uint8_t State;
-  uint16_t Port;
-  uint16_t FreeSize;
-	
-} TCPServerSockT;
-//------------------------------------------------------------------------------
+	TCPServerSockErrorNo,
+	TCPServerSockErrorAborted,
 
-typedef struct
-{
-  uint8_t Ip[4];
-  uint8_t Gateway[4];
-  uint8_t NetMask [4];
-  uint8_t Mac[6];
-	
-} TCPServerInfoT;
-//------------------------------------------------------------------------------
-
-typedef void (*TCPServerEventListenerT)(void* server, TCPServerEventSelector event, uint32_t args, uint32_t count);
-typedef xResult (*TCPServerRequestListenerT)(void* server, TCPServerRequestSelector event, uint32_t args, uint32_t count);
-//------------------------------------------------------------------------------
-
-typedef struct
-{
-	TCPServerEventListenerT EventListener;
-	TCPServerRequestListenerT RequestListener;
-	
-} TCPServerInterfaceT;
+} TCPServerSockErrors;
 //------------------------------------------------------------------------------
 
 typedef union
 {
 	struct
 	{
-		xResult InitResult : 4;
-		xResult AdapterInitResult : 4;
-		xResult RxInitResult : 4;
-		xResult TxInitResult : 4;
+		TCPServerSockStates State;
+		TCPServerSockErrors Error;
+	};
+
+	uint32_t Value;
+	
+} TCPServerSockStatusT;
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	TCPServerSockStatusT Status;
+
+	uint8_t Number;
+	uint16_t Port;
+	
+	void* Handle;
+
+} TCPServerSockT;
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	uint8_t Ip[4];
+	uint8_t Gateway[4];
+	uint8_t NetMask [4];
+	uint8_t Mac[6];
+	
+} TCPServerInfoT;
+
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	uint8_t* Data;
+	uint32_t Size;
+
+} TCPServerReceivedDataT;
+//------------------------------------------------------------------------------
+
+DEFINITION_EVENT_LISTENER_TYPE(TCPServer, TCPServerEventSelector);
+DEFINITION_REQUEST_LISTENER_TYPE(TCPServer, TCPServerRequestSelector);
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	DECLARE_EVENT_LISTENER(TCPServer);
+	DECLARE_REQUEST_LISTENER(TCPServer);
+	
+} TCPServerInterfaceT;
+//------------------------------------------------------------------------------
+
+
+typedef enum
+{
+	TCPServerClosed,
+	TCPServerOpening,
+	TCPServerIsOpen,
+	TCPServerClosing,
+
+} TCPServerStates;
+//------------------------------------------------------------------------------
+
+typedef enum
+{
+	TCPServerErrorNo,
+	TCPServerErrorAborted,
+
+} TCPServerErrors;
+//------------------------------------------------------------------------------
+
+typedef union
+{
+	struct
+	{
+		TCPServerStates State;
+		TCPServerErrors Error;
 	};
 	
 	uint32_t Value;
@@ -111,7 +158,7 @@ typedef union
 
 typedef struct
 {
-	OBJECT_HEADER;
+	ObjectBaseT Object;
 	
 	TCPServerAdapterBaseT Adapter;
 	
@@ -132,4 +179,4 @@ typedef struct
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //TCP_SERVER_TYPES_H
+#endif //_TCP_SERVER_TYPES_H

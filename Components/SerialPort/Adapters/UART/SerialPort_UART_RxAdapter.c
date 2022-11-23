@@ -7,18 +7,24 @@
 //includes:
 
 #include "SerialPort_UART_RxAdapter.h"
+#include "SerialPort/Controls/SerialPort.h"
 //==============================================================================
-static void Handler(xRxT* rx)
+static void PrivateHandler(xRxT* rx)
 {
 	SerialPortUART_AdapterT* adapter = rx->Adapter;
 	
 	adapter->RxCircleBuffer.TotalIndex = (adapter->RxCircleBuffer.SizeMask + 1) -
-																			((DMA_Stream_TypeDef*)adapter->RxDMA->Instance)->NDTR;
+											((DMA_Stream_TypeDef*)adapter->RxDMA->Instance)->NDTR;
 	
 	xRxReceiverRead(&adapter->RxReceiver, &adapter->RxCircleBuffer);
 }
 //------------------------------------------------------------------------------
-static void EventListener(xRxT* rx, xRxEventSelector event, uint32_t args, uint32_t count)
+static void PrivateIRQListener(xRxT* rx)
+{
+
+}
+//------------------------------------------------------------------------------
+static void PrivateEventListener(xRxT* rx, xRxEventSelector event, void* arg, ...)
 {
 	switch ((uint32_t)event)
 	{
@@ -26,21 +32,17 @@ static void EventListener(xRxT* rx, xRxEventSelector event, uint32_t args, uint3
 	}
 }
 //------------------------------------------------------------------------------
-static xResult RequestListener(xRxT* rx, xRxRequestSelector selector, uint32_t args, uint32_t count)
+static xResult PrivateRequestListener(xRxT* rx, xRxRequestSelector selector, void* arg, ...)
 {
 	SerialPortUART_AdapterT* adapter = rx->Adapter;
 	
 	switch ((uint32_t)selector)
 	{
-		case xRxRequestClearBuffer :
+		case xRxRequestClearBuffer:
 			adapter->RxReceiver.BytesReceived = 0;
 			break;
-		
-		case xRxRequestPutInResponseBuffer :
-			xDataBufferAdd(adapter->ResponseBuffer, (void*)args, count);
-			break;
-		
-		case xRxRequestClearResponseBuffer :
+
+		case xRxRequestClearResponseBuffer:
 			xDataBufferClear(adapter->ResponseBuffer);
 			break;
 		
@@ -50,74 +52,135 @@ static xResult RequestListener(xRxT* rx, xRxRequestSelector selector, uint32_t a
 	return xResultAccept;
 }
 //------------------------------------------------------------------------------
-static int GetValue(xRxT* rx, xRxValueSelector selector)
+
+static xResult PrivateReceive(xRxT* rx, uint8_t* data, uint32_t size)
 {
 	SerialPortUART_AdapterT* adapter = rx->Adapter;
 	
-	switch ((uint32_t)selector)
-	{
-		case xRxValueResponseData :
-			return (int)adapter->ResponseBuffer->Data;
-		
-		case xRxValueResponseDataSize :
-			return (int)adapter->ResponseBuffer->DataSize;
-		
-		default : return 0;
-	}
-}
-//------------------------------------------------------------------------------
-static xResult SetValue(xRxT* rx, xRxValueSelector selector, uint32_t value)
-{
-	switch ((uint32_t)selector)
-	{
-		default : return xResultRequestIsNotFound;
-	}
-	
+	xRxReceiverReceive(&adapter->RxReceiver, data, size);
+
 	return xResultAccept;
 }
 //------------------------------------------------------------------------------
-static void RxReceiverEventListener(xRxReceiverT* receiver, xRxReceiverEventSelector event, uint32_t args, uint32_t count)
+
+static xResult PrivatePutInResponseBuffer(xRxT* rx, uint8_t* data, uint32_t size)
 {
-	SerialPortT* serial_port = receiver->Parent->Parent;
-	SerialPortEventBaseT state;
+	SerialPortUART_AdapterT* adapter = rx->Adapter;
+
+	xDataBufferAdd(adapter->ResponseBuffer, data, size);
+
+	return xResultAccept;
+}
+//------------------------------------------------------------------------------
+
+static uint8_t* PrivateGetBuffer(xRxT* rx)
+{
+	SerialPortUART_AdapterT* adapter = rx->Adapter;
+
+	return adapter->RxReceiver.Buffer;
+}
+//------------------------------------------------------------------------------
+
+static uint32_t PrivateGetBufferSize(xRxT* rx)
+{
+	SerialPortUART_AdapterT* adapter = rx->Adapter;
+
+	return adapter->RxReceiver.BufferSize;
+}
+//------------------------------------------------------------------------------
+
+static uint32_t PrivateGetBytesCountInBuffer(xRxT* rx)
+{
+	SerialPortUART_AdapterT* adapter = rx->Adapter;
+
+	return adapter->RxReceiver.BytesReceived;
+}
+//------------------------------------------------------------------------------
+
+static uint8_t* PrivateGetResponseBuffer(xRxT* rx)
+{
+	SerialPortUART_AdapterT* adapter = rx->Adapter;
+
+	return adapter->ResponseBuffer->Data;
+}
+//------------------------------------------------------------------------------
+
+static uint32_t PrivateGetResponseBufferSize(xRxT* rx)
+{
+	SerialPortUART_AdapterT* adapter = rx->Adapter;
+
+	return adapter->ResponseBuffer->Size;
+}
+//------------------------------------------------------------------------------
+
+static uint32_t PrivateGetBytesCountInResponseBuffer(xRxT* rx)
+{
+	SerialPortUART_AdapterT* adapter = rx->Adapter;
+
+	return adapter->ResponseBuffer->DataSize;
+}
+//------------------------------------------------------------------------------
+
+static void PrivateRxReceiverEventListener(xRxReceiverT* receiver, xRxReceiverEventSelector event, void* arg, ...)
+{
+	SerialPortT* serial_port = receiver->Parent->Object.Parent;
 	
+	SerialPortReceivedDataT received_data =
+	{
+		.Data = arg,
+		.Size = *(uint32_t*)(&arg + 1),
+	};
+
 	switch ((uint8_t)event)
 	{
 		case xRxReceiverEventEndLine:
-			state.Selector = SerialPortEventEndLine;
+			SerialPortEventListener(serial_port, SerialPortEventEndLine, &received_data);
 			break;
 		
 		case xRxReceiverEventBufferIsFull:
-			state.Selector = SerialPortEventReceiverBufferIsFull;
+			SerialPortEventListener(serial_port, SerialPortEventBufferIsFull, &received_data);
 			break;
 
 		default: return;
 	}
-
-	serial_port->Interface->EventListener(serial_port, &state);
 }
 //==============================================================================
-static xRxInterfaceT rx_interface =
+//interface initializations:
+
+static const xRxInterfaceT rx_interface =
 {
-	.Handler = (xRxHandlerT)Handler,
-	.EventListener = (xRxEventListenerT)EventListener,
-	.RequestListener = (xRxRequestListenerT)RequestListener,
-	.GetValue = (xRxActionGetValueT)GetValue,
-	.SetValue = (xRxActionSetValueT)SetValue
+	INITIALIZATION_HANDLER(xRx, PrivateHandler),
+
+	INITIALIZATION_IRQ_LISTENER(xRx, PrivateIRQListener),
+
+	INITIALIZATION_EVENT_LISTENER(xRx, PrivateEventListener),
+	INITIALIZATION_REQUEST_LISTENER(xRx, PrivateRequestListener),
+
+	.Receive = (xRxReceiveActionT)PrivateReceive,
+	.PutInResponseBuffer = (xRxPutInResponseBufferActionT)PrivatePutInResponseBuffer,
+
+	.GetBuffer = (xRxGetBufferActionT)PrivateGetBuffer,
+	.GetBufferSize = (xRxGetBufferSizeActionT)PrivateGetBufferSize,
+	.GetBytesCountInBuffer = (xRxGetBytesCountInBufferActionT)PrivateGetBytesCountInBuffer,
+
+	.GetResponseBuffer = (xRxGetResponseBufferActionT)PrivateGetResponseBuffer,
+	.GetResponseBufferSize = (xRxGetResponseBufferSizeActionT)PrivateGetResponseBufferSize,
+	.GetBytesCountInResponseBuffer = (xRxGetBytesCountInResponseBufferActionT)PrivateGetBytesCountInResponseBuffer
 };
 //------------------------------------------------------------------------------
+
 static xRxReceiverInterfaceT rx_receiver_interface =
 {
-	.EventListener = (xRxReceiverEventListener)RxReceiverEventListener
+	INITIALIZATION_EVENT_LISTENER(xRxReceiver, PrivateRxReceiverEventListener),
 };
 //==============================================================================
+//initializations:
+
 xResult SerialPortUART_RxAdapterInit(SerialPortT* serial_port, SerialPortUART_AdapterT* adapter)
 {
 	if (serial_port && adapter)
 	{
 		adapter->RxReceiver.Interface = &rx_receiver_interface;
-		
-		//xRxInit(&serial_port->Rx, serial_port, adapter, &rx_interface);
 		
 		if (xRxInit(&serial_port->Rx, serial_port, adapter, &rx_interface) != xResultAccept)
 		{
@@ -130,9 +193,9 @@ xResult SerialPortUART_RxAdapterInit(SerialPortT* serial_port, SerialPortUART_Ad
 		if (adapter->RxDMA)
 		{
 			uint8_t dma_result = HAL_DMA_Start(adapter->RxDMA,
-																				(uint32_t)&adapter->Usart->Data,
-																				(uint32_t)adapter->RxCircleBuffer.Buffer,
-																				adapter->RxCircleBuffer.SizeMask + 1);
+												(uint32_t)&adapter->Usart->Data,
+												(uint32_t)adapter->RxCircleBuffer.Buffer,
+												adapter->RxCircleBuffer.SizeMask + 1);
 			
 			if (dma_result != HAL_OK)
 			{

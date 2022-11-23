@@ -53,8 +53,8 @@ xResult WS2812_DrawManagerBaseInit(WS2812_DrawManagerBaseT* manager, void* paren
 {
 	if (manager)
 	{
-		manager->Description = "WS2812_DrawManagerBaseT";
-		manager->Parent = parent;
+		manager->Object.Description = "WS2812_DrawManagerBaseT";
+		manager->Object.Parent = parent;
 		manager->Template = 0;
 		
 		manager->Handler = (WS2812_DrawManagerHandlerT)PrivateDrawManageHandler;

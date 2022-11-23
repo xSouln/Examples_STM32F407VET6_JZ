@@ -67,7 +67,7 @@ typedef struct
 //------------------------------------------------------------------------------
 typedef struct
 {
-	OBJECT_HEADER;
+	ObjectBaseT Object;
 	
 	void* Template;
 	

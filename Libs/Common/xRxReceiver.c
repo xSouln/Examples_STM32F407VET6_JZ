@@ -1,6 +1,19 @@
 //==============================================================================
+//includes:
+
 #include "xRxReceiver.h"
 //==============================================================================
+//variables:
+
+static const ObjectDescriptionT xRxReceiverObjectDescription =
+{
+	.Key = OBJECT_DESCRIPTION_KEY,
+	.ObjectId = X_RX_RECEIVER_OBJECT_ID,
+	.Type = "xRxReceiverT"
+};
+//==============================================================================
+//functions:
+
 void xRxReceiverReceive(xRxReceiverT* receiver, uint8_t *data, uint32_t data_size)
 {
 	for(uint16_t i = 0; i < data_size; i++)
@@ -10,22 +23,17 @@ void xRxReceiverReceive(xRxReceiverT* receiver, uint8_t *data, uint32_t data_siz
     
     if(receiver->BytesReceived >= receiver->BufferSize)
     {
-      receiver->Interface->EventListener(receiver,
-																				xRxReceiverEventBufferIsFull,
-																				(uint32_t)receiver->Buffer,
-																				receiver->BytesReceived);
-			receiver->BytesReceived = 0;
+		receiver->Interface->EventListener(receiver, xRxReceiverEventBufferIsFull, receiver->Buffer, receiver->BytesReceived);
+		receiver->BytesReceived = 0;
     }    
     else if(data[i] == '\r')
     {
-			receiver->Interface->EventListener(receiver,
-																				xRxReceiverEventEndLine,
-																				(uint32_t)receiver->Buffer,
-																				receiver->BytesReceived - 1);
+		receiver->Interface->EventListener(receiver, xRxReceiverEventEndLine, receiver->Buffer, receiver->BytesReceived - 1);
     }
   }
 }
-//==============================================================================
+//------------------------------------------------------------------------------
+
 void xRxReceiverRead(xRxReceiverT* receiver, xCircleBufferT* circle_buffer)
 {
 	while (circle_buffer->HandlerIndex != circle_buffer->TotalIndex)
@@ -38,32 +46,28 @@ void xRxReceiverRead(xRxReceiverT* receiver, xCircleBufferT* circle_buffer)
 		receiver->BytesReceived++;
 		
 		if(receiver->BytesReceived >= receiver->BufferSize)
-    {
-      receiver->Interface->EventListener(receiver,
-																				xRxReceiverEventBufferIsFull,
-																				(uint32_t)receiver->Buffer,
-																				receiver->BytesReceived);
+		{
+			receiver->Interface->EventListener(receiver, xRxReceiverEventBufferIsFull, receiver->Buffer, receiver->BytesReceived);
 			receiver->BytesReceived = 0;
-    }    
-    else if (byte == '\r')
-    {
-			receiver->Interface->EventListener(receiver,
-																				xRxReceiverEventEndLine,
-																				(uint32_t)receiver->Buffer,
-																				receiver->BytesReceived - 1);
-    }
+		}
+		else if (byte == '\r')
+		{
+			receiver->Interface->EventListener(receiver, xRxReceiverEventEndLine, receiver->Buffer, receiver->BytesReceived - 1);
+		}
 	}
 }
-//------------------------------------------------------------------------------
+//==============================================================================
+//initialization:
+
 int xRxReceiverInit(xRxReceiverT* receiver,
-										xRxT* parent,
-										xRxReceiverInterfaceT* interface,
-										uint8_t* buffer,
-										uint32_t buffer_size)
+					xRxT* parent,
+					xRxReceiverInterfaceT* interface,
+					uint8_t* buffer,
+					uint32_t buffer_size)
 {
 	if (receiver)
 	{
-		receiver->Description = "xRxReceiverT";
+		receiver->Description = &xRxReceiverObjectDescription;
 		receiver->Parent = parent;
 		receiver->Interface = interface;
 		receiver->Buffer = buffer;

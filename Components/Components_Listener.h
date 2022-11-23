@@ -1,13 +1,6 @@
 //==============================================================================
-//module enable:
-
-#include "TCPServer/TCPServer_ComponentConfig.h"
-#ifdef TCP_SERVER_WIZ_SPI_COMPONENT_ENABLE
-//==============================================================================
-//header:
-
-#ifndef TCP_SERVER_WIZ_SPI_COMPONENT_CONFIG_H
-#define TCP_SERVER_WIZ_SPI_COMPONENT_CONFIG_H
+#ifndef _COMPONENTS_LISTENER_H
+#define _COMPONENTS_LISTENER_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -15,24 +8,26 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Components_Types.h"
 #include "Components_Config.h"
-//==============================================================================
-//import:
-
+#include "Components_Types.h"
 //==============================================================================
 //defines:
 
-#define TCP_SERVER_WIZ_SPI_ADAPTER_ENABLE 1
 
-#define TCP_SERVER_WIZ_SPI_RX_BUF_SIZE 0x100
-#define TCP_SERVER_WIZ_SPI_RX_RECEIVER_BUF_SIZE 0x200
+//==============================================================================
+//export:
 
-#define TCP_SERVER_WIZ_SPI_REG SPI4
+void ComponentsEventListener(ComponentObjectBaseT* object, int selector, void* arg, ...);
+void ComponentsRequestListener(ComponentObjectBaseT* object, int selector, void* arg, ...);
+
+void ComponentsTrace(char* text);
+
+void ComponentsSystemDelay(ComponentObjectBaseT* object, uint32_t time);
+void ComponentsSystemEnableIRQ(ComponentObjectBaseT* object);
+void ComponentsSystemDisableIRQ(ComponentObjectBaseT* object);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //TCP_SERVER_WIZ_SPI_COMPONENT_CONFIG_H
-#endif //TCP_SERVER_WIZ_SPI_COMPONENT_ENABLE
+#endif //_COMPONENTS_LISTENER_H

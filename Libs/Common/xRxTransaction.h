@@ -1,14 +1,16 @@
-/*
- *
- */
+//==============================================================================
 #ifndef X_RX_TRANSACTION_H
 #define X_RX_TRANSACTION_H
 //==============================================================================
+//includes:
+
 #include "xRxRequest.h"
 #include "xRx.h"
 #include "xDataBuffer.h"
 #include "Adapters/xRxTransactionTransferAdapter.h"
 //==============================================================================
+//packet types:
+
 typedef union
 {
 	struct
@@ -22,6 +24,7 @@ typedef union
 	
 } PacketIdentificatorT; //aligned for uint32_t
 //------------------------------------------------------------------------------
+
 typedef struct
 {
 	PacketIdentificatorT Identificator; //identifier for recognizing the package
@@ -29,6 +32,7 @@ typedef struct
 	
 } PacketHeaderT; //aligned for uint32_t
 //------------------------------------------------------------------------------
+
 typedef struct
 {
 	uint32_t RequestId; //generated key - when receiving a response, must match the request key
@@ -38,6 +42,7 @@ typedef struct
 	
 } PacketInfoT; //aligned for uint32_t
 //------------------------------------------------------------------------------
+
 typedef struct
 {
 	PacketHeaderT Header; // format: [#][Description][:][DeviceKey]
@@ -47,28 +52,36 @@ typedef struct
 	
 } PacketT; //array: [#][Description][:][DeviceKey][RequestId][ActionKey][ContentSize][uint8_t Content[ContentSize]][\r]
 //==============================================================================
+//defines:
+
 #define PACKET_HEADER_IDENTIFICATOR_MASK 0xFF0000FFU
 #define PACKET_HEADER_IDENTIFICATOR_START_KEY '#'
 #define PACKET_HEADER_IDENTIFICATOR_END_KEY ':'
 #define PACKET_HEADER_IDENTIFICATOR 0x2300003AU // format: "#{Description}:"
 //------------------------------------------------------------------------------
+
 #define PACKET_HEADER_DESCRIPTION_MASK 0x00FFFF00U // format: "#{Description}:"
 #define PACKET_HEADER_DESCRIPTION_REQUEST 0x5251U
 #define PACKET_HEADER_DESCRIPTION_RESPONSE 0x5253U
 #define PACKET_HEADER_DESCRIPTION_EVENT 0x4554U
 //------------------------------------------------------------------------------
+
 #define PACKET_END_IDENTIFICATOR "\r" // default
 //------------------------------------------------------------------------------
+
 #define TRANSACTION_REQUEST_IDENTIFICATOR (PACKET_HEADER_IDENTIFICATOR | PACKET_HEADER_DESCRIPTION_REQUEST << 8)
 #define TRANSACTION_RESPONSE_IDENTIFICATOR (PACKET_HEADER_IDENTIFICATOR | PACKET_HEADER_DESCRIPTION_RESPONSE << 8)
 #define TRANSACTION_EVENT_IDENTIFICATOR (PACKET_HEADER_IDENTIFICATOR | PACKET_HEADER_DESCRIPTION_EVENT << 8)
 
 #define TRANSACTION_END_IDENTIFICATOR "\r"
 //==============================================================================
+//types:
+
 typedef void (*xRxTransactionAction)(xRxRequestManagerT* manager,
-																			void* request,
-																			uint16_t request_size);
-//==============================================================================
+										void* request,
+										uint16_t request_size);
+//------------------------------------------------------------------------------
+
 typedef struct
 {
   uint16_t Description;
@@ -77,9 +90,11 @@ typedef struct
   
 } xRxTransactionT;
 //==============================================================================
+//functions:
+
 xRxTransactionT* xRxTransactionIdentify(xRxTransactionT* transaction, uint16_t key);
 
 xResult xRxTransactionTransmitEvent(xTxT* tx, uint32_t device_id, uint16_t transaction, void* data, uint16_t data_size);
 xResult xRxTransactionRequestReceiver(xRxRequestManagerT* manager, uint8_t* object, uint16_t size);
 //==============================================================================
-#endif /* X_RX_TRANSACTION_H */
+#endif //X_RX_TRANSACTION_H

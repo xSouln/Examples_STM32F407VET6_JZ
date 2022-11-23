@@ -1,12 +1,18 @@
-/*
- *
- */
+//==============================================================================
 #ifndef X_TX_TRANSFER_H
 #define X_TX_TRANSFER_H
 //==============================================================================
+//includes:
+
 #include "xTypes.h"
 #include "xTx.h"
 //==============================================================================
+//defines:
+
+#define X_TX_TRANSFER_OBJECT_ID 0x907EA7FB
+//==============================================================================
+//types:
+
 typedef enum
 {
 	xTxTransferEventTransferStarted = 1U,
@@ -16,18 +22,27 @@ typedef enum
 	
 } xTxTransferEventSelector;
 //------------------------------------------------------------------------------
+
 typedef enum
 {
-	xTxTransferRequestDelay = 1U,
+	xTxTransferRequestIdle,
+
+	xTxTransferRequestDelay,
+	xTxTransferRequestTransmit
 	
 } xTxTransferRequestSelector;
 //------------------------------------------------------------------------------
+
 typedef enum
 {
-	xTxTransferTransmitterBufferFreeSize = 1U,
+	xTxTransferValueIdle,
+
+	xTxTransferValueBufferSize,
+	xTxTransferValueBufferFreeSize,
 	
 } xTxTransferValueSelector;
 //------------------------------------------------------------------------------
+
 typedef enum
 {
 	xTxTransferStatusIdle,
@@ -39,11 +54,13 @@ typedef enum
 	
 } xTxTransferStatus;
 //------------------------------------------------------------------------------
+
 typedef void (*xTxTransferHandlerT)(void* transfer);
 typedef void (*xTxTransferEventListenerT)(void* transfer, xTxTransferEventSelector selector, uint32_t args, uint32_t count);
 typedef xResult (*xTxTransferRequestListenerT)(void* transfer, xTxTransferRequestSelector selector, uint32_t args, uint32_t count);
 typedef int (*xTxTransferActionGetValueT)(void* transfer, xTxTransferValueSelector selector);
 //------------------------------------------------------------------------------
+
 typedef struct
 {
 	xTxTransferHandlerT Handler;
@@ -53,6 +70,7 @@ typedef struct
 	
 } xTxTransferInterfaceT;
 //------------------------------------------------------------------------------
+
 typedef union
 {
 	struct
@@ -66,9 +84,10 @@ typedef union
 	
 } xTxTransferStatusT;
 //------------------------------------------------------------------------------
+
 typedef struct
 {
-	OBJECT_HEADER;
+	ObjectBaseT Object;
 	
 	xTxTransferStatusT Status;
 	
@@ -88,7 +107,9 @@ typedef struct
 	uint32_t TimeOut;
 	
 } xTxTransferT;
-//------------------------------------------------------------------------------
+//==============================================================================
+//functions:
+
 xResult xTxTransferInit(xTxTransferT* layer,
 												uint32_t min_content_size,
 												uint32_t max_content_size,
@@ -100,4 +121,4 @@ xResult xTxTransferSetTxLine(xTxTransferT* layer, xTxT* tx);
 void xTxTransferAbort(xTxTransferT* layer);
 void xTxTransferHandler(xTxTransferT* layer);
 //==============================================================================
-#endif /* X_TX_TRANSFER_H */
+#endif //X_TX_TRANSFER_H

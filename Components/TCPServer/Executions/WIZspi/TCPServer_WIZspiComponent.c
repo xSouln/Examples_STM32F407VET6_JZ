@@ -6,25 +6,30 @@
 //==============================================================================
 //includes:
 
-#include "TCPServer_Component.h"
+#include "TCPServer_WIZspiComponent.h"
+#include "TCPServer/TCPServer_Component.h"
+#include "TCPServer/Adapters/WIZspi/TCPServer_WIZspiAdapter.h"
+
+#include "Components.h"
+
+#ifdef TERMINAL_COMPONENT_ENABLE
+#include "Terminal/Controls/Terminal.h"
+#endif
 //==============================================================================
-#define RX_BUF_SIZE 0x100
-#define RX_RECEIVER_BUF_SIZE 0x200
-//------------------------------------------------------------------------------
+//defines:
+
+#define RX_BUF_SIZE TCP_SERVER_WIZ_SPI_RX_BUF_SIZE
+#define RX_RECEIVER_BUF_SIZE TCP_SERVER_WIZ_SPI_RX_RECEIVER_BUF_SIZE
+//==============================================================================
+//variables:
+
 static uint8_t rx_buf[RX_BUF_SIZE];
 static uint8_t rx_receiver_buf[RX_RECEIVER_BUF_SIZE];
 
-REG_SPI_T* WIZspi;
-//------------------------------------------------------------------------------
-extern void RequestsReceiver(xRxT* rx, uint8_t* data, uint32_t size);
-//------------------------------------------------------------------------------
 TCPServerT TCPServerWIZspi;
-
-TCPServerWIZspiAdapterT WIZspiAdapter =
-{
-	//.SPI = (REG_SPI_T*)SPI2
-};
 //==============================================================================
+//functions:
+
 void WIZspiHardwareResetOn()
 {
 	//WIZ_RESET_GPIO_Port->ODR &= ~WIZ_RESET_Pin;
@@ -85,28 +90,24 @@ void WIZspiTransmiteByte(uint8_t byte)
   */
 }
 //------------------------------------------------------------------------------
-static void EventListener(TCPServerT* server, TCPServerEventSelector selector, uint32_t args, uint32_t count)
+void _TCPServerWIZspiComponentEventListener(TCPServerT* server, TCPServerEventSelector selector, void* arg, ...)
 {
 	switch ((uint8_t)selector)
 	{
-		case TCPServerEventEndLine :
-			//xRxDeclareRequest(&serial_port->Rx, xRxRequestClearBuffer, 0, 0);
-			RequestsReceiver(&server->Rx, (uint8_t*)args, count);
+		case TCPServerEventEndLine:
 			break;
 		
-		case TCPServerEventReceiverBufferIsFull :
-			//xRxDeclareRequest(&serial_port->Rx, xRxRequestClearBuffer, 0, 0);
-			RequestsReceiver(&server->Rx, (uint8_t*)args, count);
+		case TCPServerEventBufferIsFull:
 			break;
 	}
 }
 //------------------------------------------------------------------------------
-static xResult RequestListener(TCPServerT* server, TCPServerRequestSelector selector, uint32_t args, uint32_t count)
+xResult _TCPServerWIZspiComponentRequestListener(TCPServerT* server, TCPServerRequestSelector selector, void* arg, ...)
 {
 	switch ((uint8_t)selector)
 	{
-		case TCPServerRequestDelay :
-			HAL_Delay(args);
+		case TCPServerRequestDelay:
+			HAL_Delay((uint32_t)arg);
 			break;
 		
 		default : return xResultRequestIsNotFound;
@@ -114,17 +115,17 @@ static xResult RequestListener(TCPServerT* server, TCPServerRequestSelector sele
 	
 	return xResultAccept;
 }
-//==============================================================================
-TCPServerInterfaceT Interface =
+//------------------------------------------------------------------------------
+
+void _TCPServerWIZspiComponentIRQListener(TCPServerT* port, ...)
 {
-	.EventListener = (TCPServerEventListenerT)EventListener,
-	.RequestListener = (TCPServerRequestListenerT)RequestListener
-};
-//==============================================================================
+
+}
+//------------------------------------------------------------------------------
 /**
  * @brief main handler
  */
-inline void TCPServerWIZspiComponentHandler()
+inline void _TCPServerWIZspiComponentHandler()
 {
 
 }
@@ -132,40 +133,59 @@ inline void TCPServerWIZspiComponentHandler()
 /**
  * @brief time synchronization of time-dependent processes
  */
-inline void TCPServerWIZspiComponentTimeSynchronization()
+inline void _TCPServerWIZspiComponentTimeSynchronization()
 {
 
 }
 //==============================================================================
+//initializations:
+
+TCPServerInterfaceT TCPServerInterface =
+{
+	INITIALIZATION_EVENT_LISTENER(TCPServer, ComponentsEventListener),
+	INITIALIZATION_REQUEST_LISTENER(TCPServer, ComponentsRequestListener)
+};
+
+//------------------------------------------------------------------------------
+
+TCPServerWIZspiAdapterT TCPServerWIZspiAdapter =
+{
+	.SPI = TCP_SERVER_WIZ_SPI_REG,
+
+	.BusInterface =
+	{
+		.SelectChip = WIZspiSelectChip,
+		.DeselectChip = WIZspiSelectChip,
+
+		.HardwareResetOn = WIZspiHardwareResetOn,
+		.HardwareResetOff = WIZspiHardwareResetOff,
+
+		.TransmiteByte = WIZspiTransmiteByte,
+		.ReceiveByte = WIZspiReceiveByte
+	},
+};
+//==============================================================================
+//initialization:
+
 xResult TCPServerWIZspiComponentInit(void* parent)
 {
-	extern xDataBufferT MainResponseBuffer;
-	WIZspiAdapter.ResponseBuffer = &MainResponseBuffer;
+	#ifdef TERMINAL_COMPONENT_ENABLE
+	TCPServerWIZspiAdapter.ResponseBuffer = &Terminal.ResponseBuffer;
+	#endif
 	
-	WIZspiAdapter.Server = &TCPServerWIZspi;
+	TCPServerWIZspiAdapter.RxBuffer = rx_buf;
+	TCPServerWIZspiAdapter.RxBufferSize = sizeof(rx_buf);
 	
-	//WIZspi = (REG_SPI_T*)SPI4;
-	
-	WIZspiAdapter.BusInterface.HardwareResetOn = WIZspiHardwareResetOn;
-	WIZspiAdapter.BusInterface.HardwareResetOff = WIZspiHardwareResetOff;
-	WIZspiAdapter.BusInterface.SelectChip = WIZspiSelectChip;
-	WIZspiAdapter.BusInterface.DeselectChip = WIZspiDeselectChip;
-	WIZspiAdapter.BusInterface.ReceiveByte = WIZspiReceiveByte;
-	WIZspiAdapter.BusInterface.TransmiteByte = WIZspiTransmiteByte;
-	
-	WIZspiAdapter.RxBuffer = rx_buf;
-	WIZspiAdapter.RxBufferSize = sizeof(rx_buf);
-	
-	xRxReceiverInit(&WIZspiAdapter.RxReceiver,
+	xRxReceiverInit(&TCPServerWIZspiAdapter.RxReceiver,
 									&TCPServerWIZspi.Rx,
 									0,
 									rx_receiver_buf,
 									sizeof(rx_receiver_buf));
 	
-	TCPServerInit(&TCPServerWIZspi, parent, &Interface);
-	TCPServerWIZspiAdapterInit(&TCPServerWIZspi, &WIZspiAdapter);
+	TCPServerInit(&TCPServerWIZspi, parent, &TCPServerInterface);
+	TCPServerWIZspiAdapterInit(&TCPServerWIZspi, &TCPServerWIZspiAdapter);
 	
   return xResultAccept;
 }
 //==============================================================================
-#endif /* TCP_SERVER_COMPONENT_ENABLE */
+#endif //TCP_SERVER_WIZ_SPI_COMPONENT_ENABLE

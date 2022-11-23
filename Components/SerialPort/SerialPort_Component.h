@@ -17,6 +17,7 @@ extern "C" {
 
 #include "SerialPort_ComponentTypes.h"
 #include "SerialPort/SerialPort_ComponentConfig.h"
+#include "SerialPort/Controls/SerialPort.h"
 //==============================================================================
 //configurations:
 
@@ -28,16 +29,44 @@ extern "C" {
 
 
 //==============================================================================
+//macros:
+
+
+//==============================================================================
 //functions:
 
-int SerialPortComponentInit(void* parent);
+xResult _SerialPortComponentInit(SerialPortT* port, void* parent);
 
-void SerialPortComponentHandler();
-void SerialPortComponentTimeSynchronization();
+void _SerialPortComponentHandler(SerialPortT* port);
+void _SerialPortComponentTimeSynchronization(SerialPortT* port);
+
+void _SerialPortComponentIRQListener(SerialPortT* port);
 //==============================================================================
 //export:
 
 
+//==============================================================================
+//override:
+
+#ifndef SerialPortComponentInit
+#define SerialPortComponentInit(port, parent)\
+	_SerialPortComponentInit(port, parent)
+#endif
+//------------------------------------------------------------------------------
+#ifndef SerialPortComponentHandler
+#define SerialPortComponentHandler(port)\
+	_SerialPortComponentHandler(port)
+#endif
+//------------------------------------------------------------------------------
+#ifndef SerialPortComponentTimeSynchronization
+#define SerialPortComponentTimeSynchronization(port)\
+	_SerialPortComponentTimeSynchronization(port)
+#endif
+//------------------------------------------------------------------------------
+#ifndef SerialPortComponentIRQListener
+#define SerialPortComponentIRQListener(port)\
+	_SerialPortComponentIRQListener(port)
+#endif
 //==============================================================================
 #ifdef __cplusplus
 }

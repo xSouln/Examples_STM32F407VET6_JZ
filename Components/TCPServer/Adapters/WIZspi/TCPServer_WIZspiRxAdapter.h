@@ -1,8 +1,13 @@
 //==============================================================================
+//module enable:
+
+#include "TCPServer/Adapters/TCPServer_AdapterConfig.h"
+#ifdef TCP_SERVER_WIZ_SPI_ADAPTER_ENABLE
+//==============================================================================
 //header:
 
-#ifndef TCP_SERVER_WIZ_SPI_RX_ADAPTER_H
-#define TCP_SERVER_WIZ_SPI_RX_ADAPTER_H
+#ifndef _TCP_SERVER_WIZ_SPI_RX_ADAPTER_H
+#define _TCP_SERVER_WIZ_SPI_RX_ADAPTER_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -20,5 +25,5 @@ xResult TCPServerWIZspiRxAdapterInit(TCPServerT* server, TCPServerWIZspiAdapterT
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //TCP_SERVER_WIZ_SPI_RX_ADAPTER_H
-
+#endif //_TCP_SERVER_WIZ_SPI_RX_ADAPTER_H
+#endif //TCP_SERVER_WIZ_SPI_ADAPTER_ENABLE

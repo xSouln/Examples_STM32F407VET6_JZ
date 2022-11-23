@@ -6,8 +6,8 @@
 //==============================================================================
 //header:
 
-#ifndef TCP_SERVER_COMPONENT_TYPES_H
-#define TCP_SERVER_COMPONENT_TYPES_H
+#ifndef _TCP_SERVER_COMPONENT_TYPES_H
+#define _TCP_SERVER_COMPONENT_TYPES_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -25,5 +25,5 @@ extern "C" {
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //TCP_SERVER_COMPONENT_TYPES_H
+#endif //_TCP_SERVER_COMPONENT_TYPES_H
 #endif //TCP_SERVER_COMPONENT_ENABLE

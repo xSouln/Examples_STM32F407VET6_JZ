@@ -1,43 +1,38 @@
 //==============================================================================
 //module enable:
 
-#include "SerialPort/SerialPort_ComponentConfig.h"
-#ifdef TCP_SERVER_WIZ_SPI_COMPONENT_ENABLE
+#include "TCPServer/TCPServer_ComponentConfig.h"
+#ifdef TCP_SERVER_LWIP_COMPONENT_ENABLE
 //==============================================================================
 //header:
 
-#ifndef SERIAL_PORT_UART_COMPONENT_H
-#define SERIAL_PORT_UART_COMPONENT_H
+#ifndef _TCP_SERVER_LWIP_COMPONENT_CONFIG_H
+#define _TCP_SERVER_LWIP_COMPONENT_CONFIG_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 //==============================================================================
 //includes:
 
-#include "SerialPort_UART_ComponentConfig.h"
-#include "SerialPort/Controls/SerialPort.h"
+#include "Components_Types.h"
+//==============================================================================
+//macros:
+
+
+//==============================================================================
+//import:
+
+
 //==============================================================================
 //defines:
 
-
-//==============================================================================
-//functions:
-
-xResult SerialPortUARTComponentInit(void* parent);
-void SerialPortUARTComponentHandler();
-void SerialPortUARTComponentTimeSynchronization();
-
-void SerialPortUARTComponentTxIRQ();
-void SerialPortUARTComponentRxIRQ();
-//==============================================================================
-//export:
-
-extern SerialPortT SerialPortUART;
+#define TCP_SERVER_LWIP_RX_BUF_SIZE 0x100
+#define TCP_SERVER_LWIP_RX_RECEIVER_BUF_SIZE 0x200
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //SERIAL_PORT_UART_COMPONENT_H
-#endif //SERIAL_PORT_UART_COMPONENT_ENABLE
+#endif //_TCP_SERVER_LWIP_COMPONENT_CONFIG_H
+#endif //TCP_SERVER_LWIP_COMPONENT_ENABLE

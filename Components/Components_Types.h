@@ -12,6 +12,43 @@ extern "C" {
 #include "Common/xTypes.h"
 #include "Registers/registers.h"
 //==============================================================================
+//defines:
+
+
+//==============================================================================
+//types:
+
+typedef enum
+{
+	ComponentsSystemRequestIdle,
+
+	ComponentsSystemRequestDelay,
+	ComponentsSystemRequestDisableIRQ,
+	ComponentsSystemRequestInableIRQ
+
+} ComponentsSystemRequests;
+//------------------------------------------------------------------------------
+
+#define COMPONENT_EVENT_BASE\
+	ObjectBaseT Object;\
+	uint16_t Selector
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	uint16_t Selector;
+	void* Content;
+
+} ComponentEventBaseT;
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	ObjectDescriptionT* Description;
+	void* Parent;
+
+} ComponentObjectBaseT;
+//==============================================================================
 #ifdef __cplusplus
 }
 #endif

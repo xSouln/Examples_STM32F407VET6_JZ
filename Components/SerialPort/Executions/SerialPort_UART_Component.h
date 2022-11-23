@@ -1,7 +1,7 @@
 //==============================================================================
 //module enable:
 
-#include "SerialPort/SerialPort_ComponentConfig.h"
+#include "SerialPort_UART_ComponentConfig.h"
 #ifdef SERIAL_PORT_UART_COMPONENT_ENABLE
 //==============================================================================
 //header:
@@ -11,7 +11,7 @@
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 //==============================================================================
 //includes:
 
@@ -22,14 +22,39 @@ extern "C" {
 
 
 //==============================================================================
+//macros:
+
+
+//==============================================================================
 //functions:
 
-xResult SerialPortUARTComponentInit(void* parent);
-void SerialPortUARTComponentHandler();
-void SerialPortUARTComponentTimeSynchronization();
+xResult _SerialPortUARTComponentInit(void* parent);
 
-void SerialPortUARTComponentTxIRQ();
-void SerialPortUARTComponentRxIRQ();
+void _SerialPortUARTComponentHandler();
+void _SerialPortUARTComponentTimeSynchronization();
+void _SerialPortUARTComponentIRQListener();
+//==============================================================================
+//import:
+
+
+//==============================================================================
+//override:
+
+#define SerialPortUARTComponentInit(parent) _SerialPortUARTComponentInit(parent)
+
+#define SerialPortUARTComponentHandler() SerialPortHandler(&SerialPortUART)
+#define SerialPortUARTComponentTimeSynchronization() SerialPortTimeSynchronization(&SerialPortUART)
+
+#define SerialPortUARTComponentIRQListener() SerialPortIRQListener(&SerialPortUART)
+//------------------------------------------------------------------------------
+//override main components functions:
+
+#define SerialPortComponentInit(parent) SerialPortUARTComponentInit(parent)
+
+#define SerialPortComponentHandler() SerialPortUARTComponentHandler()
+#define SerialPortComponentTimeSynchronization() SerialPortUARTComponentTimeSynchronization()
+
+#define SerialPortComponentIRQListener() SerialPortUARTComponentIRQListener()
 //==============================================================================
 //export:
 

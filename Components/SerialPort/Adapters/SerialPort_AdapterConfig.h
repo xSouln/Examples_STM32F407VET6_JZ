@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef SERIAL_PORT_ADAPTER_CONFIG_H
-#define SERIAL_PORT_ADAPTER_CONFIG_H
+#ifndef _SERIAL_PORT_ADAPTER_CONFIG_H
+#define _SERIAL_PORT_ADAPTER_CONFIG_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -20,4 +20,4 @@ extern "C" {
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //SERIAL_PORT_ADAPTER_CONFIG_H
+#endif //_SERIAL_PORT_ADAPTER_CONFIG_H

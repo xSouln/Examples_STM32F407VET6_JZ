@@ -1,8 +1,6 @@
 //==============================================================================
-//header:
-
-#ifndef TCP_SERVER_ADAPTERS_CONFIG_H
-#define TCP_SERVER_ADAPTERS_CONFIG_H
+#ifndef _TERMINAL_INFO_H
+#define _TERMINAL_INFO_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -10,10 +8,16 @@ extern "C" {
 //==============================================================================
 //includes:
 
+
+//==============================================================================
+//defines:
+
+#define TERMINAL_OBJECT_ID 0x45389560
+
+#define TERMINAL_DEVICE_KEY TERMINAL_OBJECT_ID
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //TCP_SERVER_ADAPTERS_CONFIG_H
-
+#endif
