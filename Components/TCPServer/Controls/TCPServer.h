@@ -17,7 +17,7 @@ extern "C" {
 xResult TCPServerInit(TCPServerT* server, void* parent, TCPServerInterfaceT* interface);
 
 void _TCPServerHandler(TCPServerT* server);
-void _TCPServerHandlerTimeSynchronization(TCPServerT* server);
+void _TCPServerTimeSynchronization(TCPServerT* server);
 void _TCPServerIRQListener(TCPServerT* server);
 
 void _TCPServerHandlerEventListener(TCPServerT* server, TCPServerEventSelector selector, void* arg, ...);
@@ -30,7 +30,7 @@ void _TCPServerHandlerRequestListener(TCPServerT* server, TCPServerRequestSelect
 //override:
 
 #define TCPServerHandler(server) _TCPServerHandler(server)
-#define TCPServerTimeSynchronization(server) //_TCPServerTimeSynchronization(server)
+#define TCPServerTimeSynchronization(server) _TCPServerTimeSynchronization(server)
 #define TCPServerIRQListener(server) //_TCPServerIRQtListener(server)
 
 #define TCPServerEventListener(server, selector, arg, ...) ((TCPServerT*)server)->Interface->EventListener(server, selector, arg, ##__VA_ARGS__)

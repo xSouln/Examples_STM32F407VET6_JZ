@@ -27,8 +27,8 @@ extern "C" {
 //==============================================================================
 //defines:
 
-#define TCP_SERVER_LWIP_RX_BUF_SIZE 0x100
-#define TCP_SERVER_LWIP_RX_RECEIVER_BUF_SIZE 0x200
+#define TCP_SERVER_LWIP_RX_OBJECT_BUF_SIZE (0x3ff + 1)
+#define TCP_SERVER_LWIP_RX_CIRCLE_BUF_SIZE_MASK 0xfff
 //==============================================================================
 #ifdef __cplusplus
 }

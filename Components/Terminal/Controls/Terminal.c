@@ -58,12 +58,14 @@ void _TerminalReceiveData(xRxT* rx, uint8_t* data, uint32_t size)
 		//reset size when content exceeds size specified in packet.Info
 		if(content_size > request->Info.ContentSize)
 		{
-			return;
+			goto end;
 		}
 	}
 
 	//command identification
 	if (xRxRequestIdentify(rx, &Terminal, (xRxRequestT*)TerminalRxRequests, data, size)) { goto end; }
+
+	xRxTransactionError(rx->Tx, request, 0, 0);
 
 	end:;
 	xRxRequestListener(rx, xRxRequestClearBuffer, 0);
@@ -125,7 +127,7 @@ static const ObjectDescriptionT TerminalObjectDescription =
 {
 	.Key = OBJECT_DESCRIPTION_KEY,
 	.ObjectId = TERMINAL_OBJECT_ID,
-	.Type = "TerminalT"
+	.Type = nameof(TerminalT)
 };
 //------------------------------------------------------------------------------
 TerminalTransferAdapterT TerminalTransferAdapter =

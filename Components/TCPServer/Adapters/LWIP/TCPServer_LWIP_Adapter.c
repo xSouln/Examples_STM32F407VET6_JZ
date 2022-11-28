@@ -10,12 +10,34 @@
 #include "TCPServer_LWIP_TxAdapter.h"
 #include "TCPServer_LWIP_RxAdapter.h"
 #include "Common/xMemory.h"
+#include <string.h>
+//==============================================================================
+//import:
+
+//==============================================================================
+//variables:
+
+
 //==============================================================================
 //functions:
 
+static xResult private_tcp_server_open(TCPServerT* server);
+//------------------------------------------------------------------------------
+
 static void PrivateHandler(TCPServerT* server)
 {
+	TCPServerLWIPAdapterT* adapter = server->Adapter.Child;
+
 	MX_LWIP_Process();
+
+	xRxReceiverRead(&adapter->RxReceiver, &adapter->RxCircleBuffer);
+
+	if (server->Status.State == TCPServerIsOpen && !adapter->Data.OtputUpdateTime)
+	{
+		adapter->Data.OtputUpdateTime = 20;
+
+		tcp_output(adapter->Data.SocketHandle);
+	}
 }
 //------------------------------------------------------------------------------
 
@@ -27,8 +49,17 @@ static void PrivateIRQListener(TCPServerT* server, void* reg)
 
 static void PrivateEventListener(TCPServerT* server, TCPServerAdapterEventSelector selector, void* args, ...)
 {
+	TCPServerLWIPAdapterT* adapter = server->Adapter.Child;
+
 	switch ((int)selector)
 	{
+		case TCPServerAdapterEventUpdateTime:
+			if (adapter->Data.OtputUpdateTime)
+			{
+				adapter->Data.OtputUpdateTime--;
+			}
+			break;
+
 		default: return;
 	}
 }
@@ -50,8 +81,9 @@ static xResult PrivateRequestListener(TCPServerT* server, TCPServerAdapterReques
   * @param  es: pointer on echo_state structure
   * @retval None
   */
-static void private_tcp_server_connection_close(TCPServerT* server)
+static void private_tcp_server_close(TCPServerT* server)
 {
+	TCPServerLWIPAdapterT* adapter = server->Adapter.Child;
 	server->Status.State = TCPServerClosed;
 
 	if (!server)
@@ -59,21 +91,22 @@ static void private_tcp_server_connection_close(TCPServerT* server)
 		return;
 	}
 
-	TCPServerLWIPAdapterT* adapter = server->Adapter.Child;
-
-	if (adapter->Data.Socket)
+	if (adapter->Data.SocketHandle)
 	{
 		/* remove all callbacks */
+		/*
 		tcp_arg(adapter->Data.Socket, NULL);
 		tcp_sent(adapter->Data.Socket, NULL);
 		tcp_recv(adapter->Data.Socket, NULL);
 		tcp_err(adapter->Data.Socket, NULL);
 		tcp_poll(adapter->Data.Socket, NULL, 0);
-
+*/
 		/* close tcp connection */
-		tcp_close(adapter->Data.Socket);
+		tcp_close(adapter->Data.SocketHandle);
+		//tcp_close(adapter->Data.Socket);
 
-		adapter->Data.Socket = NULL;
+		//adapter->Data.Socket = NULL;
+		//adapter->Data.SocketHandle = NULL;
 	}
 }
 //------------------------------------------------------------------------------
@@ -87,6 +120,35 @@ static void private_tcp_server_connection_close(TCPServerT* server)
   */
 static err_t private_tcp_server_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
 {
+	TCPServerT* server = arg;
+	TCPServerLWIPAdapterT* adapter = server->Adapter.Child;
+
+	if (err != ERR_OK)
+	{
+		//free received pbuf
+		if (p != NULL)
+		{
+			pbuf_free(p);
+		}
+
+		return err;
+	}
+
+	uint32_t len = 0;
+	struct pbuf* element = p;
+
+	while (len < p->tot_len && element)
+	{
+		//xRxReceiverReceive(&adapter->RxReceiver, element->payload, element->len);
+
+		xCircleBufferAdd(&adapter->RxCircleBuffer, element->payload, element->len);
+
+		len += element->len;
+		element = element->next;
+	}
+
+	tcp_recved(tpcb, p->tot_len);
+	pbuf_free(p);
 
 	return ERR_OK;
 }
@@ -104,7 +166,7 @@ static void private_tcp_server_error(void *arg, err_t err)
 
 	server->Status.Error = TCPServerErrorAborted;
 
-	private_tcp_server_connection_close(server);
+	private_tcp_server_close(server);
 }
 //------------------------------------------------------------------------------
 /**
@@ -113,7 +175,7 @@ static void private_tcp_server_error(void *arg, err_t err)
   * @param  tpcb: pointer on the tcp_pcb for the current tcp connection
   * @retval err_t: error code
   */
-static err_t tcp_server_poll(void *arg, struct tcp_pcb *tpcb)
+static err_t private_tcp_server_poll(void *arg, struct tcp_pcb *tpcb)
 {
 	TCPServerT* server = arg;
 	err_t ret_err;
@@ -129,6 +191,14 @@ static err_t tcp_server_poll(void *arg, struct tcp_pcb *tpcb)
 		ret_err = ERR_ABRT;
 	}
 
+	switch ((int)tpcb->state)
+	{
+		case CLOSE_WAIT:
+			private_tcp_server_close(server);
+			//private_tcp_server_open(server);
+			break;
+	}
+
 	return ret_err;
 }
 //------------------------------------------------------------------------------
@@ -142,6 +212,7 @@ static err_t tcp_server_poll(void *arg, struct tcp_pcb *tpcb)
 static err_t private_tcp_server_accept(void *arg, struct tcp_pcb *newpcb, err_t err)
 {
 	TCPServerT* server = arg;
+	TCPServerLWIPAdapterT* adapter = server->Adapter.Child;
 
 	err_t ret_err;
 
@@ -154,6 +225,7 @@ static err_t private_tcp_server_accept(void *arg, struct tcp_pcb *newpcb, err_t 
 	if (arg != NULL)
 	{
 		server->Status.State = TCPServerIsOpen;
+		adapter->Data.SocketHandle = newpcb;
 
 		//pass newly allocated es structure as argument to newpcb
 		tcp_arg(newpcb, arg);
@@ -165,7 +237,7 @@ static err_t private_tcp_server_accept(void *arg, struct tcp_pcb *newpcb, err_t 
 		tcp_err(newpcb, private_tcp_server_error);
 
 		//initialize lwip tcp_poll callback function for newpcb
-		tcp_poll(newpcb, tcp_server_poll, 0);
+		tcp_poll(newpcb, private_tcp_server_poll, 0);
 
 		ret_err = ERR_OK;
 	}
@@ -179,6 +251,47 @@ static err_t private_tcp_server_accept(void *arg, struct tcp_pcb *newpcb, err_t 
 	}
 
   return ret_err;
+}
+//------------------------------------------------------------------------------
+
+static xResult private_tcp_server_open(TCPServerT* server)
+{
+	TCPServerLWIPAdapterT* adapter = server->Adapter.Child;
+
+	if (server->Status.State == TCPServerClosed)
+	{
+		if (!adapter->Data.Socket)
+		{
+			adapter->Data.Socket = tcp_new();
+		}
+
+		err_t err;
+
+		//bind echo_pcb to port TCP_SERVER_DEFAULT_PORT (ECHO protocol)
+		err = tcp_bind(adapter->Data.Socket, IP_ADDR_ANY, TCP_SERVER_DEFAULT_PORT);
+
+		if (err == ERR_OK)
+		{
+			//tart tcp listening for echo_pcb
+			adapter->Data.Socket = tcp_listen(adapter->Data.Socket);
+			tcp_arg(adapter->Data.Socket, server);
+
+			server->Status.State = TCPServerOpening;
+			server->Status.Error = TCPServerErrorNo;
+
+			//initialize LwIP tcp_accept callback function
+			tcp_accept(adapter->Data.Socket, private_tcp_server_accept);
+
+			return xResultAccept;
+		}
+		else
+		{
+			//deallocate the pcb
+			memp_free(MEMP_TCP_PCB, adapter->Data.Socket);
+		}
+	}
+
+	return xResultError;
 }
 //==============================================================================
 //interfaces:
@@ -210,35 +323,9 @@ xResult TCPServerLWIPAdapterInit(TCPServerT* server, TCPServerLWIPAdapterT* adap
 	TCPServerLWIPRxAdapterInit(server, adapter);
 	TCPServerLWIPTxAdapterInit(server, adapter);
 
-	adapter->Data.Socket = tcp_new();
+	xRxTxBind(&server->Rx, &server->Tx);
 
-	if (adapter->Data.Socket != NULL)
-	{
-		err_t err;
-
-		//bind echo_pcb to port TCP_SERVER_DEFAULT_PORT (ECHO protocol)
-		err = tcp_bind(adapter->Data.Socket, IP_ADDR_ANY, TCP_SERVER_DEFAULT_PORT);
-
-		if (err == ERR_OK)
-		{
-			//tart tcp listening for echo_pcb
-			adapter->Data.Socket = tcp_listen(adapter->Data.Socket);
-			tcp_arg(adapter->Data.Socket, server);
-
-			server->Status.State = TCPServerOpening;
-			server->Status.Error = TCPServerErrorNo;
-
-			//initialize LwIP tcp_accept callback function
-			tcp_accept(adapter->Data.Socket, private_tcp_server_accept);
-
-			return xResultAccept;
-		}
-		else
-		{
-			//deallocate the pcb
-			memp_free(MEMP_TCP_PCB, adapter->Data.Socket);
-		}
-	}
+	private_tcp_server_open(server);
 
   return xResultError;
 }

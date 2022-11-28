@@ -23,7 +23,7 @@
 //==============================================================================
 //variables:
 
-static uint8_t rx_circle_buf[RX_CIRCLE_BUF_SIZE_MASK + 1];
+static uint8_t uart_rx_circle_buf[RX_CIRCLE_BUF_SIZE_MASK + 1];
 static uint8_t rx_object_buf[RX_OBJECT_BUF_SIZE];
 static uint8_t tx_circle_buf[TX_CIRCLE_BUF_SIZE_MASK + 1];
 
@@ -121,7 +121,7 @@ xResult _SerialPortUARTComponentInit(void* parent)
 
 	xCircleBufferInit(&SerialPortUART_Adapter.RxCircleBuffer,
 										&SerialPortUART.Rx,
-										rx_circle_buf,
+										uart_rx_circle_buf,
 										RX_CIRCLE_BUF_SIZE_MASK);
 	
 	xCircleBufferInit(&SerialPortUART_Adapter.TxCircleBuffer,

@@ -101,7 +101,6 @@ typedef struct
 	uint8_t Mac[6];
 	
 } TCPServerInfoT;
-
 //------------------------------------------------------------------------------
 
 typedef struct

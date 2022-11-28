@@ -160,6 +160,8 @@ typedef struct
 #define xRxGetResponseBufferSize(rx) ((xRxT*)rx)->Interface->GetResponseBufferSize(rx)
 #define xRxGetBytesCountInResponseBuffer(rx) ((xRxT*)rx)->Interface->GetBytesCountInResponseBuffer(rx)
 #define xRxClearResponseBuffer(rx) ((xRxT*)rx)->Interface->RequestListener(rx, xRxRequestClearResponseBuffer, 0)
+
+#define xRxTxBind(rx, tx) (((xRxT*)rx)->Tx = tx)
 //==============================================================================
 //functions:
 

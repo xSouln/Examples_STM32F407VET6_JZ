@@ -61,9 +61,10 @@ typedef struct
 //------------------------------------------------------------------------------
 
 #define PACKET_HEADER_DESCRIPTION_MASK 0x00FFFF00U // format: "#{Description}:"
-#define PACKET_HEADER_DESCRIPTION_REQUEST 0x5251U
-#define PACKET_HEADER_DESCRIPTION_RESPONSE 0x5253U
-#define PACKET_HEADER_DESCRIPTION_EVENT 0x4554U
+#define PACKET_HEADER_DESCRIPTION_REQUEST 0x5251U // "RQ"
+#define PACKET_HEADER_DESCRIPTION_RESPONSE 0x5253U // "RS"
+#define PACKET_HEADER_DESCRIPTION_EVENT 0x4556U // "EV"
+#define PACKET_HEADER_DESCRIPTION_ERROR 0x4552U // "EV"
 //------------------------------------------------------------------------------
 
 #define PACKET_END_IDENTIFICATOR "\r" // default
@@ -72,6 +73,7 @@ typedef struct
 #define TRANSACTION_REQUEST_IDENTIFICATOR (PACKET_HEADER_IDENTIFICATOR | PACKET_HEADER_DESCRIPTION_REQUEST << 8)
 #define TRANSACTION_RESPONSE_IDENTIFICATOR (PACKET_HEADER_IDENTIFICATOR | PACKET_HEADER_DESCRIPTION_RESPONSE << 8)
 #define TRANSACTION_EVENT_IDENTIFICATOR (PACKET_HEADER_IDENTIFICATOR | PACKET_HEADER_DESCRIPTION_EVENT << 8)
+#define TRANSACTION_ERROR_IDENTIFICATOR (PACKET_HEADER_IDENTIFICATOR | PACKET_HEADER_DESCRIPTION_ERROR << 8)
 
 #define TRANSACTION_END_IDENTIFICATOR "\r"
 //==============================================================================
@@ -96,5 +98,6 @@ xRxTransactionT* xRxTransactionIdentify(xRxTransactionT* transaction, uint16_t k
 
 xResult xRxTransactionTransmitEvent(xTxT* tx, uint32_t device_id, uint16_t transaction, void* data, uint16_t data_size);
 xResult xRxTransactionRequestReceiver(xRxRequestManagerT* manager, uint8_t* object, uint16_t size);
+xResult xRxTransactionError(xTxT* tx, PacketT* request_header, void* data, uint16_t data_size);
 //==============================================================================
 #endif //X_RX_TRANSACTION_H

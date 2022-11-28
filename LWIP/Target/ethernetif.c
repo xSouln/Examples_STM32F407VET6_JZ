@@ -742,6 +742,9 @@ void HAL_ETH_TxFreeCallback(uint32_t * buff)
 }
 
 /* USER CODE BEGIN 8 */
-
+err_t ethernetif_output(struct netif *netif, struct pbuf *p)
+{
+	return low_level_output(netif, p);
+}
 /* USER CODE END 8 */
 

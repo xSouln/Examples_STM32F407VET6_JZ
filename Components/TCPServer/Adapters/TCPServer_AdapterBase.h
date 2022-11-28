@@ -18,6 +18,8 @@ typedef enum
 {
 	TCPServerAdapterEventIdle,
 	
+	TCPServerAdapterEventUpdateTime
+
 } TCPServerAdapterEventSelector;
 //------------------------------------------------------------------------------
 
@@ -39,9 +41,6 @@ DEFINITION_HANDLER_TYPE(TCPServerAdapter);
 DEFINITION_IRQ_LISTENER_TYPE(TCPServerAdapter);
 DEFINITION_EVENT_LISTENER_TYPE(TCPServerAdapter, TCPServerAdapterEventSelector);
 DEFINITION_REQUEST_LISTENER_TYPE(TCPServerAdapter, TCPServerAdapterRequestSelector);
-
-DEFINITION_GET_VALUE_ACTION_TYPE(TCPServerAdapter, TCPServerAdapterValueSelector);
-DEFINITION_SET_VALUE_ACTION_TYPE(TCPServerAdapter, TCPServerAdapterValueSelector);
 //------------------------------------------------------------------------------
 
 typedef struct

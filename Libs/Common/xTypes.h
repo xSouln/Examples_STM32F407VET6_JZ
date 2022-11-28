@@ -39,6 +39,15 @@ typedef enum
 typedef void* xObject;
 //------------------------------------------------------------------------------
 
+typedef struct xEventStruct
+{
+	uint32_t Selector;
+	void* Arg;
+	struct xEventStruct* Primary;
+
+} xEventT;
+//------------------------------------------------------------------------------
+
 typedef enum
 {
 	PropertyGet,
@@ -47,6 +56,8 @@ typedef enum
 } PropertyActions;
 //------------------------------------------------------------------------------
 
+#define nameof(value) #value
+//------------------------------------------------------------------------------
 #define DEFINITION_HANDLER_TYPE(name)\
 typedef void (*name##HandlerT)(void* object)
 

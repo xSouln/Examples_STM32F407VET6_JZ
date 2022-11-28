@@ -55,7 +55,7 @@ static const ObjectDescriptionT SerialPortObjectDescription =
 {
 	.Key = OBJECT_DESCRIPTION_KEY,
 	.ObjectId = SERIAL_PORT_OBJECT_ID,
-	.Type = "SerialPortT"
+	.Type = nameof(SerialPortT)
 };
 //------------------------------------------------------------------------------
 

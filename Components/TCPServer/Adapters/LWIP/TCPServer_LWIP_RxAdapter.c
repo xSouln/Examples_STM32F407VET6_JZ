@@ -27,22 +27,113 @@ static void PrivateEventListener(xRxT* rx, xRxEventSelector event, void* arg, ..
 //------------------------------------------------------------------------------
 static xResult PrivateRequestListener(xRxT* rx, xRxRequestSelector selector, void* arg, ...)
 {
-	//TCPServerWIZspiAdapterT* adapter = rx->Adapter;
+	TCPServerLWIPAdapterT* adapter = rx->Adapter;
 	
 	switch ((uint32_t)selector)
 	{
-		default: return xResultRequestIsNotFound;
+		case xRxRequestClearBuffer:
+			adapter->RxReceiver.BytesReceived = 0;
+			break;
+
+		case xRxRequestClearResponseBuffer:
+			xDataBufferClear(adapter->ResponseBuffer);
+			break;
+
+		default : return xResultRequestIsNotFound;
 	}
 	
-	return xResultRequestIsNotFound;
+	return xResultAccept;
 }
 //------------------------------------------------------------------------------
+
+static xResult PrivateReceive(xRxT* rx, uint8_t* data, uint32_t size)
+{
+	TCPServerLWIPAdapterT* adapter = rx->Adapter;
+
+	xRxReceiverReceive(&adapter->RxReceiver, data, size);
+
+	return xResultAccept;
+}
+//------------------------------------------------------------------------------
+
+static xResult PrivatePutInResponseBuffer(xRxT* rx, uint8_t* data, uint32_t size)
+{
+	TCPServerLWIPAdapterT* adapter = rx->Adapter;
+
+	xDataBufferAdd(adapter->ResponseBuffer, data, size);
+
+	return xResultAccept;
+}
+//------------------------------------------------------------------------------
+
+static uint8_t* PrivateGetBuffer(xRxT* rx)
+{
+	TCPServerLWIPAdapterT* adapter = rx->Adapter;
+
+	return adapter->RxReceiver.Buffer;
+}
+//------------------------------------------------------------------------------
+
+static uint32_t PrivateGetBufferSize(xRxT* rx)
+{
+	TCPServerLWIPAdapterT* adapter = rx->Adapter;
+
+	return adapter->RxReceiver.BufferSize;
+}
+//------------------------------------------------------------------------------
+
+static uint32_t PrivateGetBytesCountInBuffer(xRxT* rx)
+{
+	TCPServerLWIPAdapterT* adapter = rx->Adapter;
+
+	return adapter->RxReceiver.BytesReceived;
+}
+//------------------------------------------------------------------------------
+
+static uint8_t* PrivateGetResponseBuffer(xRxT* rx)
+{
+	TCPServerLWIPAdapterT* adapter = rx->Adapter;
+
+	return adapter->ResponseBuffer->Data;
+}
+//------------------------------------------------------------------------------
+
+static uint32_t PrivateGetResponseBufferSize(xRxT* rx)
+{
+	TCPServerLWIPAdapterT* adapter = rx->Adapter;
+
+	return adapter->ResponseBuffer->Size;
+}
+//------------------------------------------------------------------------------
+
+static uint32_t PrivateGetBytesCountInResponseBuffer(xRxT* rx)
+{
+	TCPServerLWIPAdapterT* adapter = rx->Adapter;
+
+	return adapter->ResponseBuffer->DataSize;
+}
+//------------------------------------------------------------------------------
+
 static void PrivateRxReceiverEventListener(xRxReceiverT* receiver, xRxReceiverEventSelector event, void* arg, ...)
 {
-	//TCPServerT* server = receiver->Parent->Object.Parent;
+	TCPServerT* server = receiver->Parent->Object.Parent;
+
+	TCPServerReceivedDataT event_arg =
+	{
+		.Data = arg,
+		.Size = *(uint32_t*)(&arg + 1),
+	};
 
 	switch ((uint8_t)event)
 	{
+		case xRxReceiverEventEndLine:
+			server->Interface->EventListener(server, TCPServerEventEndLine, &event_arg);
+			break;
+
+		case xRxReceiverEventBufferIsFull:
+			server->Interface->EventListener(server, TCPServerEventBufferIsFull, &event_arg);
+			break;
+
 		default: return;
 	}
 }
@@ -60,6 +151,17 @@ static xRxInterfaceT rx_interface =
 	INITIALIZATION_EVENT_LISTENER(xRx, PrivateEventListener),
 	INITIALIZATION_IRQ_LISTENER(xRx, PrivateIRQListener),
 	INITIALIZATION_REQUEST_LISTENER(xRx, PrivateRequestListener),
+
+	.Receive = (xRxReceiveActionT)PrivateReceive,
+	.PutInResponseBuffer = (xRxPutInResponseBufferActionT)PrivatePutInResponseBuffer,
+
+	.GetBuffer = (xRxGetBufferActionT)PrivateGetBuffer,
+	.GetBufferSize = (xRxGetBufferSizeActionT)PrivateGetBufferSize,
+	.GetBytesCountInBuffer = (xRxGetBytesCountInBufferActionT)PrivateGetBytesCountInBuffer,
+
+	.GetResponseBuffer = (xRxGetResponseBufferActionT)PrivateGetResponseBuffer,
+	.GetResponseBufferSize = (xRxGetResponseBufferSizeActionT)PrivateGetResponseBufferSize,
+	.GetBytesCountInResponseBuffer = (xRxGetBytesCountInResponseBufferActionT)PrivateGetBytesCountInResponseBuffer
 };
 //==============================================================================
 //initialization:

@@ -9,7 +9,7 @@ static const ObjectDescriptionT xRxObjectDescription =
 {
 	.Key = OBJECT_DESCRIPTION_KEY,
 	.ObjectId = X_RX_OBJECT_ID,
-	.Type = "xRxT"
+	.Type = nameof(xRxT)
 };
 //==============================================================================
 //functions:

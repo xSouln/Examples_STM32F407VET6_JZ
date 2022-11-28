@@ -15,7 +15,7 @@ static void PrivateHandler(xTxT *tx)
 
 }
 //------------------------------------------------------------------------------
-static void PrivateIRQListener(xTxT *tx, ...)
+static void PrivateIRQListener(xTxT *tx)
 {
 	//TCPServerWIZspiAdapterT* adapter = tx->Adapter;
 
@@ -23,10 +23,18 @@ static void PrivateIRQListener(xTxT *tx, ...)
 //------------------------------------------------------------------------------
 static void PrivateEventListener(xTxT *tx, xTxEventSelector selector, void* arg, ...)
 {
-	//TCPServerWIZspiAdapterT* adapter = tx->Adapter;
+	TCPServerLWIPAdapterT* adapter = tx->Adapter;
+	TCPServerT* server = tx->Object.Parent;
 	
 	switch ((int)selector)
 	{
+		case xTxEventTransmissionComplete:
+			if (server->Status.State == TCPServerIsOpen)
+			{
+				tcp_output(adapter->Data.SocketHandle);
+			}
+			break;
+
 		default : break;
 	}
 }
@@ -43,6 +51,30 @@ static xResult PrivateRequestListener(xTxT* tx, xTxRequestSelector selector, voi
 	
 	return xResultAccept;
 }
+//------------------------------------------------------------------------------
+
+static xResult PrivateTransmitData(xTxT* tx, void* data, uint32_t size)
+{
+	TCPServerLWIPAdapterT* adapter = tx->Adapter;
+
+	return tcp_write(adapter->Data.SocketHandle, data, size, TCP_WRITE_FLAG_COPY) == ERR_OK ? xResultAccept : xResultError;
+}
+//------------------------------------------------------------------------------
+
+static uint32_t PrivateGetBufferSize(xTxT* tx)
+{
+	TCPServerLWIPAdapterT* adapter = tx->Adapter;
+
+	return 1000;
+}
+//------------------------------------------------------------------------------
+
+static uint32_t PrivateGetFreeBufferSize(xTxT* tx)
+{
+	TCPServerLWIPAdapterT* adapter = tx->Adapter;
+
+	return 1000;
+}
 //==============================================================================
 //interfaces:
 
@@ -52,6 +84,11 @@ static xTxInterfaceT interface =
 	INITIALIZATION_EVENT_LISTENER(xTx, PrivateEventListener),
 	INITIALIZATION_IRQ_LISTENER(xTx, PrivateIRQListener),
 	INITIALIZATION_REQUEST_LISTENER(xTx, PrivateRequestListener),
+
+	.TransmitData = (xTxTransmitDataT)PrivateTransmitData,
+
+	.GetBufferSize = (xTxGetBufferSizeActionT)PrivateGetBufferSize,
+	.GetFreeBufferSize = (xTxGetFreeBufferSizeActionT)PrivateGetFreeBufferSize
 };
 //==============================================================================
 //initialization:

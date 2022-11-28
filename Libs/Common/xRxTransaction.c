@@ -62,6 +62,63 @@ xResult xRxTransactionTransmitEvent(xTxT* tx, uint32_t device_id, uint16_t trans
 	return xResultAccept;
 }
 //------------------------------------------------------------------------------
+xResult xRxTransactionError(xTxT* tx, PacketT* request_header, void* data, uint16_t data_size)
+{
+  //event array:
+	//Header: [#][Description][:][DeviceKey];
+	//Info: [RequestId][ActionKey][ContentSize]
+	//Content: [uint8_t Content[ContentSize]]
+	//End packet marker: [\r]
+
+	if (!tx)
+	{
+		return xResultLinkError;
+	}
+
+	//filling in the packet header information
+	PacketHeaderT packet_header =
+	{
+		.Identificator =
+		{
+			.Value = TRANSACTION_ERROR_IDENTIFICATOR
+		},
+
+		.DeviceKey = request_header->Header.DeviceKey
+	};
+
+	//filling in the package information
+	PacketInfoT packet_info =
+	{
+		.RequestId = request_header->Info.RequestId,
+		.ActionKey = request_header->Info.ActionKey,
+		.ContentSize = data_size
+	};
+
+	//start transmission logic implementation selected "tx" line
+	xTxEventListener(tx, xTxEventStartTransmission, 0);
+
+	//Packet header start
+	xTxTransmitData(tx, &packet_header, sizeof(packet_header));
+	//Packet header end
+
+	//Packet info: command "id" and "content_size"
+	xTxTransmitData(tx, &packet_info, sizeof(packet_info));
+
+	//sending content
+	xTxTransmitData(tx, data, data_size);
+
+	//Packet end
+	xTxTransmitData(tx, TRANSACTION_END_IDENTIFICATOR, SIZE_STRING(TRANSACTION_END_IDENTIFICATOR));
+
+	//transmission logic implementation selected "tx" line
+	xTxEventListener(tx, xTxEventStopTransmission, 0);
+
+	//generate event
+	xTxEventListener(tx, xTxEventTransmissionComplete, 0);
+
+	return xResultAccept;
+}
+//------------------------------------------------------------------------------
 xResult xRxTransactionRequestReceiver(xRxRequestManagerT* manager, uint8_t* object, uint16_t size)
 {
 	//request array:

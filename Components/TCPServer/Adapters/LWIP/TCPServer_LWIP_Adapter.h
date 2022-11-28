@@ -22,9 +22,14 @@ extern "C" {
 //==============================================================================
 //types:
 
+//------------------------------------------------------------------------------
+
 typedef struct
 {
 	struct tcp_pcb* Socket;
+	struct tcp_pcb* SocketHandle;
+
+	uint16_t OtputUpdateTime;
 
 } TCPServerLWIPAdapterDataT;
 //------------------------------------------------------------------------------
@@ -38,8 +43,7 @@ typedef struct
 	xDataBufferT* ResponseBuffer;
 	xRxReceiverT RxReceiver;
 
-	uint8_t* RxBuffer;
-	uint16_t RxBufferSize;
+	xCircleBufferT RxCircleBuffer;
 
 } TCPServerLWIPAdapterT;
 //==============================================================================

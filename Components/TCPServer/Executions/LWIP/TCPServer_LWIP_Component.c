@@ -18,13 +18,13 @@
 //==============================================================================
 //defines:
 
-#define RX_BUF_SIZE TCP_SERVER_LWIP_RX_BUF_SIZE
-#define RX_RECEIVER_BUF_SIZE TCP_SERVER_LWIP_RX_RECEIVER_BUF_SIZE
+#define RX_CIRCLE_BUF_SIZE_MASK (TCP_SERVER_LWIP_RX_CIRCLE_BUF_SIZE_MASK)
+#define RX_OBJECT_BUF_SIZE (TCP_SERVER_LWIP_RX_OBJECT_BUF_SIZE)
 //==============================================================================
 //variables:
 
-static uint8_t rx_buf[RX_BUF_SIZE];
-static uint8_t rx_receiver_buf[RX_RECEIVER_BUF_SIZE];
+static uint8_t rx_circle_buf[RX_CIRCLE_BUF_SIZE_MASK + 1];
+static uint8_t rx_object_buf[RX_OBJECT_BUF_SIZE];
 
 TCPServerT TCPServerLWIP;
 //==============================================================================
@@ -35,9 +35,15 @@ static void _TCPServerLWIPComponentEventListener(TCPServerT* server, TCPServerEv
 	switch ((uint8_t)selector)
 	{
 		case TCPServerEventEndLine:
+			#ifdef TERMINAL_COMPONENT_ENABLE
+			TerminalReceiveData(&server->Rx, ((TCPServerReceivedDataT*)arg)->Data, ((TCPServerReceivedDataT*)arg)->Size);
+			#endif
 			break;
 		
 		case TCPServerEventBufferIsFull:
+			#ifdef TERMINAL_COMPONENT_ENABLE
+			TerminalReceiveData(&server->Rx, ((TCPServerReceivedDataT*)arg)->Data, ((TCPServerReceivedDataT*)arg)->Size);
+			#endif
 			break;
 	}
 }
@@ -82,8 +88,8 @@ void _TCPServerLWIPComponentTimeSynchronization()
 
 static TCPServerInterfaceT TCPServerInterface =
 {
-	INITIALIZATION_EVENT_LISTENER(TCPServer, ComponentsEventListener),
-	INITIALIZATION_REQUEST_LISTENER(TCPServer, ComponentsRequestListener)
+	INITIALIZATION_EVENT_LISTENER(TCPServer, _TCPServerLWIPComponentEventListener),
+	INITIALIZATION_REQUEST_LISTENER(TCPServer, _TCPServerLWIPComponentRequestListener)
 };
 
 //------------------------------------------------------------------------------
@@ -101,15 +107,17 @@ xResult _TCPServerLWIPComponentInit(void* parent)
 	TCPServerLWIPAdapter.ResponseBuffer = &Terminal.ResponseBuffer;
 	#endif
 	
-	TCPServerLWIPAdapter.RxBuffer = rx_buf;
-	TCPServerLWIPAdapter.RxBufferSize = sizeof(rx_buf);
-	
 	xRxReceiverInit(&TCPServerLWIPAdapter.RxReceiver,
 									&TCPServerLWIP.Rx,
 									0,
-									rx_receiver_buf,
-									sizeof(rx_receiver_buf));
-	
+									rx_object_buf,
+									sizeof(rx_object_buf));
+
+	xCircleBufferInit(&TCPServerLWIPAdapter.RxCircleBuffer,
+						&TCPServerLWIP.Rx,
+						rx_circle_buf,
+						RX_CIRCLE_BUF_SIZE_MASK);
+
 	TCPServerLWIPAdapterInit(&TCPServerLWIP, &TCPServerLWIPAdapter);
 	TCPServerInit(&TCPServerLWIP, parent, &TCPServerInterface);
 	

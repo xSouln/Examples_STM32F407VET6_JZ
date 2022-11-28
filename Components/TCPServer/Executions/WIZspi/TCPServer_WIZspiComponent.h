@@ -1,7 +1,7 @@
 //==============================================================================
 //module enable:
 
-#include "SerialPort/SerialPort_ComponentConfig.h"
+#include "TCPClient/TCPClient_ComponentConfig.h"
 #ifdef TCP_SERVER_WIZ_SPI_COMPONENT_ENABLE
 //==============================================================================
 //header:
@@ -55,4 +55,4 @@ extern TCPServerT TCPServerWIZspi;
 #endif
 //------------------------------------------------------------------------------
 #endif //_TCP_SERVER_WIZ_SPI_COMPONENT_H
-#endif //SERIAL_PORT_UART_COMPONENT_ENABLE
+#endif //TCP_SERVER_WIZ_SPI_COMPONENT_ENABLE

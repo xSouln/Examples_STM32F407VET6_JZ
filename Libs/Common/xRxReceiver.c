@@ -9,7 +9,7 @@ static const ObjectDescriptionT xRxReceiverObjectDescription =
 {
 	.Key = OBJECT_DESCRIPTION_KEY,
 	.ObjectId = X_RX_RECEIVER_OBJECT_ID,
-	.Type = "xRxReceiverT"
+	.Type = nameof(xRxReceiverT)
 };
 //==============================================================================
 //functions:
@@ -31,6 +31,28 @@ void xRxReceiverReceive(xRxReceiverT* receiver, uint8_t *data, uint32_t data_siz
 		receiver->Interface->EventListener(receiver, xRxReceiverEventEndLine, receiver->Buffer, receiver->BytesReceived - 1);
     }
   }
+}
+//------------------------------------------------------------------------------
+
+void xRxReceiverReceiveReverce(xRxReceiverT* receiver, uint8_t *data, uint32_t data_size)
+{
+	while(data_size)
+	{
+		data_size--;
+
+		receiver->Buffer[receiver->BytesReceived] = data[data_size];
+		receiver->BytesReceived++;
+
+		if(receiver->BytesReceived >= receiver->BufferSize)
+		{
+			receiver->Interface->EventListener(receiver, xRxReceiverEventBufferIsFull, receiver->Buffer, receiver->BytesReceived);
+			receiver->BytesReceived = 0;
+		}
+		else if(data[data_size] == '\r')
+		{
+			receiver->Interface->EventListener(receiver, xRxReceiverEventEndLine, receiver->Buffer, receiver->BytesReceived - 1);
+		}
+	}
 }
 //------------------------------------------------------------------------------
 

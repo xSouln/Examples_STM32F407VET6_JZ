@@ -9,7 +9,7 @@ static const ObjectDescriptionT xTxTransferObjectDescription =
 {
 	.Key = OBJECT_DESCRIPTION_KEY,
 	.ObjectId = X_TX_TRANSFER_OBJECT_ID,
-	.Type = "xTxTransferT"
+	.Type = nameof(xTxTransferT)
 };
 //==============================================================================
 //functions:

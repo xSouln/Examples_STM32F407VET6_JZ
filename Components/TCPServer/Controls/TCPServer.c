@@ -8,16 +8,19 @@
 
 void _TCPServerHandler(TCPServerT* server)
 {
-	server->Adapter.Interface->Handler(server);
-
 	xRxHandler(&server->Rx);
 	xTxHandler(&server->Tx);
+
+	server->Adapter.Interface->Handler(server);
 }
 //------------------------------------------------------------------------------
 
 void _TCPServerTimeSynchronization(TCPServerT* server)
 {
-
+	if (server->Adapter.Interface)
+	{
+		server->Adapter.Interface->EventListener(server, TCPServerAdapterEventUpdateTime, 0);
+	}
 }
 //------------------------------------------------------------------------------
 void _TCPServerEventListener(TCPServerT* server, TCPServerEventSelector selector, void* arg, ...)
@@ -53,7 +56,7 @@ static const ObjectDescriptionT TCPServerObjectDescription =
 {
 	.Key = OBJECT_DESCRIPTION_KEY,
 	.ObjectId = TCP_SERVER_OBJECT_ID,
-	.Type = "SerialPortT"
+	.Type = nameof(TCPServerT)
 };
 //------------------------------------------------------------------------------
 xResult TCPServerInit(TCPServerT* server, void* parent, TCPServerInterfaceT* interface)

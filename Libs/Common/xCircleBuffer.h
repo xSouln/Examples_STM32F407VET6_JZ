@@ -29,9 +29,11 @@ typedef struct
 //------------------------------------------------------------------------------
 
 uint32_t xCircleBufferAdd(xCircleBufferT* buffer, uint8_t* data, uint32_t size);
-uint8_t xCircleBufferGet(xCircleBufferT* buffer);
+uint32_t xCircleBufferAddReverce(xCircleBufferT* buffer, uint8_t* data, uint32_t size);
 
+uint8_t xCircleBufferGet(xCircleBufferT* buffer);
 uint32_t xCircleBufferGetFreeSize(xCircleBufferT* buffer);
+bool xCircleBufferIsEmpty(xCircleBufferT* buffer);
 
 xResult xCircleBufferInit(xCircleBufferT* circle_buffer,
 														void* parent,

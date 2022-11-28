@@ -73,6 +73,8 @@ typedef struct
 //functions:
 
 void xRxReceiverReceive(xRxReceiverT* receiver, uint8_t *data, uint32_t data_size);
+void xRxReceiverReceiveReverce(xRxReceiverT* receiver, uint8_t *data, uint32_t data_size);
+
 void xRxReceiverRead(xRxReceiverT* receiver, xCircleBufferT* circle_buffer);
 
 int xRxReceiverInit(xRxReceiverT* receiver,

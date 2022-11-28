@@ -16,21 +16,32 @@ static const ObjectDescriptionT xCircleBufferObjectDescription =
 
 uint32_t xCircleBufferAdd(xCircleBufferT* buffer, uint8_t* data, uint32_t size)
 {
-	if (data)
+	for (uint16_t i = 0; i < size; i++)
 	{
-		for (uint16_t i = 0; i < size; i++)
-		{
-			buffer->Buffer[buffer->TotalIndex] = data[i];
-			buffer->TotalIndex++;
-			buffer->TotalIndex &= buffer->SizeMask;
-		}
+		buffer->Buffer[buffer->TotalIndex] = data[i];
+		buffer->TotalIndex++;
+		buffer->TotalIndex &= buffer->SizeMask;
+	}
+
+	return size;
+}
+//------------------------------------------------------------------------------
+
+uint32_t xCircleBufferAddReverce(xCircleBufferT* buffer, uint8_t* data, uint32_t size)
+{
+	while(size)
+	{
+		size--;
 		
-		return size;
+		buffer->Buffer[buffer->TotalIndex] = data[size];
+		buffer->TotalIndex++;
+		buffer->TotalIndex &= buffer->SizeMask;
 	}
 	
 	return 0;
 }
 //------------------------------------------------------------------------------
+
 uint8_t xCircleBufferGet(xCircleBufferT* buffer)
 {
 	uint8_t value = buffer->Buffer[buffer->HandlerIndex];
@@ -40,11 +51,19 @@ uint8_t xCircleBufferGet(xCircleBufferT* buffer)
 	return value;
 }
 //------------------------------------------------------------------------------
+
+bool xCircleBufferIsEmpty(xCircleBufferT* buffer)
+{
+	return buffer->HandlerIndex == buffer->TotalIndex;
+}
+//------------------------------------------------------------------------------
+
 uint32_t xCircleBufferGetFreeSize(xCircleBufferT* buffer)
 {
 	return (buffer->SizeMask + 1) - ((buffer->TotalIndex - buffer->HandlerIndex) & buffer->SizeMask);
 }
 //------------------------------------------------------------------------------
+
 xResult xCircleBufferInit(xCircleBufferT* circle_buffer,
 														void* parent,
 														uint8_t* buffer,
