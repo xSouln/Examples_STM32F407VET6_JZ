@@ -24,6 +24,10 @@ extern "C" {
 #ifdef TCP_SERVER_COMPONENT_ENABLE
 #include "TCPServer/TCPServer_Component.h"
 #endif
+
+#ifdef ZIGBEE_COMPONENT_ENABLE
+#include "Zigbee/Zigbee_Component.h"
+#endif
 //==============================================================================
 //functions:
 

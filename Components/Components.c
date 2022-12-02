@@ -103,6 +103,10 @@ void ComponentsHandler()
 		#ifdef TCP_SERVER_COMPONENT_ENABLE
 		TCPServerComponentHandler();
 		#endif
+
+		#ifdef ZIGBEE_COMPONENT_ENABLE
+		ZigbeeComponentHandler(0);
+		#endif
 	}
 
 	if (!time1000_ms)
@@ -128,6 +132,10 @@ void ComponentsTimeSynchronization()
 
 	#ifdef TCP_SERVER_COMPONENT_ENABLE
 	TCPServerComponentTimeSynchronization();
+	#endif
+
+	#ifdef ZIGBEE_COMPONENT_ENABLE
+	ZigbeeComponentTimeSynchronization(0);
 	#endif
 
 	time1_ms = 0;
@@ -174,16 +182,21 @@ void ComponentsSystemDisableIRQ(ComponentObjectBaseT* object)
  */
 xResult ComponentsInit(void* parent)
 {
-	#ifdef TERMINAL_COMPONENT_ENABLE
-	TerminalComponentInit(parent);
-	#endif
-
 	#if SERIAL_PORT_COMPONENT_ENABLE
 	SerialPortComponentInit(parent);
 	#endif
 
 	#ifdef TCP_SERVER_COMPONENT_ENABLE
 	TCPServerComponentInit(parent);
+	#endif
+
+	#ifdef ZIGBEE_COMPONENT_ENABLE
+	ZigbeeComponentInit(0, parent);
+	#endif
+
+	#ifdef TERMINAL_COMPONENT_ENABLE
+	TerminalComponentInit(parent);
+	TerminalTxBind(&SerialPortUART.Tx);
 	#endif
 
 	return xResultAccept;

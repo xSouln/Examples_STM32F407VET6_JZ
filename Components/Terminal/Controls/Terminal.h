@@ -23,6 +23,11 @@ void TerminalTimeSynchronization();
 void _TerminalReceiveData(xRxT* rx, uint8_t* data, uint32_t size);
 void _TerminalRequestReceiver(TerminalT* terminal, TerminalRequestSelector selector, void* arg, ...);
 //==============================================================================
+//macros:
+
+#define TerminalTxBind(tx) Terminal.Tx = tx
+#define TerminalTransmit(data, size) xTxTransmitData(Terminal.Tx, data, size)
+//==============================================================================
 //override:
 
 #define TerminalReceiveData(rx, data, size) _TerminalReceiveData(rx, data, size)

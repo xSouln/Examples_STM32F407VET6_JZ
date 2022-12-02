@@ -1,3 +1,0 @@
-Source files here came from:
-C:\Projects\Hub2\asf-standalone-archive-3.45.0.85\xdk-asf-3.45.0\thirdparty\wireless\avr2025_mac\source
-PAL files heavily modified to port over to our platform.

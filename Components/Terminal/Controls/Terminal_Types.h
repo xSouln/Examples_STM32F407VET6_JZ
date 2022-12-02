@@ -94,6 +94,8 @@ typedef struct
 
 	xTxTransferT Transfer;
 
+	xTxT* Tx;
+
 } TerminalT;
 //==============================================================================
 #ifdef __cplusplus
