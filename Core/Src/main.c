@@ -21,6 +21,7 @@
 #include "dma.h"
 #include "i2c.h"
 #include "lwip.h"
+#include "rng.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -98,6 +99,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART3_UART_Init();
   MX_TIM4_Init();
+  MX_RNG_Init();
   /* USER CODE BEGIN 2 */
   ComponentsInit(main);
   /* USER CODE END 2 */

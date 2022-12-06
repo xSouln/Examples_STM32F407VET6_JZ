@@ -7,8 +7,6 @@
 //includes:
 
 #include "Zigbee_Component.h"
-#include "mac_api.h"
-#include "common_sw_timer.h"
 
 #ifdef TERMINAL_COMPONENT_ENABLE
 #include "Terminal/Controls/Terminal.h"
@@ -68,8 +66,6 @@ void _ZigbeeComponentHandler(ZigbeeT* network)
 	if (!update_time)
 	{
 		update_time = 5;
-
-		wpan_task();
 	}
 }
 //------------------------------------------------------------------------------
@@ -98,12 +94,6 @@ static ZigbeeInterfaceT ZigbeeInterface =
  */
 xResult _ZigbeeComponentInit(ZigbeeT* network, void* parent)
 {
-	sw_timer_init();
-
-	wpan_init();
-
-	wpan_mlme_reset_req(true);
-
 	return 0;
 }
 //==============================================================================

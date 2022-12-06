@@ -12,12 +12,25 @@ extern "C" {
 //==============================================================================
 //types:
 
+typedef enum
+{
+	ZigbeeAdapterEventIdle,
+
+	ZigbeeAdapterEventEXTI
+
+} ZigbeeAdapterEventSelector;
+//------------------------------------------------------------------------------
+
 DEFINITION_HANDLER_TYPE(ZigbeeAdapter);
+
+typedef void (*ZigbeeAdapterEXTI_ListenerT)(void* network);
 //------------------------------------------------------------------------------
 
 typedef struct
 {
 	DECLARE_HANDLER(ZigbeeAdapter);
+
+	ZigbeeAdapterEXTI_ListenerT EXTI_Listener;
 
 } ZigbeeAdapterInterfaceT;
 //------------------------------------------------------------------------------
@@ -33,6 +46,10 @@ typedef struct
 	ZigbeeAdapterInterfaceT* Interface;
 
 } ZigbeeAdapterBaseT;
+//==============================================================================
+//macros:
+
+
 //==============================================================================
 #ifdef __cplusplus
 }

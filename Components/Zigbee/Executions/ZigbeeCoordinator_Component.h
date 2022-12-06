@@ -15,9 +15,7 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "ZigbeeCoordinator/ZigbeeCoordinator_ComponentTypes.h"
-#include "ZigbeeCoordinator/ZigbeeCoordinator_ComponentConfig.h"
-#include "ZigbeeCoordinator/Controls/ZigbeeCoordinator.h"
+#include "Zigbee/Controls/Zigbee.h"
 //==============================================================================
 //configurations:
 
@@ -35,38 +33,26 @@ extern "C" {
 //==============================================================================
 //functions:
 
-xResult _ZigbeeCoordinatorComponentInit(ZigbeeCoordinatorT* network, void* parent);
+xResult _ZigbeeCoordinatorComponentInit(void* parent);
 
-void _ZigbeeCoordinatorComponentHandler(ZigbeeCoordinatorT* network);
-void _ZigbeeCoordinatorComponentTimeSynchronization(ZigbeeCoordinatorT* network);
-
-void _ZigbeeCoordinatorComponentIRQListener(ZigbeeCoordinatorT* network);
+void _ZigbeeCoordinatorComponentHandler();
+void _ZigbeeCoordinatorComponentTimeSynchronization();
 //==============================================================================
-//exnetwork:
+//macros:
 
-
+#define ZigbeeCoordinatorComponentInit(parent) _ZigbeeCoordinatorComponentInit(parent)
+#define ZigbeeCoordinatorComponentHandler() ZigbeeHandler(&ZigbeeCoordinator)
+#define ZigbeeCoordinatorComponentTimeSynchronization(parent) ZigbeeTimeSynchronization(&ZigbeeCoordinator)
 //==============================================================================
 //override:
 
-#ifndef ZigbeeCoordinatorComponentInit
-#define ZigbeeCoordinatorComponentInit(network, parent)\
-	_ZigbeeCoordinatorComponentInit(network, parent)
-#endif
-//------------------------------------------------------------------------------
-#ifndef ZigbeeCoordinatorComponentHandler
-#define ZigbeeCoordinatorComponentHandler(network)\
-	_ZigbeeCoordinatorComponentHandler(network)
-#endif
-//------------------------------------------------------------------------------
-#ifndef ZigbeeCoordinatorComponentTimeSynchronization
-#define ZigbeeCoordinatorComponentTimeSynchronization(network)\
-	_ZigbeeCoordinatorComponentTimeSynchronization(network)
-#endif
-//------------------------------------------------------------------------------
-#ifndef ZigbeeCoordinatorComponentIRQListener
-#define ZigbeeCoordinatorComponentIRQListener(network)\
-	_ZigbeeCoordinatorComponentIRQListener(network)
-#endif
+#define ZigbeeComponentInit(parent) ZigbeeCoordinatorComponentInit(parent)
+#define ZigbeeComponentHandler() ZigbeeCoordinatorComponentHandler()
+#define ZigbeeComponentTimeSynchronization() ZigbeeCoordinatorComponentTimeSynchronization()
+//==============================================================================
+//export:
+
+extern ZigbeeT ZigbeeCoordinator;
 //==============================================================================
 #ifdef __cplusplus
 }

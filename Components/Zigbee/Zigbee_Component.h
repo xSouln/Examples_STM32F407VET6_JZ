@@ -17,12 +17,11 @@ extern "C" {
 
 #include "Zigbee_ComponentTypes.h"
 #include "Zigbee/Zigbee_ComponentConfig.h"
-#include "Zigbee/Controls/Zigbee.h"
 //==============================================================================
 //configurations:
 
-#ifdef ZIGBEE_UART_COMPONENT_ENABLE
-#include "Zigbee/Executions/Zigbee_UART_Component.h"
+#ifdef ZIGBEE_COORDINATOR_COMPONENT_ENABLE
+#include "Zigbee/Executions/ZigbeeCoordinator_Component.h"
 #endif
 //==============================================================================
 //defines:
@@ -42,7 +41,7 @@ void _ZigbeeComponentTimeSynchronization(ZigbeeT* network);
 
 void _ZigbeeComponentIRQListener(ZigbeeT* network);
 //==============================================================================
-//exnetwork:
+//extern:
 
 
 //==============================================================================
@@ -61,11 +60,6 @@ void _ZigbeeComponentIRQListener(ZigbeeT* network);
 #ifndef ZigbeeComponentTimeSynchronization
 #define ZigbeeComponentTimeSynchronization(network)\
 	_ZigbeeComponentTimeSynchronization(network)
-#endif
-//------------------------------------------------------------------------------
-#ifndef ZigbeeComponentIRQListener
-#define ZigbeeComponentIRQListener(network)\
-	_ZigbeeComponentIRQListener(network)
 #endif
 //==============================================================================
 #ifdef __cplusplus

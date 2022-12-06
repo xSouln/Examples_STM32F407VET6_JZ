@@ -73,6 +73,7 @@ void Error_Handler(void);
 #define NRF24L01_CSN_GPIO_Port GPIOE
 #define NRF24L01_IRQ_Pin GPIO_PIN_9
 #define NRF24L01_IRQ_GPIO_Port GPIOE
+#define NRF24L01_IRQ_EXTI_IRQn EXTI9_5_IRQn
 #define SW1_Pin GPIO_PIN_10
 #define SW1_GPIO_Port GPIOE
 #define SW2_Pin GPIO_PIN_11
@@ -93,6 +94,7 @@ void Error_Handler(void);
 #define USB_HS_DP_GPIO_Port GPIOB
 #define AT86RF233_IRQ_Pin GPIO_PIN_12
 #define AT86RF233_IRQ_GPIO_Port GPIOD
+#define AT86RF233_IRQ_EXTI_IRQn EXTI15_10_IRQn
 #define AT86RF233_RST_Pin GPIO_PIN_13
 #define AT86RF233_RST_GPIO_Port GPIOD
 #define AT86RF233_SLP_TR_Pin GPIO_PIN_14

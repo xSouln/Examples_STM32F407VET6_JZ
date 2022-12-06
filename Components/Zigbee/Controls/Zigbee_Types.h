@@ -79,22 +79,37 @@ typedef struct
 } ZigbeeOptionsT;
 //------------------------------------------------------------------------------
 
+typedef union
+{
+	uint64_t Value;
+
+	uint8_t Address[sizeof(uint64_t)];
+
+} ZigbeeMAC_T;
+//------------------------------------------------------------------------------
+
 typedef struct
 {
 	ObjectBaseT Object;
 	
 	ZigbeeAdapterBaseT Adapter;
-	
 	ZigbeeInterfaceT* Interface;
 	
 	ZigbeeStatusT Status;
 
 	ZigbeeOptionsT Options;
 
+	ZigbeeMAC_T MAC;
+	uint8_t CurrentChannelPage;
+
 	xRxT Rx;
 	xTxT Tx;
 	  
 } ZigbeeT;
+//==============================================================================
+//macros:
+
+#define ZigbeeAdapterEXTI_Interapt(network) ((ZigbeeT*)network)->Adapter.Interface->EXTI_Listener(network);
 //==============================================================================
 #ifdef __cplusplus
 }

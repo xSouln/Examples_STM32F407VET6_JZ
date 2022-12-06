@@ -105,7 +105,7 @@ void ComponentsHandler()
 		#endif
 
 		#ifdef ZIGBEE_COMPONENT_ENABLE
-		ZigbeeComponentHandler(0);
+		ZigbeeComponentHandler();
 		#endif
 	}
 
@@ -135,7 +135,7 @@ void ComponentsTimeSynchronization()
 	#endif
 
 	#ifdef ZIGBEE_COMPONENT_ENABLE
-	ZigbeeComponentTimeSynchronization(0);
+	ZigbeeComponentTimeSynchronization();
 	#endif
 
 	time1_ms = 0;
@@ -191,7 +191,7 @@ xResult ComponentsInit(void* parent)
 	#endif
 
 	#ifdef ZIGBEE_COMPONENT_ENABLE
-	ZigbeeComponentInit(0, parent);
+	ZigbeeComponentInit(parent);
 	#endif
 
 	#ifdef TERMINAL_COMPONENT_ENABLE

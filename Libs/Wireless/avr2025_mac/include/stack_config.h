@@ -165,7 +165,10 @@
 	MAX_MGMT_FRAME_LENGTH +	\
 	LENGTH_FIELD_LEN + LQI_LEN + ED_VAL_LEN) / 4 + 1) * 4)
 #else
-#error "Unknown Device family for buffer calculation"
+
+#define LARGE_BUFFER_SIZE               (160)
+#define SMALL_BUFFER_SIZE               (68)
+//#error "Unknown Device family for buffer calculation"
 #endif
 
 #elif ((HIGHEST_STACK_LAYER == MAC) || (HIGHEST_STACK_LAYER == RTB))

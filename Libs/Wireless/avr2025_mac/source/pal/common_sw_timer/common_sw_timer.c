@@ -36,7 +36,6 @@
 #if SAMD || SAMR21 || SAML21
 #include "system.h"
 #endif /* SAMD || SAMR21 || SAML21*/
-#include "board.h"
 
 #if (TOTAL_NUMBER_OF_SW_TIMERS > 0)
 

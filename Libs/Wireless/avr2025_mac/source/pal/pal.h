@@ -59,7 +59,6 @@
 #include "pal_generic.h"
 #include "return_val.h"
 #include "common_sw_timer.h"
-#include "board.h"
 
 #if (PAL_USE_SPI_TRX == 1)
 #ifdef MULTI_TRX_SUPPORT
@@ -86,7 +85,7 @@
 #define PAL_WAIT_1_US()               pal_timer_delay(1);
 
 /* Wait for 65 ns. */
-#define PAL_WAIT_65_NS()  { nop(); nop(); }
+#define PAL_WAIT_65_NS()  PAL_WAIT_1_US()
 
 /**
  * This macro is used for handling endianness among the different CPUs.

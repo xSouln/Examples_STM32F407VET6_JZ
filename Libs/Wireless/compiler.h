@@ -62,6 +62,7 @@
 
 #include "status_codes.h"
 #include "main.h"
+#include <string.h>
 
 #ifdef __ICCAVR__
 /*! \name Compiler Keywords
@@ -987,8 +988,12 @@ typedef U8                  Byte;       //!< 8-bit unsigned integer.
   #define FLASH_EXTERN(x) extern const __flash x
 #endif
 
+#define FLASH_DECLARE(x)  x
+#define FLASH_EXTERN(x) extern const x
 #define PGM_READ_BYTE(x) *(x)
 #define PGM_READ_WORD(x) *(x)
+#define MEMCPY_ENDIAN memcpy
+#define PGM_READ_BLOCK(dst, src, len) memcpy((dst), (src), (len))
 
 /*Defines the Flash Storage for the request and response of MAC*/
 #define CMD_ID_OCTET    (0)
@@ -1014,21 +1019,41 @@ typedef U8                  Byte;       //!< 8-bit unsigned integer.
 #define CCPU_ENDIAN_TO_LE64(x)  (x)
 
 #if (defined __GNUC__)
-  #define ADDR_COPY_DST_SRC_16(dst, src)  memcpy((&(dst)), (&(src)), sizeof(uint16_t))
-  #define ADDR_COPY_DST_SRC_64(dst, src)  memcpy((&(dst)), (&(src)), sizeof(uint64_t))
+  #define ADDR_COPY_DST_SRC_16(dst, src)  ((dst) = (src))
+  #define ADDR_COPY_DST_SRC_64(dst, src)  ((dst) = (src))
 
 /* Converts a 2 Byte array into a 16-Bit value */
 #define convert_byte_array_to_16_bit(data) \
-    (*(uint16_t *)(data))
+	 (((uint8_t*)data)[0] | ((uint16_t)((uint8_t*)data)[1] << 8))
+    //(*(uint16_t *)(data))
 
 /* Converts a 4 Byte array into a 32-Bit value */
 #define convert_byte_array_to_32_bit(data) \
     (*(uint32_t *)(data))
 
 /* Converts a 8 Byte array into a 64-Bit value */
-#define convert_byte_array_to_64_bit(data) \
-    (*(uint64_t *)(data))
+#define convert_byte_array_to_64_bit(data)\
+	((((uint64_t)convert_byte_array_to_32_bit((uint8_t*)data + sizeof(uint32_t)) << 32) | convert_byte_array_to_32_bit(data)))
+	//((((uint64_t)convert_byte_array_to_32_bit((uint8_t*)data + sizeof(uint32_t)))) | convert_byte_array_to_32_bit(data))
+    //(*(uint64_t *)(data))
+/*
+static inline uint64_t convert_byte_array_to_64_bit(uint8_t* data)
+{
+	union
+	{
+		uint64_t value;
+		uint8_t buffer[sizeof(uint64_t)];
 
+	} result;
+
+	for (uint8_t i = 0; i < sizeof(result); i++)
+	{
+		result.buffer[i] = data[i];
+	}
+
+	return result.value;
+}
+*/
 /* Converts a 16-Bit value into a 2 Byte array */
 #define convert_16_bit_to_byte_array(value, data) \
     ((*(uint16_t *)(data)) = (uint16_t)(value))
@@ -1047,8 +1072,17 @@ typedef U8                  Byte;       //!< 8-bit unsigned integer.
 
 /* Converts a 64-Bit value into  a 8 Byte array */
 /* Here memcpy requires much less footprint */
-#define convert_64_bit_to_byte_array(value, data) \
-    memcpy((data), (&(value)), sizeof(uint64_t))
+//#define convert_64_bit_to_byte_array(value, data)
+    //memcpy((data), (&(value)), sizeof(uint64_t))
+
+static inline void convert_64_bit_to_byte_array(uint64_t value, uint8_t* data)
+{
+	for(uint8_t i = 0; i < sizeof(uint64_t); i++)
+	{
+		data[i] = value & 0xFF;
+		value >>= 8;
+	}
+}
 
 #elif (defined __ICCAVR__)
   #define ADDR_COPY_DST_SRC_16(dst, src)  ((dst) = (src))
@@ -1086,9 +1120,6 @@ typedef U8                  Byte;       //!< 8-bit unsigned integer.
 #define convert_64_bit_to_byte_array(value, data) \
     ((*(uint64_t *)(data)) = (uint64_t)(value))
 #endif
-
-#define MEMCPY_ENDIAN memcpy
-#define PGM_READ_BLOCK(dst, src, len) memcpy_P((dst), (src), (len))
 
 #if (defined __GNUC__)
   #define nop() do { __asm__ __volatile__ ("nop"); } while (0)

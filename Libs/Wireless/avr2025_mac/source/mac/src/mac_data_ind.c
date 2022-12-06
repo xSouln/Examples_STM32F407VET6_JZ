@@ -1343,6 +1343,7 @@ static bool parse_mpdu(frame_info_t *rx_frame_ptr)
 #endif /* (MAC_ORPHAN_INDICATION_RESPONSE == 1) */
 		case DATAREQUEST:
 		case BEACONREQUEST:
+			mac_parse_data.mac_payload_data.beacon_req_data.req_info = temp_frame_ptr[payload_loc++];
 #if (MAC_PAN_ID_CONFLICT_AS_PC == 1)
 		case PANIDCONFLICTNOTIFICAION:
 #endif  /* (MAC_PAN_ID_CONFLICT_AS_PC == 1) */

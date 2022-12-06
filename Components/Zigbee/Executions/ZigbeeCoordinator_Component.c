@@ -6,39 +6,28 @@
 //==============================================================================
 //includes:
 
-#include "Zigbee_Component.h"
+#include "ZigbeeCoordinator_Component.h"
+#include "Zigbee/Adapters/ASF/Zigbee_ASF_Adapter.h"
 
 #ifdef TERMINAL_COMPONENT_ENABLE
 #include "Terminal/Controls/Terminal.h"
 #endif
 //==============================================================================
+//variables:
 
-static void _ZigbeeComponentEventListener(ZigbeeT* network, ZigbeeEventSelector selector, void* arg, ...)
+ZigbeeT ZigbeeCoordinator;
+//==============================================================================
+
+static void _ZigbeeCoordinatorComponentEventListener(ZigbeeT* network, ZigbeeEventSelector selector, void* arg, ...)
 {
 	switch((int)selector)
 	{
-		case ZigbeeEventEndLine:
-			#ifdef TERMINAL_COMPONENT_ENABLE
-			TerminalReceiveData(&network->Rx,
-								((ZigbeeReceivedDataT*)arg)->Data,
-								((ZigbeeReceivedDataT*)arg)->Size);
-			#endif
-			break;
-
-		case ZigbeeEventBufferIsFull:
-			#ifdef TERMINAL_COMPONENT_ENABLE
-			TerminalReceiveData(&network->Rx,
-								((ZigbeeReceivedDataT*)arg)->Data,
-								((ZigbeeReceivedDataT*)arg)->Size);
-			#endif
-			break;
-
 		default: break;
 	}
 }
 //------------------------------------------------------------------------------
 
-static xResult _ZigbeeComponentRequestListener(ZigbeeT* network, ZigbeeRequestSelector selector, void* arg, ...)
+static xResult _ZigbeeCoordinatorComponentRequestListener(ZigbeeT* network, ZigbeeRequestSelector selector, void* arg, ...)
 {
 	switch((int)selector)
 	{
@@ -49,42 +38,50 @@ static xResult _ZigbeeComponentRequestListener(ZigbeeT* network, ZigbeeRequestSe
 }
 //------------------------------------------------------------------------------
 
-void _ZigbeeComponentIRQListener(ZigbeeT* network)
+void _ZigbeeCoordinatorComponentIRQListener()
 {
-	ZigbeeIRQListener(network);
+	ZigbeeIRQListener(&ZigbeeCoordinator);
 }
 //------------------------------------------------------------------------------
 /**
  * @brief main handler
  */
-void _ZigbeeComponentHandler(ZigbeeT* network)
+void _ZigbeeCoordinatorComponentHandler()
 {
-	ZigbeeHandler(network);
+	ZigbeeHandler(&ZigbeeCoordinator);
 }
 //------------------------------------------------------------------------------
 /**
  * @brief time synchronization of time-dependent processes
  */
-void _ZigbeeComponentTimeSynchronization(ZigbeeT* network)
+void _ZigbeeCoordinatorComponentTimeSynchronization()
 {
-	ZigbeeTimeSynchronization(network);
+	ZigbeeTimeSynchronization(&ZigbeeCoordinator);
 }
 //==============================================================================
+//initialization:
 
-static ZigbeeInterfaceT ZigbeeInterface =
+static ZigbeeInterfaceT PrivateZigbeeCoordinatorInterface =
 {
-	INITIALIZATION_EVENT_LISTENER(Zigbee, _ZigbeeComponentEventListener),
-	INITIALIZATION_REQUEST_LISTENER(Zigbee, _ZigbeeComponentRequestListener)
+	INITIALIZATION_EVENT_LISTENER(Zigbee, _ZigbeeCoordinatorComponentEventListener),
+	INITIALIZATION_REQUEST_LISTENER(Zigbee, _ZigbeeCoordinatorComponentRequestListener)
 };
 //------------------------------------------------------------------------------
+
+static Zigbee_ASF_AdapterT PrivateZigbee_ASF_Adapter =
+{
+	0
+};
+//==============================================================================
 /**
  * @brief initializing the component
  * @param parent binding to the parent object
  * @return int
  */
-xResult _ZigbeeComponentInit(ZigbeeT* network, void* parent)
+xResult _ZigbeeCoordinatorComponentInit(void* parent)
 {
-	ZigbeeInit(network, parent, &ZigbeeInterface);
+	ZigbeeInit(&ZigbeeCoordinator, parent, &PrivateZigbeeCoordinatorInterface);
+	Zigbee_ASF_AdapterInit(&ZigbeeCoordinator, &PrivateZigbee_ASF_Adapter);
 
 	return 0;
 }

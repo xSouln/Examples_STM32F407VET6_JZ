@@ -1,8 +1,8 @@
 //==============================================================================
 //module enable:
 
-#include "Components_Config.h"
-#ifdef ZIGBEE_CCOORDINATOR_COMPONENT_ENABLE
+#include "Zigbee/Zigbee_ComponentConfig.h"
+#ifdef ZIGBEE_COORDINATOR_COMPONENT_ENABLE
 //==============================================================================
 //header:
 
@@ -15,9 +15,11 @@ extern "C" {
 //==============================================================================
 //includes:
 
+
 //==============================================================================
 //defines:
 
+#define ZIGBEE_MAC_ADDRESS
 //==============================================================================
 //selector:
 

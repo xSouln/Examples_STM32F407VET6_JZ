@@ -144,6 +144,11 @@ typedef struct mac_coord_realign_tag {
 	uint8_t channel_page;
 } mac_coord_realign_t;
 
+/** Beacon Request type - Added by Chris */
+typedef struct mac_beacon_req_tag {
+	uint8_t req_info;
+} mac_beacon_req_t;
+
 /**
  * General Command frame payload type
  */
@@ -157,6 +162,8 @@ typedef union {
 #ifdef GTS_SUPPORT
 	gts_char_t gts_req_data;
 #endif /* GTS_SUPPORT */
+
+	mac_beacon_req_t beacon_req_data;
 } frame_payload_t;
 
 /**

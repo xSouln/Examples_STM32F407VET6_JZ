@@ -10,7 +10,7 @@ extern "C" {
 //==============================================================================
 //defines:
 
-#define ZIGBEE_CCOORDINATOR_COMPONENT_ENABLE 1
+#define ZIGBEE_COORDINATOR_COMPONENT_ENABLE 1
 #define ZIGBEE_ASF_ADAPTER_ENABLE 1
 //==============================================================================
 //import:

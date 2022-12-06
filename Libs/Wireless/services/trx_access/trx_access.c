@@ -38,7 +38,6 @@
  * Licensed under Atmel's Limited License Agreement --> EULA.txt
  */
 
-#include "board.h"
 #include "trx_access.h"
 #include "spi.h"
 
@@ -71,6 +70,14 @@ void trx_irq_handler(void)
 	}
 }
 
+static void trx_wait_spi()
+{
+	while (__HAL_SPI_GET_FLAG(&hspi2, SPI_FLAG_BSY))
+	{
+
+	}
+}
+
 uint8_t trx_reg_read(uint8_t addr)
 {
 	uint8_t register_value = 0;
@@ -95,10 +102,8 @@ uint8_t trx_reg_read(uint8_t addr)
 	//result = HAL_SPI_TransmitReceive(&hspi2, packet, packet, sizeof(packet), 100);
 
 	/* Stop the SPI transaction by setting SEL high */
-	while (__HAL_SPI_GET_FLAG(&hspi2, SPI_FLAG_BSY))
-	{
+	trx_wait_spi();
 
-	}
 	TRX_DESELECT_DEVICE();
 
 	/*Restoring the interrupt status which was stored & enabling the global
@@ -128,10 +133,8 @@ void trx_reg_write(uint8_t addr, uint8_t data)
 	result = HAL_SPI_Transmit(&hspi2, &data, sizeof(data), 100);
 
 	/* Stop the SPI transaction by setting SEL high */
-	while (__HAL_SPI_GET_FLAG(&hspi2, SPI_FLAG_BSY))
-	{
+	trx_wait_spi();
 
-	}
 	TRX_DESELECT_DEVICE();
 
 	LEAVE_TRX_CRITICAL_REGION();
@@ -174,20 +177,29 @@ void trx_bit_write(uint8_t reg_addr, uint8_t mask, uint8_t pos,
 void trx_frame_read(uint8_t *data, uint8_t length)
 {
 	HAL_StatusTypeDef result;
-	uint8_t temp;
+	uint8_t command = TRX_CMD_FR;
+	uint8_t buffer[0xff];
+
+	buffer[0] = TRX_CMD_FR;
 
 	/*Saving the current interrupt status & disabling the global interrupt
 	**/
 	ENTER_TRX_CRITICAL_REGION();
 
 	/* Start SPI transaction by pulling SEL low */
+
 	TRX_SELECT_DEVICE();
 
-	temp = TRX_CMD_FR;
-
 	/* Send the command byte */
-	result = HAL_SPI_Transmit(&hspi2, &temp, sizeof(temp), 100);
-	result = HAL_SPI_Receive(&hspi2, data, length, 100);
+	//result = HAL_SPI_Transmit(&hspi2, &command, sizeof(command), 100);
+
+	//result = HAL_SPI_Receive(&hspi2, data, length, 100);
+
+	result = HAL_SPI_TransmitReceive(&hspi2, buffer, buffer, sizeof(command) + length, 100);
+
+	trx_wait_spi();
+
+	memcpy(data, buffer + 1, length);
 
 	/* Stop the SPI transaction by setting SEL high */
 	TRX_DESELECT_DEVICE();
@@ -202,7 +214,10 @@ void trx_frame_read(uint8_t *data, uint8_t length)
 void trx_frame_write(uint8_t *data, uint8_t length)
 {
 	HAL_StatusTypeDef result;
-	uint8_t temp = TRX_CMD_FW;
+	uint8_t command = TRX_CMD_FW;
+	uint8_t buffer[0xff];
+
+	buffer[0] = TRX_CMD_FW;
 
 	/*Saving the current interrupt status & disabling the global interrupt
 	**/
@@ -211,9 +226,13 @@ void trx_frame_write(uint8_t *data, uint8_t length)
 	/* Start SPI transaction by pulling SEL low */
 	TRX_SELECT_DEVICE();
 
+	memcpy(buffer + 1, data, length);
+
 	/* Send the command byte */
-	result = HAL_SPI_Transmit(&hspi2, &temp, sizeof(temp), 100);
-	result = HAL_SPI_Transmit(&hspi2, data, length, 100);
+	result = HAL_SPI_Transmit(&hspi2, buffer, sizeof(command) + length, 100);
+	//result = HAL_SPI_Transmit(&hspi2, data, length, 100);
+
+	trx_wait_spi();
 
 	/* Stop the SPI transaction by setting SEL high */
 	TRX_DESELECT_DEVICE();
@@ -237,7 +256,7 @@ void trx_frame_write(uint8_t *data, uint8_t length)
 void trx_sram_write(uint8_t addr, uint8_t *data, uint8_t length)
 {
 	HAL_StatusTypeDef result;
-	uint8_t temp;
+	uint8_t command = TRX_CMD_SW;
 
 	/*Saving the current interrupt status & disabling the global interrupt
 	**/
@@ -247,15 +266,14 @@ void trx_sram_write(uint8_t addr, uint8_t *data, uint8_t length)
 	TRX_SELECT_DEVICE();
 
 	/* Send the command byte */
-	temp = TRX_CMD_SW;
-
-	/* Send the command byte */
-	result = HAL_SPI_Transmit(&hspi2, &temp, sizeof(temp), 100);
+	result = HAL_SPI_TransmitReceive(&hspi2, &command, &command, sizeof(command), 100);
 
 	/* Send the address from which the write operation should start */
-	result = HAL_SPI_Transmit(&hspi2, &addr, sizeof(addr), 100);
+	result = HAL_SPI_TransmitReceive(&hspi2, &addr, &addr, sizeof(addr), 100);
 
 	result = HAL_SPI_Transmit(&hspi2, data, length, 100);
+
+	trx_wait_spi();
 
 	/* Stop the SPI transaction by setting SEL high */
 	TRX_DESELECT_DEVICE();
@@ -279,7 +297,7 @@ void trx_sram_write(uint8_t addr, uint8_t *data, uint8_t length)
 void trx_sram_read(uint8_t addr, uint8_t *data, uint8_t length)
 {
 	HAL_StatusTypeDef result;
-	uint8_t temp = TRX_CMD_SR;
+	uint8_t command = TRX_CMD_SR;
 
 	TRX_DELAY(1); /* wap_rf4ce */
 
@@ -291,14 +309,16 @@ void trx_sram_read(uint8_t addr, uint8_t *data, uint8_t length)
 	TRX_SELECT_DEVICE();
 
 	/* Send the command byte */
-	result = HAL_SPI_Transmit(&hspi2, &temp, sizeof(temp), 100);
+	result = HAL_SPI_TransmitReceive(&hspi2, &command, &command, sizeof(command), 100);
 
 	/* Send the command byte */
-	result = HAL_SPI_Transmit(&hspi2, &addr, sizeof(addr), 100);
+	result = HAL_SPI_TransmitReceive(&hspi2, &addr, &addr, sizeof(addr), 100);
 
 	/* Send the address from which the read operation should start */
 	/* Upload the received byte in the user provided location */
 	result = HAL_SPI_Receive(&hspi2, data, length, 100);
+
+	trx_wait_spi();
 
 	/* Stop the SPI transaction by setting SEL high */
 	TRX_DESELECT_DEVICE();
