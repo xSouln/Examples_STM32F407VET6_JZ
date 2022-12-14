@@ -403,10 +403,20 @@ static void mac_process_tal_tx_status(retval_t tx_status, frame_info_t *frame)
 			 * invalid
 			 * afterwards.
 			 */
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+
+#else
 			remove_frame_from_indirect_q(frame);
+#endif
 
 			mac_mlme_comm_status(tx_status, frame->buffer_header);
 		}
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+		else
+		{
+			bmm_buffer_free(frame->buffer_header);
+		}
+#endif
 
 		/* Set radio to sleep if allowed */
 		mac_sleep_trans();

@@ -1047,7 +1047,11 @@ void usr_mlme_associate_conf(uint16_t AssocShortAddress,
  * @ingroup group_mac_ind
  */
 void usr_mlme_associate_ind(uint64_t DeviceAddress,
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+		uint8_t CapabilityInformation, uint8_t dev_type, uint8_t dev_rssi);
+#else
 		uint8_t CapabilityInformation);
+#endif //SURENET_SUPPORT
 
 #endif  /* (MAC_ASSOCIATION_INDICATION_RESPONSE == 1) */
 

@@ -220,9 +220,12 @@ void mlme_associate_ind(uint8_t *m)
 	memcpy((uint8_t *)&device_addr_temp, (uint8_t *)&pmsg->DeviceAddress,
 			sizeof(device_addr_temp));
 	usr_mlme_associate_ind(device_addr_temp, pmsg->CapabilityInformation);
+#elif defined ZIGBEE_SUREFLAP_DRIVER
+	usr_mlme_associate_ind(pmsg->DeviceAddress,
+			pmsg->CapabilityInformation, pmsg->dev_type, pmsg->dev_rssi);
 #else
 	usr_mlme_associate_ind(pmsg->DeviceAddress,
-			pmsg->CapabilityInformation);
+				pmsg->CapabilityInformation);
 #endif
 
 	/* Free the buffer */

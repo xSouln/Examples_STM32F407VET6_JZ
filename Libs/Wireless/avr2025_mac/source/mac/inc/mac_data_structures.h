@@ -116,6 +116,10 @@ typedef struct mac_data_payload_tag {
  */
 typedef struct mac_assoc_req_tag {
 	uint8_t capability_info;
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+    uint8_t dev_type;
+    uint8_t dev_rssi;
+#endif //ZIGBEE_SUREFLAP_DRIVER
 } mac_assoc_req_t;
 
 /**
@@ -144,10 +148,12 @@ typedef struct mac_coord_realign_tag {
 	uint8_t channel_page;
 } mac_coord_realign_t;
 
+#ifdef ZIGBEE_SUREFLAP_DRIVER
 /** Beacon Request type - Added by Chris */
 typedef struct mac_beacon_req_tag {
 	uint8_t req_info;
 } mac_beacon_req_t;
+#endif //ZIGBEE_SUREFLAP_DRIVER
 
 /**
  * General Command frame payload type
@@ -162,8 +168,9 @@ typedef union {
 #ifdef GTS_SUPPORT
 	gts_char_t gts_req_data;
 #endif /* GTS_SUPPORT */
-
+#ifdef ZIGBEE_SUREFLAP_DRIVER
 	mac_beacon_req_t beacon_req_data;
+#endif //ZIGBEE_SUREFLAP_DRIVER
 } frame_payload_t;
 
 /**

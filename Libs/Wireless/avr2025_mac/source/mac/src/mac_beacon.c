@@ -134,6 +134,10 @@ static void mac_t_prepare_beacon_cb(void *callback_parameter);
 
 static void mac_t_superframe_cb(void *callback_parameter);
 
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+extern bool usr_mac_process_beacon_request(uint64_t mac_address, uint8_t src_address_mode, uint8_t data);
+#endif
+
 #endif  /* BEACON_SUPPORT */
 
 /* === Implementation ======================================================= */
@@ -674,6 +678,27 @@ void mac_process_beacon_request(buffer_t *msg)
 	 * to transmit the beacon frame.
 	 */
 	bmm_buffer_free((buffer_t *)msg);
+
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+	bool send_beacon;
+	    // call back to SureNet to tell it about the beacon request data
+	    send_beacon = usr_mac_process_beacon_request(mac_parse_data.src_addr.long_address,
+	    		mac_parse_data.src_addr_mode,
+				mac_parse_data.mac_payload_data.beacon_req_data.req_info);
+		/*
+		 * The buffer in which the beacon request was received is freed up.
+		 * This is only done in a BEACON build, since a static buffer is used
+		 * to transmit the beacon frame.
+		 */
+		bmm_buffer_free((buffer_t *)msg);
+
+		// if we are not in pairing mode, then do not send a beacon. I suspect a bug in at least the Thalamus
+		// RF stack which causes a device to send an ASSOCIATION_REQUEST even if the BEACON it received has ASSOCIATION_PERMIT == 0;
+		if (send_beacon == false)
+		{
+			return;
+		}
+#endif //SUREPLAP_SUPPORT
 
 	/*
 	 * If the network is a beacon enabled network then the beacons will not

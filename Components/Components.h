@@ -11,6 +11,10 @@ extern "C" {
 #include "Components_Types.h"
 #include "Components_Config.h"
 //==============================================================================
+//defines:
+
+
+//==============================================================================
 //configurations:
 
 #ifdef TERMINAL_COMPONENT_ENABLE
@@ -28,6 +32,10 @@ extern "C" {
 #ifdef ZIGBEE_COMPONENT_ENABLE
 #include "Zigbee/Zigbee_Component.h"
 #endif
+
+#ifdef SUREFLAP_COMPONENT_ENABLE
+#include "SureFlap/SureFlap_Component.h"
+#endif
 //==============================================================================
 //functions:
 
@@ -44,6 +52,10 @@ void ComponentsRequestListener(ComponentObjectBaseT* object, int selector, void*
 //==============================================================================
 //override:
 
+//==============================================================================
+//variables:
+
+extern REG_TIM_T* Timer4;
 //==============================================================================
 #ifdef __cplusplus
 }

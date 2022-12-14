@@ -59,6 +59,9 @@
 #include "mac.h"
 #include "mac_config.h"
 #include "mac_build_config.h"
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+extern bool usr_mac_process_associate_request(uint64_t mac_address);
+#endif
 
 /* === Macros =============================================================== */
 
@@ -351,6 +354,29 @@ void mac_process_associate_request(buffer_t *assoc_req)
 	 * association request command from a device, the command shall be
 	 * ignored.
 	 */
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+	ADDR_COPY_DST_SRC_64(mai->DeviceAddress, mac_parse_data.src_addr.long_address);
+
+	// We accept an Association Request under two circumstances:
+	// 1. We have already seen a beacon from this device, and we are in Pairing Mode, or
+	// 2. The device is in the Pairing Table.
+
+	if (((usr_mac_process_associate_request(mai->DeviceAddress) == true)
+		&& (mac_pib.mac_AssociationPermit == true)))
+	{
+		/* Build the MLME association indication parameters. */
+		mai->CapabilityInformation = mac_parse_data.mac_payload_data.assoc_req_data.capability_info;
+		mai->dev_type = mac_parse_data.mac_payload_data.assoc_req_data.dev_type;
+		mai->dev_rssi = mac_parse_data.mac_payload_data.assoc_req_data.dev_rssi;
+		mai->cmdcode = MLME_ASSOCIATE_INDICATION;
+		/* Append the MLME associate indication to the MAC-NHLE queue. */
+		qmm_queue_append(&mac_nhle_q, assoc_req);
+	}
+	else
+	{
+		bmm_buffer_free(assoc_req);    // drop the request and free the buffer
+	}
+#else
 	if (!mac_pib.mac_AssociationPermit) {
 		bmm_buffer_free(assoc_req);
 		return;
@@ -366,6 +392,7 @@ void mac_process_associate_request(buffer_t *assoc_req)
 
 	/* Append the MLME associate indication to the MAC-NHLE queue. */
 	qmm_queue_append(&mac_nhle_q, assoc_req);
+#endif //ZIGBEE_SUREFLAP_DRIVER
 }
 
 #endif /* (MAC_ASSOCIATION_INDICATION_RESPONSE == 1) */
@@ -386,6 +413,9 @@ void mlme_associate_response(uint8_t *m)
 	uint8_t *frame_ptr;
 	uint8_t *temp_frame_ptr;
 	uint16_t fcf;
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+	retval_t tal_tx_status;
+#endif
 
 	mlme_associate_resp_t mar;
 	memcpy(&mar, BMM_BUFFER_POINTER((buffer_t *)m),
@@ -393,6 +423,11 @@ void mlme_associate_response(uint8_t *m)
 
 	frame_info_t *assoc_resp_frame
 		= (frame_info_t *)BMM_BUFFER_POINTER((buffer_t *)m);
+
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+	// added by Chris - strangely omitted from reference stack?!
+	assoc_resp_frame->buffer_header = (buffer_t *)m;
+#endif
 
 	/*
 	 * A MLME associate response can only be processed
@@ -491,7 +526,20 @@ void mlme_associate_response(uint8_t *m)
 	}
 
 #else
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+	//For SureNet, instead of queueing the Association Response to be
+	//collected later via a DATA_REQUEST, send it immediately.
+	tal_tx_status = tal_tx_frame(assoc_resp_frame, CSMA_UNSLOTTED, false);
+	// this buffer will be freed when the ack is received.
+
+	if (MAC_SUCCESS != tal_tx_status)
+	{
+		bmm_buffer_free((buffer_t *)m);
+		return;
+	}
+#else
 	qmm_queue_append(&indirect_data_q, (buffer_t *)m);
+#endif
 #endif  /* ENABLE_QUEUE_CAPACITY */
 
 	/*

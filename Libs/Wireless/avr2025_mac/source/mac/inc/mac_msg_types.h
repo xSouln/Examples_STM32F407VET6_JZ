@@ -262,6 +262,11 @@ typedef struct mlme_associate_ind_tag {
 	/** The operational capabilities of the device requesting association.
 	**/
 	uint8_t CapabilityInformation;
+
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+    uint8_t dev_type;
+    uint8_t dev_rssi;
+#endif //ZIGBEE_SUREFLAP_DRIVER
 } mlme_associate_ind_t;
 
 /**

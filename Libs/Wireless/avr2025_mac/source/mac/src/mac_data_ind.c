@@ -1275,9 +1275,15 @@ static bool parse_mpdu(frame_info_t *rx_frame_ptr)
 		switch (mac_parse_data.mac_command) {
 #if (MAC_ASSOCIATION_INDICATION_RESPONSE == 1)
 		case ASSOCIATIONREQUEST:
+#ifdef ZIGBEE_SUREFLAP_DRIVER
+			mac_parse_data.mac_payload_data.assoc_req_data.capability_info= temp_frame_ptr[payload_loc++];
+			mac_parse_data.mac_payload_data.assoc_req_data.dev_type= temp_frame_ptr[payload_loc++];
+			mac_parse_data.mac_payload_data.assoc_req_data.dev_rssi= temp_frame_ptr[payload_loc++];
+#else
 			mac_parse_data.mac_payload_data.assoc_req_data.
 			capability_info
 				= temp_frame_ptr[payload_loc++];
+#endif //ZIGBEE_SUREFLAP_DRIVER
 			break;
 #endif /* (MAC_ASSOCIATION_INDICATION_RESPONSE == 1) */
 
@@ -1340,14 +1346,19 @@ static bool parse_mpdu(frame_info_t *rx_frame_ptr)
 
 #if (MAC_ORPHAN_INDICATION_RESPONSE == 1)
 		case ORPHANNOTIFICATION:
+			break;
 #endif /* (MAC_ORPHAN_INDICATION_RESPONSE == 1) */
 		case DATAREQUEST:
+			break;
 		case BEACONREQUEST:
+#ifdef ZIGBEE_SUREFLAP_DRIVER
 			mac_parse_data.mac_payload_data.beacon_req_data.req_info = temp_frame_ptr[payload_loc++];
+#endif //ZIGBEE_SUREFLAP_DRIVER
+			break;
 #if (MAC_PAN_ID_CONFLICT_AS_PC == 1)
 		case PANIDCONFLICTNOTIFICAION:
-#endif  /* (MAC_PAN_ID_CONFLICT_AS_PC == 1) */
 			break;
+#endif  /* (MAC_PAN_ID_CONFLICT_AS_PC == 1) */
 
 #ifdef GTS_SUPPORT
 		case GTSREQUEST:

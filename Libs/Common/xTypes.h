@@ -31,7 +31,8 @@ typedef enum
 	xResultRequestIsNotFound,
 	xResultLinkError,
 	xResulComponentInitializationError,
-	xResultOutOfRange
+	xResultOutOfRange,
+	xResultNotFound,
 	
 } xResult;
 //------------------------------------------------------------------------------
@@ -153,14 +154,23 @@ name##PropertyT value_name
 
 #define OBJECT_BASE\
 	const void* Description;\
-	void* Parent
+	parent_type* Parent
 //------------------------------------------------------------------------------
 
-typedef struct
+typedef struct _ObjectBaseT
 {
-	OBJECT_BASE;
+	const void* Description;
+	void* Parent;
 
 } ObjectBaseT;
+//------------------------------------------------------------------------------
+
+#define OBJECT_BASE_T(heder_name, patent_type)\
+struct\
+{\
+	OBJECT_BASE(patent_type);\
+} heder_name
+
 //------------------------------------------------------------------------------
 
 #define OBJECT_DESCRIPTION_KEY 0xFE0000EF

@@ -96,7 +96,7 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-  ComponentsTimeSynchronization();
+
   /* USER CODE END SysTick_IRQn 1 */
 }
 
@@ -155,10 +155,10 @@ void EXTI9_5_IRQHandler(void)
 void TIM4_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM4_IRQn 0 */
-
+	Timer4->Status.UpdateInterrupt = false;
   /* USER CODE END TIM4_IRQn 0 */
   /* USER CODE BEGIN TIM4_IRQn 1 */
-
+	ComponentsTimeSynchronization();
   /* USER CODE END TIM4_IRQn 1 */
 }
 
@@ -213,7 +213,7 @@ void EXTI15_10_IRQHandler(void)
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(AT86RF233_IRQ_Pin);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
-  ZigbeeAdapterEXTI_Interapt(&ZigbeeCoordinator);
+  SureFlapZigbeeAdapterEXTI_Interapt(&SureFlap.Zigbee);
   /* USER CODE END EXTI15_10_IRQn 1 */
 }
 

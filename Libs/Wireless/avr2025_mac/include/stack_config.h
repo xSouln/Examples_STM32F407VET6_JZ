@@ -274,7 +274,7 @@
 #include "tal_build_config.h"
 #include "tal_config.h"
 #define NUMBER_OF_TOTAL_STACK_TIMERS        (NUMBER_OF_TAL_TIMERS)
-#define NUMBER_OF_LARGE_STACK_BUFS          (3)
+#define NUMBER_OF_LARGE_STACK_BUFS          (6)
 #define NUMBER_OF_SMALL_STACK_BUFS          (0)
 #endif  /* (HIGHEST_STACK_LAYER == TAL) */
 
@@ -313,7 +313,7 @@
 #endif  /* (MAC_INDIRECT_DATA_FFD == 1) */
 #else /* GTS_SUPPORT */
 #if (MAC_INDIRECT_DATA_FFD == 1)
-#define NUMBER_OF_LARGE_STACK_BUFS      (6 + EXTRA_RTB_BUFFER)
+#define NUMBER_OF_LARGE_STACK_BUFS      (18 + EXTRA_RTB_BUFFER)
 #else
 #define NUMBER_OF_LARGE_STACK_BUFS      (4 + EXTRA_RTB_BUFFER)
 #endif  /* (MAC_INDIRECT_DATA_FFD == 1) */

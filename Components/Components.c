@@ -6,6 +6,8 @@
 //==============================================================================
 //variables:
 
+REG_TIM_T* Timer4 = (REG_TIM_T*)TIM4;
+
 static uint8_t time1_ms;
 static uint8_t time5_ms;
 static uint16_t time1000_ms;
@@ -16,10 +18,13 @@ static void PrivateTerminalComponentEventListener(TerminalT* terminal, TerminalE
 {
 	switch((int)selector)
 	{
+		/*
 		case TerminalEventTime_1000ms:
 			xTxTransferSetTxLine(&Terminal.Transfer, &SerialPortUART.Tx);
 			xTxTransferStart(&Terminal.Transfer, "qwerty", 6);
 			break;
+		*/
+		default: break;
 	}
 }
 //------------------------------------------------------------------------------
@@ -103,11 +108,15 @@ void ComponentsHandler()
 		#ifdef TCP_SERVER_COMPONENT_ENABLE
 		TCPServerComponentHandler();
 		#endif
-
-		#ifdef ZIGBEE_COMPONENT_ENABLE
-		ZigbeeComponentHandler();
-		#endif
 	}
+
+	#ifdef ZIGBEE_COMPONENT_ENABLE
+	ZigbeeComponentHandler();
+	#endif
+
+	#ifdef SUREFLAP_COMPONENT_ENABLE
+	SureFlapComponentHandler();
+	#endif
 
 	if (!time1000_ms)
 	{
@@ -136,6 +145,10 @@ void ComponentsTimeSynchronization()
 
 	#ifdef ZIGBEE_COMPONENT_ENABLE
 	ZigbeeComponentTimeSynchronization();
+	#endif
+
+	#ifdef SUREFLAP_COMPONENT_ENABLE
+	SureFlapComponentTimeSynchronization();
 	#endif
 
 	time1_ms = 0;
@@ -190,14 +203,21 @@ xResult ComponentsInit(void* parent)
 	TCPServerComponentInit(parent);
 	#endif
 
-	#ifdef ZIGBEE_COMPONENT_ENABLE
-	ZigbeeComponentInit(parent);
-	#endif
-
 	#ifdef TERMINAL_COMPONENT_ENABLE
 	TerminalComponentInit(parent);
 	TerminalTxBind(&SerialPortUART.Tx);
 	#endif
+
+	#ifdef SUREFLAP_COMPONENT_ENABLE
+	SureFlapComponentInit(parent);
+	#endif
+
+	#ifdef ZIGBEE_COMPONENT_ENABLE
+	ZigbeeComponentInit(parent);
+	#endif
+
+	Timer4->DMAOrInterrupts.UpdateInterruptEnable = true;
+	Timer4->Control1.CounterEnable = true;
 
 	return xResultAccept;
 }
