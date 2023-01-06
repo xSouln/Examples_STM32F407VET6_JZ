@@ -20,7 +20,7 @@ extern "C" {
 //==============================================================================
 //configurations:
 
-#include "SureFlap/Controls/SureFlap.h"
+#include "SureFlap/Control/SureFlap.h"
 //==============================================================================
 //defines:
 

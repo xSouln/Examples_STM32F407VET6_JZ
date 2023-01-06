@@ -21,7 +21,8 @@ extern "C" {
 //==============================================================================
 //selector:
 
-#define SUREFLAP_ZIGBEE_ASF_ADAPTER_ENABLE
+#define SUREFLAP_ZIGBEE_ASF_ADAPTER_ENABLE 1
+#define SUREFLAP_DEVICE_HANDLER_ENABLE 1
 //==============================================================================
 #ifdef __cplusplus
 }

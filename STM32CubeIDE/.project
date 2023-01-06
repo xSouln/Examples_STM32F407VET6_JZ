@@ -62,6 +62,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_crc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_crc.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_dma.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c</locationURI>
@@ -155,6 +160,56 @@
 			<name>Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_uart.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/FreeRTOS/cmsis_os2.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/FreeRTOS/croutine.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/FreeRTOS/Source/croutine.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/FreeRTOS/event_groups.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/FreeRTOS/heap_4.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/FreeRTOS/list.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/FreeRTOS/Source/list.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/FreeRTOS/port.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/FreeRTOS/queue.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/FreeRTOS/Source/queue.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/FreeRTOS/stream_buffer.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/FreeRTOS/tasks.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/FreeRTOS/Source/tasks.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/FreeRTOS/timers.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/LwIP/altcp.c</name>
@@ -282,9 +337,19 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/netif/ppp/eui64.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/LwIP/fs.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/apps/http/fs.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/LwIP/fsm.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/netif/ppp/fsm.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/LwIP/httpd.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/apps/http/httpd.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/LwIP/icmp.c</name>
@@ -492,6 +557,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/netif/slipif.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/LwIP/sntp.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/apps/sntp/sntp.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/LwIP/sockets.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/api/sockets.c</locationURI>
@@ -505,6 +575,11 @@
 			<name>Middlewares/LwIP/sys.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/core/sys.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/LwIP/sys_arch.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/system/OS/sys_arch.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/LwIP/tcp.c</name>
@@ -557,9 +632,19 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/netif/zepif.c</locationURI>
 		</link>
 		<link>
+			<name>Application/User/Core/crc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/crc.c</locationURI>
+		</link>
+		<link>
 			<name>Application/User/Core/dma.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/dma.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/Core/freertos.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/freertos.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/gpio.c</name>
@@ -590,6 +675,11 @@
 			<name>Application/User/Core/stm32f4xx_hal_msp.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/stm32f4xx_hal_msp.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/Core/stm32f4xx_hal_timebase_tim.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/stm32f4xx_hal_timebase_tim.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/stm32f4xx_it.c</name>

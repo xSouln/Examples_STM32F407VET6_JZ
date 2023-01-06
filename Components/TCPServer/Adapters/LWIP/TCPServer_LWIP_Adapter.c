@@ -28,7 +28,7 @@ static void PrivateHandler(TCPServerT* server)
 {
 	TCPServerLWIPAdapterT* adapter = server->Adapter.Child;
 
-	MX_LWIP_Process();
+	//MX_LWIP_Process();
 
 	xRxReceiverRead(&adapter->RxReceiver, &adapter->RxCircleBuffer);
 

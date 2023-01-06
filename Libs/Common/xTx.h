@@ -173,7 +173,7 @@ xResult xTxInit(xTxT* tx, void* parent, xTxAdapterT* adapter, xTxInterfaceT* int
 
 #define xTxTransmitByte(tx, data) _xTxTransmitByte(tx, data)
 #define xTxTransmitWord(tx, data) _xTxTransmitWord(tx, data)
-#define xTxTransmitString(tx, str) _xTxTransmitString(tx, (char*)str)
+#define xTxTransmitString(tx, str) xTxTransmitData(tx, (uint8_t*)str, strlen((char*)str))
 
 #define xTxGetBuffer(tx) ((xTxT*)tx)->Interface->GetBuffer(tx)
 #define xTxGetBufferSize(tx) ((xTxT*)tx)->Interface->GetBufferSize(tx)

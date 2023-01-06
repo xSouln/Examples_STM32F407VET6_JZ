@@ -52,6 +52,7 @@ void ComponentsRequestListener(ComponentObjectBaseT* object, int selector, void*
 //==============================================================================
 //override:
 
+#define ComponentsSysGetTime() HAL_GetTick()
 //==============================================================================
 //variables:
 

@@ -11,6 +11,8 @@ REG_TIM_T* Timer4 = (REG_TIM_T*)TIM4;
 static uint8_t time1_ms;
 static uint8_t time5_ms;
 static uint16_t time1000_ms;
+
+static led_toggle_time_stamp;
 //==============================================================================
 //functions:
 
@@ -118,9 +120,11 @@ void ComponentsHandler()
 	SureFlapComponentHandler();
 	#endif
 
-	if (!time1000_ms)
+	if (ComponentsSysGetTime() - led_toggle_time_stamp > 999)
 	{
-		time1000_ms = 1000;
+		//time1000_ms = 1000;
+
+		led_toggle_time_stamp = ComponentsSysGetTime();
 
 		LED1_GPIO_Port->ODR ^= LED1_Pin;
 	}

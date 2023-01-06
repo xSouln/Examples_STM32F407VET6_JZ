@@ -1032,11 +1032,11 @@ typedef U8                  Byte;       //!< 8-bit unsigned integer.
     (*(uint32_t *)(data))
 
 /* Converts a 8 Byte array into a 64-Bit value */
-#define convert_byte_array_to_64_bit(data)\
+//#define convert_byte_array_to_64_bit(data)\
 	((((uint64_t)convert_byte_array_to_32_bit((uint8_t*)data + sizeof(uint32_t)) << 32) | convert_byte_array_to_32_bit(data)))
 	//((((uint64_t)convert_byte_array_to_32_bit((uint8_t*)data + sizeof(uint32_t)))) | convert_byte_array_to_32_bit(data))
     //(*(uint64_t *)(data))
-/*
+
 static inline uint64_t convert_byte_array_to_64_bit(uint8_t* data)
 {
 	union
@@ -1053,7 +1053,7 @@ static inline uint64_t convert_byte_array_to_64_bit(uint8_t* data)
 
 	return result.value;
 }
-*/
+
 /* Converts a 16-Bit value into a 2 Byte array */
 #define convert_16_bit_to_byte_array(value, data) \
     ((*(uint16_t *)(data)) = (uint16_t)(value))

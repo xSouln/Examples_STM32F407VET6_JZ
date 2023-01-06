@@ -15,7 +15,9 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Components_Types.h"
+#include "Common/xTypes.h"
+#include <stdint.h>
+#include <stdbool.h>
 #include <string.h>
 //==============================================================================
 //defines:

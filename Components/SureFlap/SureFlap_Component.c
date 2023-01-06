@@ -7,7 +7,7 @@
 //includes:
 
 #include "SureFlap_Component.h"
-#include "SureFlap/Adapters/Zigbee_ASF/Zigbee_ASF_Adapter.h"
+#include "Adapters/ASF/Zigbee_ASF_Adapter.h"
 
 #ifdef TERMINAL_COMPONENT_ENABLE
 #include "Terminal/Controls/Terminal.h"
@@ -17,32 +17,13 @@
 
 SureFlapT SureFlap;
 //==============================================================================
-
-static void _SureFlapComponentEventListener(SureFlapT* network, SureFlapEventSelector selector, void* arg, ...)
-{
-	switch((int)selector)
-	{
-		default: break;
-	}
-}
-//------------------------------------------------------------------------------
-
-static xResult _SureFlapComponentRequestListener(SureFlapT* network, SureFlapRequestSelector selector, void* arg, ...)
-{
-	switch((int)selector)
-	{
-		default: return xResultRequestIsNotFound;
-	}
-
-	return xResultAccept;
-}
-//------------------------------------------------------------------------------
 /**
  * @brief main handler
  */
 void _SureFlapComponentHandler()
 {
 	SureFlapZigbeeHandler(&SureFlap.Zigbee);
+	SureFlapDeviceHandler(&SureFlap.DeviceControl);
 	SureFlapHandler(&SureFlap);
 }
 //------------------------------------------------------------------------------
@@ -56,11 +37,14 @@ void _SureFlapComponentTimeSynchronization()
 }
 //==============================================================================
 
+
+//==============================================================================
+
 static SureFlapInterfaceT SureFlapInterface =
 {
-	INITIALIZATION_EVENT_LISTENER(SureFlap, _SureFlapComponentEventListener),
-	INITIALIZATION_REQUEST_LISTENER(SureFlap, _SureFlapComponentRequestListener)
+
 };
+//------------------------------------------------------------------------------
 
 static SureFlapZigbee_ASF_AdapterT SureFlapZigbee_ASF_Adapter =
 {
