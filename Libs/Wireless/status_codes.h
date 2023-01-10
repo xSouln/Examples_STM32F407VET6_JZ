@@ -6,7 +6,7 @@
  * This file defines various status codes returned by functions,
  * indicating success or failure as well as what kind of failure.
  *
- * Copyright (c) 2009-2018 Microchip Technology Inc. and its subsidiaries.
+ * Copyright (c) 2012-2018 Microchip Technology Inc. and its subsidiaries.
  *
  * \asf_license_start
  *
@@ -36,29 +36,38 @@
 /*
  * Support and FAQ: visit <a href="https://www.microchip.com/support/">Microchip Support</a>
  */
+// CHRIS NOTE - there is a weird conflation of status_code and status_code_wireless which
+// gives warning pe188. Since all the code seems to be 'vanilla', I can only assume that Atmel
+// accept this. So I have supressed the warning in project options.
+
+
 #ifndef STATUS_CODES_H_INCLUDED
 #define STATUS_CODES_H_INCLUDED
 
+#include <stdint.h>
+
 /**
- * \defgroup group_xmega_utils_status_codes Status Codes
+ * \defgroup group_sam0_utils_status_codes Status Codes
  *
- * \ingroup group_xmega_utils
+ * \ingroup group_sam0_utils
  *
- * \{
+ * @{
  */
 
-/* Note: this is a local workaround to avoid a pre-processor clash due to the
- * lwIP macro ERR_TIMEOUT. */
-#if defined(__LWIP_ERR_H__) && defined(ERR_TIMEOUT)
-#if (ERR_TIMEOUT != -3)
+/** Mask to retrieve the error category of a status code. */
+#define STATUS_CATEGORY_MASK  0xF0
 
-/* Internal check to make sure that the later restore of lwIP's ERR_TIMEOUT
- * macro is set to the correct value. Note that it is highly improbable that
- * this value ever changes in lwIP. */
-#error ASF developers: check lwip err.h new value for ERR_TIMEOUT
-#endif
-#undef ERR_TIMEOUT
-#endif
+/** Mask to retrieve the error code within the category of a status code. */
+#define STATUS_ERROR_MASK     0x0F
+
+/** Status code error categories. */
+enum status_categories {
+	STATUS_CATEGORY_OK                = 0x00,
+	STATUS_CATEGORY_COMMON            = 0x10,
+	STATUS_CATEGORY_ANALOG            = 0x30,
+	STATUS_CATEGORY_COM               = 0x40,
+	STATUS_CATEGORY_IO                = 0x50,
+};
 
 /**
  * Status code that may be returned by shell commands and protocol
@@ -69,8 +78,46 @@
  * however, but make sure that any message string tables are updated
  * at the same time.
  */
-enum status_code {
-	STATUS_OK               =  0, //!< Success
+typedef enum status_code {
+	STATUS_OK                         = STATUS_CATEGORY_OK     | 0x00,
+	STATUS_VALID_DATA                 = STATUS_CATEGORY_OK     | 0x01,
+	STATUS_NO_CHANGE                  = STATUS_CATEGORY_OK     | 0x02,
+	STATUS_ABORTED                    = STATUS_CATEGORY_OK     | 0x04,
+	STATUS_BUSY                       = STATUS_CATEGORY_OK     | 0x05,
+	STATUS_SUSPEND                    = STATUS_CATEGORY_OK     | 0x06,
+
+	STATUS_ERR_IO                     = STATUS_CATEGORY_COMMON | 0x00,
+	STATUS_ERR_REQ_FLUSHED            = STATUS_CATEGORY_COMMON | 0x01,
+	STATUS_ERR_TIMEOUT                = STATUS_CATEGORY_COMMON | 0x02,
+	STATUS_ERR_BAD_DATA               = STATUS_CATEGORY_COMMON | 0x03,
+	STATUS_ERR_NOT_FOUND              = STATUS_CATEGORY_COMMON | 0x04,
+	STATUS_ERR_UNSUPPORTED_DEV        = STATUS_CATEGORY_COMMON | 0x05,
+	STATUS_ERR_NO_MEMORY              = STATUS_CATEGORY_COMMON | 0x06,
+	STATUS_ERR_INVALID_ARG            = STATUS_CATEGORY_COMMON | 0x07,
+	STATUS_ERR_BAD_ADDRESS            = STATUS_CATEGORY_COMMON | 0x08,
+	STATUS_ERR_BAD_FORMAT             = STATUS_CATEGORY_COMMON | 0x0A,
+	STATUS_ERR_BAD_FRQ                = STATUS_CATEGORY_COMMON | 0x0B,
+	STATUS_ERR_DENIED                 = STATUS_CATEGORY_COMMON | 0x0c,
+	STATUS_ERR_ALREADY_INITIALIZED    = STATUS_CATEGORY_COMMON | 0x0d,
+	STATUS_ERR_OVERFLOW               = STATUS_CATEGORY_COMMON | 0x0e,
+	STATUS_ERR_NOT_INITIALIZED        = STATUS_CATEGORY_COMMON | 0x0f,
+
+	STATUS_ERR_SAMPLERATE_UNAVAILABLE = STATUS_CATEGORY_ANALOG | 0x00,
+	STATUS_ERR_RESOLUTION_UNAVAILABLE = STATUS_CATEGORY_ANALOG | 0x01,
+
+	STATUS_ERR_BAUDRATE_UNAVAILABLE   = STATUS_CATEGORY_COM    | 0x00,
+	STATUS_ERR_PACKET_COLLISION       = STATUS_CATEGORY_COM    | 0x01,
+	STATUS_ERR_PROTOCOL               = STATUS_CATEGORY_COM    | 0x02,
+
+	STATUS_ERR_PIN_MUX_INVALID        = STATUS_CATEGORY_IO     | 0x00,
+//};
+//typedef enum status_code status_code_genare_t;
+//
+///**
+//  Status codes used by MAC stack.
+// */
+//enum status_code_wireless {
+	//STATUS_OK               =  0, //!< Success
 	ERR_IO_ERROR            =  -1, //!< I/O error
 	ERR_FLUSHED             =  -2, //!< Request flushed from queue
 	ERR_TIMEOUT             =  -3, //!< Operation timed out
@@ -96,16 +143,10 @@ enum status_code {
 	 * callers. It is strictly for internal use.
 	 */
 	OPERATION_IN_PROGRESS	= -128,
-};
+}status_code_t;
 
-typedef enum status_code status_code_t;
+//typedef enum status_code_wireless status_code_t;
 
-#if defined(__LWIP_ERR_H__)
-#define ERR_TIMEOUT -3
-#endif
-
-/**
- * \}
- */
+/** @} */
 
 #endif /* STATUS_CODES_H_INCLUDED */

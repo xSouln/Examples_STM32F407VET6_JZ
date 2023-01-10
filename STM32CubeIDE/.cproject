@@ -24,6 +24,10 @@
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.1267655759" name="Floating-point ABI" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.value.hard" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.1447779695" name="Board" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board" useByScannerDiscovery="false" value="genericBoard" valueType="string"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.1029973863" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" useByScannerDiscovery="false" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.5 || Debug || true || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace || STM32F407VETx || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../../Core/Inc | ../../LWIP/App | ../../Middlewares/Third_Party/LwIP/src/include/netif/ppp | ../../Drivers/CMSIS/Device/ST/STM32F4xx/Include | ../../Middlewares/Third_Party/LwIP/src/include/compat/posix/net | ../../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 | ../../Middlewares/Third_Party/LwIP/src/include/compat/stdc | ../../Middlewares/Third_Party/LwIP/system/arch | ../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy | ../../Middlewares/Third_Party/LwIP/system | ../../Middlewares/Third_Party/LwIP/src/include | ../../Drivers/STM32F4xx_HAL_Driver/Inc | ../../Drivers/BSP/Components/dp83848 | ../../wolfSSL | ../../Drivers/CMSIS/Include | ../../Middlewares/Third_Party/LwIP/src/include/lwip/priv | ../../Middlewares/Third_Party/LwIP/src/apps/http | ../../LWIP/Target | ../../Middlewares/Third_Party/LwIP/src/include/lwip/apps | ../../Middlewares/Third_Party/LwIP/src/include/lwip | ../../Middlewares/Third_Party/LwIP/src/include/lwip/prot | ../../Middlewares/Third_Party/LwIP/src/include/compat/posix | ../../Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/ | ../../Middlewares/Third_Party/LwIP/src/include/compat/posix/sys | ../../Middlewares/Third_Party/FreeRTOS/Source/include | ../../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F | ../../Middlewares/Third_Party/LwIP/src/include/netif | ../../Middlewares/Third_Party/LwIP/src/include/compat/posix/arpa ||  ||  || USE_HAL_DRIVER | STM32F407xx ||  ||  ||  ||  || ${workspace_loc:/${ProjName}/STM32F407VETX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o ||  || None || " valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.convertbinary.1391243734" name="Convert to binary file (-O binary)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.convertbinary" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.converthex.1514425510" name="Convert to Intel Hex file (-O ihex)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.converthex" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoscanffloat.1333820383" name="Use float with scanf from newlib-nano (-u _scanf_float)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoscanffloat" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoprintffloat.987839805" name="Use float with printf from newlib-nano (-u _printf_float)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.nanoprintffloat" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform.1936717831" isAbstract="false" osList="all" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform"/>
 							<builder buildPath="${workspace_loc:/JZ_STM32F407VET6}/Debug" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder.1821119804" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder"/>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.373042373" name="MCU GCC Assembler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler">
@@ -50,6 +54,8 @@
 									<listOptionValue builtIn="false" value="ENABLE_TRX_SRAM_READ"/>
 									<listOptionValue builtIn="false" value="ZIGBEE_SUREFLAP_DRIVER"/>
 									<listOptionValue builtIn="false" value="configAPPLICATION_ALLOCATED_HEAP=1"/>
+									<listOptionValue builtIn="false" value="WOLFSSL_BASE64_ENCODE"/>
+									<listOptionValue builtIn="false" value="HAVE_SNI=1"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths.1884880232" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="../../Core/Inc"/>
@@ -101,6 +107,19 @@
 									<listOptionValue builtIn="false" value="../../Components/SureFlap/Control"/>
 									<listOptionValue builtIn="false" value="../../Components/SureFlap/Zigbee"/>
 									<listOptionValue builtIn="false" value="../../Components/SureFlap/Device"/>
+									<listOptionValue builtIn="false" value="../../Components/Hermes"/>
+									<listOptionValue builtIn="false" value="../../Components/Hermes/Sources"/>
+									<listOptionValue builtIn="false" value="../../Components/Hermes/Surenet"/>
+									<listOptionValue builtIn="false" value="../../Components/Hermes/Surenet/SureNetDriver"/>
+									<listOptionValue builtIn="false" value="../../MQTT"/>
+									<listOptionValue builtIn="false" value="../../MQTT/AWS"/>
+									<listOptionValue builtIn="false" value="../../MQTT/AWS/include"/>
+									<listOptionValue builtIn="false" value="../../Middlewares/Third_Party/FreeRTOS-Plus-TCP/source"/>
+									<listOptionValue builtIn="false" value="../../Middlewares/Third_Party/FreeRTOS-Plus-TCP/source/include"/>
+									<listOptionValue builtIn="false" value="../../Middlewares/Third_Party/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC"/>
+									<listOptionValue builtIn="false" value="../../Middlewares/Third_Party/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/ksz8851snl"/>
+									<listOptionValue builtIn="false" value="../../Libs/external_libs/jsmn"/>
+									<listOptionValue builtIn="false" value="../../MQTT/AWS/platform/CortexM7"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.1572159475" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.value.gnu18" valueType="enumerated"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1928597628" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>

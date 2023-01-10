@@ -2,6 +2,7 @@
 //module enable:
 
 #include "SureFlap_ComponentConfig.h"
+#include "Components_Types.h"
 #ifdef SUREFLAP_COMPONENT_ENABLE
 //==============================================================================
 //header:
@@ -15,10 +16,7 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Common/xTypes.h"
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
+
 //==============================================================================
 //defines:
 

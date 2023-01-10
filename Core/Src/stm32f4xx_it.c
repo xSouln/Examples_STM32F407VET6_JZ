@@ -201,7 +201,7 @@ void EXTI15_10_IRQHandler(void)
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(AT86RF233_IRQ_Pin);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
-  SureFlapZigbeeAdapterEXTI_Interapt(&SureFlap.Zigbee);
+  //SureFlapZigbeeAdapterEXTI_Interapt(&SureFlap.Zigbee);
   /* USER CODE END EXTI15_10_IRQn 1 */
 }
 
