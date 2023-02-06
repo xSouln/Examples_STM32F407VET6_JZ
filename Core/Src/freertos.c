@@ -29,8 +29,6 @@
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
-typedef StaticTask_t osStaticThreadDef_t;
-typedef StaticQueue_t osStaticMessageQDef_t;
 typedef StaticEventGroup_t osStaticEventGroupDef_t;
 /* USER CODE BEGIN PTD */
 
@@ -54,10 +52,17 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 256 * 4,
+  .stack_size = 1024 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for xHTTPPostTask */
+/* Definitions for xSurenet_EventGroup */
+osEventFlagsId_t xSurenet_EventGroupHandle;
+osStaticEventGroupDef_t xSurenet_EventGroupControlBlock;
+const osEventFlagsAttr_t xSurenet_EventGroup_attributes = {
+  .name = "xSurenet_EventGroup",
+  .cb_mem = &xSurenet_EventGroupControlBlock,
+  .cb_size = sizeof(xSurenet_EventGroupControlBlock),
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -65,7 +70,6 @@ const osThreadAttr_t defaultTask_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
-void HTTPPostTask(void *argument);
 
 extern void MX_LWIP_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -92,10 +96,6 @@ void MX_FREERTOS_Init(void) {
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
-  /* Create the queue(s) */
-  /* creation of xAssociationSuccessfulMailbox */
-
-
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -104,15 +104,13 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* creation of xHTTPPostTask */
-  //xHTTPPostTaskHandle = osThreadNew(HTTPPostTask, NULL, &xHTTPPostTask_attributes);
-
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
   /* Create the event(s) */
   /* creation of xSurenet_EventGroup */
+  xSurenet_EventGroupHandle = osEventFlagsNew(&xSurenet_EventGroup_attributes);
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
@@ -140,24 +138,6 @@ void StartDefaultTask(void *argument)
 	  osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
-}
-
-/* USER CODE BEGIN Header_HTTPPostTask */
-/**
-* @brief Function implementing the xHTTPPostTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_HTTPPostTask */
-void HTTPPostTask(void *argument)
-{
-  /* USER CODE BEGIN HTTPPostTask */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END HTTPPostTask */
 }
 
 /* Private application code --------------------------------------------------*/

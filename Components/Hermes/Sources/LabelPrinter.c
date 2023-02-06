@@ -128,7 +128,7 @@ void label_task(void *pvParameters)
 	char 						idstring[128];
 	uint32_t					timeout = pdMS_TO_TICKS(5000); 
 	uint32_t					len;
-	uint16_t 					CRC;
+	uint16_t 					crc;
 	uint8_t						byte;
 	char 						reply[128];
 	uint8_t						led_cycle_state = 0;	// used to cycle around colour LEDs.
@@ -195,14 +195,18 @@ void label_task(void *pvParameters)
 								mac_string,
 								DEVICE_TYPE_HUB);
 				// Now we need to amend len to account for the %d\r\n\r\n at the beginning
-				if (len>95)		// this is a hideous kludge. 95 is 99-strlen("\r\n\r\n")
+				if (len>95) // this is a hideous kludge. 95 is 99-strlen("\r\n\r\n")
+				{
 					len+=7;
+				}
 				else
-					len+=6;				
-				CRC = CRC16((uint8_t *)idstring, len, 0xcccc);
-				byte = CRC>>8;
+				{
+					len+=6;
+				}
+				crc = CRC16((uint8_t *)idstring, len, 0xcccc);
+				byte = crc >> 8;
 				FreeRTOS_send(lblSocket, &byte, sizeof(byte), 0);
-				byte = CRC & 0xff;
+				byte = crc & 0xff;
 				FreeRTOS_send(lblSocket, &byte, sizeof(byte), 0);
 				if( len!= FreeRTOS_send(lblSocket, &idstring, len, 0) )
 				{

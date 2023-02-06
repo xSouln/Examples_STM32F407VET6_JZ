@@ -26,7 +26,7 @@
 #define AWS_IOT_JOBS_JSON_H_
 
 #include <stdbool.h>
-#include "external_libs\jsmn\jsmn.h"
+//#include "external_libs\jsmn\jsmn.h"
 #include "aws_iot_jobs_types.h"
 
 #ifdef __cplusplus

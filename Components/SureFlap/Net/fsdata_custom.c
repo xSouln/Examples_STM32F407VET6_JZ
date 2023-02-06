@@ -1,3 +1,7 @@
+//==============================================================================
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//==============================================================================
 #include "lwip/apps/fs.h"
 #include "lwip/def.h"
 
@@ -2835,4 +2839,5 @@ sizeof(data__STM32F4xx_html) - 16,
 
 #define FS_ROOT file__STM32F4xx_html
 #define FS_NUMFILES 5
-
+//==============================================================================
+#endif //SUREFLAP_COMPONENT_ENABLE

@@ -2,13 +2,15 @@
 #ifndef _SUREFLAP_CONFIG_H
 #define _SUREFLAP_CONFIG_H
 //------------------------------------------------------------------------------
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
 #endif 
 //==============================================================================
 //includes:
 
-#include "SureFlap/SureFlap_ComponentConfig.h"
 //==============================================================================
 //defines:
 
@@ -70,3 +72,4 @@ extern "C" {
 #endif
 //------------------------------------------------------------------------------
 #endif //_SUREFLAP_CONFIG_H
+#endif //SUREFLAP_COMPONENT_ENABLE

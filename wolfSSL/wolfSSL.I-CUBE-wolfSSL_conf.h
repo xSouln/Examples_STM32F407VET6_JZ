@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2022 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -196,6 +196,9 @@
         #undef  NO_STM32_CRYPTO
         #define WOLFSSL_STM32_PKA
     #endif
+#elif defined(STM32H723xx)
+	#define WOLFSSL_STM32H7
+	#define HAL_CONSOLE_UART huart3
 #else
     #warning Please define a hardware platform!
     /* This means there is not a pre-defined platform for your board/CPU */

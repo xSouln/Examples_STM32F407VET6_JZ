@@ -2,6 +2,9 @@
 #ifndef _SUREFLAP_H_
 #define _SUREFLAP_H_
 //------------------------------------------------------------------------------
+#include "SureFlap_Config.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -55,3 +58,4 @@ uint8_t SureFlapUtilitiesGetParity(int8_t *ParityMessage, int16_t size);
 #endif
 //------------------------------------------------------------------------------
 #endif //_SUREFLAP_H_
+#endif //SUREFLAP_COMPONENT_ENABLE

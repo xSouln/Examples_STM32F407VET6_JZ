@@ -2,6 +2,9 @@
 #ifndef _SUREFLAP_TCP_PACKETS_H
 #define _SUREFLAP_TCP_PACKETS_H
 //------------------------------------------------------------------------------
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -27,3 +30,4 @@ extern "C" {
 #endif
 //------------------------------------------------------------------------------
 #endif //_SUREFLAP_TCP_PACKETS_H
+#endif //SUREFLAP_COMPONENT_ENABLE

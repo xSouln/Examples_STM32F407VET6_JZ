@@ -33,7 +33,7 @@ extern "C" {
 #include <stdint.h>
 
 #include "aws_iot_error.h"
-#include "external_libs\jsmn\jsmn.h"
+#include "../external_libs/jsmn/jsmn.h"
 
 // utility functions
 /**

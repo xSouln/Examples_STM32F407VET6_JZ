@@ -2,6 +2,9 @@
 #ifndef _SUREFLAP_ZIGBEE_TYPES_H
 #define _SUREFLAP_ZIGBEE_TYPES_H
 //------------------------------------------------------------------------------
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -346,3 +349,4 @@ typedef struct
 #endif
 //------------------------------------------------------------------------------
 #endif //_SUREFLAP_ZIGBEE_TYPES_H
+#endif //SUREFLAP_COMPONENT_ENABLE

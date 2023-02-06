@@ -56,6 +56,7 @@
 									<listOptionValue builtIn="false" value="configAPPLICATION_ALLOCATED_HEAP=1"/>
 									<listOptionValue builtIn="false" value="WOLFSSL_BASE64_ENCODE"/>
 									<listOptionValue builtIn="false" value="HAVE_SNI=1"/>
+									<listOptionValue builtIn="false" value="JSMN_STATIC"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths.1884880232" name="Include paths (-I)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.includepaths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="../../Core/Inc"/>
@@ -114,12 +115,11 @@
 									<listOptionValue builtIn="false" value="../../MQTT"/>
 									<listOptionValue builtIn="false" value="../../MQTT/AWS"/>
 									<listOptionValue builtIn="false" value="../../MQTT/AWS/include"/>
+									<listOptionValue builtIn="false" value="../../MQTT/AWS/platform/CortexM7"/>
 									<listOptionValue builtIn="false" value="../../Middlewares/Third_Party/FreeRTOS-Plus-TCP/source"/>
 									<listOptionValue builtIn="false" value="../../Middlewares/Third_Party/FreeRTOS-Plus-TCP/source/include"/>
 									<listOptionValue builtIn="false" value="../../Middlewares/Third_Party/FreeRTOS-Plus-TCP/source/portable/Compiler/GCC"/>
 									<listOptionValue builtIn="false" value="../../Middlewares/Third_Party/FreeRTOS-Plus-TCP/source/portable/NetworkInterface/ksz8851snl"/>
-									<listOptionValue builtIn="false" value="../../Libs/external_libs/jsmn"/>
-									<listOptionValue builtIn="false" value="../../MQTT/AWS/platform/CortexM7"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.1572159475" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.value.gnu18" valueType="enumerated"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1928597628" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>

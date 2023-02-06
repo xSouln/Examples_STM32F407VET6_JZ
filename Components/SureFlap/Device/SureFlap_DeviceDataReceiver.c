@@ -1,4 +1,7 @@
 //==============================================================================
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//------------------------------------------------------------------------------
 //includes:
 
 #include "SureFlap_Device.h"
@@ -121,3 +124,4 @@ void SureFlapDeviceDataReceiver(SureFlapT* hub, SureFlapDeviceT* device)
 	}
 }
 //==============================================================================
+#endif //SUREFLAP_COMPONENT_ENABLE

@@ -26,7 +26,6 @@
 #include "Components.h"
 
 #include <stdint.h>
-#include "debug.h"	// for LED based debugging for when all else fails!
 #include "Signing.h"
 
 #define SHOULD_I_PACKAGE	true

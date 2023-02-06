@@ -2,6 +2,9 @@
 #ifndef _SUREFLAP_DEVICE_H
 #define _SUREFLAP_DEVICE_H
 //------------------------------------------------------------------------------
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -50,3 +53,4 @@ void SureFlapDeviceSetSecurityKey(SureFlapDeviceT* device);
 #endif
 //------------------------------------------------------------------------------
 #endif //_ZIGBEE_TYPES_H
+#endif //SUREFLAP_COMPONENT_ENABLE

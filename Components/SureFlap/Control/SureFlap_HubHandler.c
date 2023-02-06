@@ -1,8 +1,6 @@
 //==============================================================================
-//includes:
-
-#include "SureFlap_Device.h"
-#ifdef SUREFLAP_DEVICE_HANDLER_ENABLE
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
 //==============================================================================
 //includes:
 
@@ -712,4 +710,4 @@ void SureFlapDeviceHubHandler(SureFlapDeviceControlT* control)
 			SUREFLAP_HUB_HANDLER_IDLE : SUREFLAP_HUB_HANDLER_BUSY;
 }
 //==============================================================================
-#endif
+#endif //SUREFLAP_COMPONENT_ENABLE

@@ -2,6 +2,9 @@
 #ifndef _SUREFLAP_TYPES_H
 #define _SUREFLAP_TYPES_H
 //------------------------------------------------------------------------------
+#include "SureFlap_Config.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -95,3 +98,4 @@ typedef struct _SureFlapT
 #endif
 //------------------------------------------------------------------------------
 #endif //_SUREFLAP_TYPES_H
+#endif //SUREFLAP_COMPONENT_ENABLE

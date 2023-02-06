@@ -2,6 +2,9 @@
 #ifndef _SUREFLAP_TCP_H
 #define _SUREFLAP_TCP_H
 //------------------------------------------------------------------------------
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -35,3 +38,4 @@ xResult _SureFlapTcpAddToServerBuffer(SureFlapTcpT* tcp, uint64_t mac, void* dat
 #endif
 //------------------------------------------------------------------------------
 #endif //_SUREFLAP_TCP_H
+#endif //SUREFLAP_COMPONENT_ENABLE

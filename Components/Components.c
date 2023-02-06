@@ -106,10 +106,11 @@ void ComponentsHandler()
 		#ifdef TERMINAL_COMPONENT_ENABLE
 		TerminalComponentHandler();
 		#endif
-
+		/*
 		#ifdef TCP_SERVER_COMPONENT_ENABLE
 		TCPServerComponentHandler();
 		#endif
+		*/
 	}
 
 	#ifdef ZIGBEE_COMPONENT_ENABLE
@@ -202,11 +203,11 @@ xResult ComponentsInit(void* parent)
 	#if SERIAL_PORT_COMPONENT_ENABLE
 	SerialPortComponentInit(parent);
 	#endif
-
+/*
 	#ifdef TCP_SERVER_COMPONENT_ENABLE
 	TCPServerComponentInit(parent);
 	#endif
-
+*/
 	#ifdef TERMINAL_COMPONENT_ENABLE
 	TerminalComponentInit(parent);
 	TerminalTxBind(&SerialPortUART.Tx);

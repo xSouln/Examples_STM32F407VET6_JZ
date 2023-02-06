@@ -30,7 +30,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "external_libs\jsmn\jsmn.h"
+//#include "external_libs\jsmn\jsmn.h"
 #include "timer_interface.h"
 
 #ifdef __cplusplus

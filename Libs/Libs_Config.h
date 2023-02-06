@@ -1,6 +1,6 @@
 //==============================================================================
-#ifndef _COMPONENTS_CONFIG_H
-#define _COMPONENTS_CONFIG_H
+#ifndef _LIBS_CONFIG_H
+#define _LIBS_CONFIG_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -11,11 +11,8 @@ extern "C" {
 //==============================================================================
 //components:
 
-#define TERMINAL_COMPONENT_ENABLE 1
-#define SERIAL_PORT_COMPONENT_ENABLE 1
-//#define TCP_SERVER_COMPONENT_ENABLE 1
-//#define ZIGBEE_COMPONENT_ENABLE 1
-//#define SUREFLAP_COMPONENT_ENABLE 1
+//#define LIB_XTEA_ENABLE 1
+
 //==============================================================================
 //defines:
 

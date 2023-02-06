@@ -1,4 +1,7 @@
 //==============================================================================
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//==============================================================================
 //includes:
 
 #include "SureFlap_Zigbee.h"
@@ -419,3 +422,5 @@ xResult _SureFlapZigbeeInit(SureFlapT* hub)
 	return xResultError;
 }
 //==============================================================================
+#endif //SUREFLAP_COMPONENT_ENABLE
+

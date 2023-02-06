@@ -104,6 +104,7 @@ int main(void)
   MX_TIM4_Init();
   MX_RNG_Init();
   MX_CRC_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   ComponentsInit(main);
   /* USER CODE END 2 */

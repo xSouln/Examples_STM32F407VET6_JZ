@@ -2,6 +2,9 @@
 #ifndef _SUREFLAP_ZIGBEE_H
 #define _SUREFLAP_ZIGBEE_H
 //------------------------------------------------------------------------------
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -56,3 +59,4 @@ int16_t _SureFlapZigbeeTransmit(SureFlapZigbeeT* network,
 #endif
 //------------------------------------------------------------------------------
 #endif //_SUREFLAP_ZIGBEE_H
+#endif //SUREFLAP_COMPONENT_ENABLE

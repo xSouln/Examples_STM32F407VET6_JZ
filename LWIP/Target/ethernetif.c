@@ -33,7 +33,7 @@
 
 /* Within 'USER CODE' section, code will be kept by default at each generation */
 /* USER CODE BEGIN 0 */
-
+#include "TCPServer/TCPServer_Component.h"
 /* USER CODE END 0 */
 
 /* Private define ------------------------------------------------------------*/
@@ -41,7 +41,7 @@
 #define TIME_WAITING_FOR_INPUT ( portMAX_DELAY )
 /* USER CODE BEGIN OS_THREAD_STACK_SIZE_WITH_RTOS */
 /* Stack size of the interface thread */
-#define INTERFACE_THREAD_STACK_SIZE ( 350 )
+#define INTERFACE_THREAD_STACK_SIZE ( 1024 )
 /* USER CODE END OS_THREAD_STACK_SIZE_WITH_RTOS */
 /* Network interface name */
 #define IFNAME0 's'
@@ -614,9 +614,9 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef* ethHandle)
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
     /* Peripheral interrupt init */
-    HAL_NVIC_SetPriority(ETH_IRQn, 7, 0);
+    HAL_NVIC_SetPriority(ETH_IRQn, 15, 0);
     HAL_NVIC_EnableIRQ(ETH_IRQn);
-    HAL_NVIC_SetPriority(ETH_WKUP_IRQn, 7, 0);
+    HAL_NVIC_SetPriority(ETH_WKUP_IRQn, 10, 0);
     HAL_NVIC_EnableIRQ(ETH_WKUP_IRQn);
   /* USER CODE BEGIN ETH_MspInit 1 */
 
@@ -747,7 +747,7 @@ void ethernet_link_thread(void* argument)
 
   struct netif *netif = (struct netif *) argument;
 /* USER CODE BEGIN ETH link init */
-
+  //TCPServerComponentInit(ethernet_link_thread);
 /* USER CODE END ETH link init */
 
   for(;;)
@@ -802,10 +802,10 @@ void ethernet_link_thread(void* argument)
   }
 
 /* USER CODE BEGIN ETH link Thread core code for User BSP */
-
+  //TCPServerComponentHandler();
 /* USER CODE END ETH link Thread core code for User BSP */
 
-    osDelay(100);
+    osDelay(1);
   }
 }
 

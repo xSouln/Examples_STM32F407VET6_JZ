@@ -1,4 +1,7 @@
 //==============================================================================
+#include "SureFlap_Config.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//==============================================================================
 //includes:
 
 #include "SureFlap.h"
@@ -84,3 +87,5 @@ xResult SureFlapInit(SureFlapT* hub, void* parent, SureFlapInterfaceT* interface
 	return xResultError;
 }
 //==============================================================================
+#endif //SUREFLAP_COMPONENT_ENABLE
+

@@ -1,4 +1,7 @@
 //==============================================================================
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//==============================================================================
 //includes:
 
 #include "SureFlap_Zigbee.h"
@@ -479,3 +482,5 @@ void SureFlapZigbeePacketReceiver(SureFlapZigbeeT* network, SF_ZigbeeRxBufferT* 
 	}
 }
 //==============================================================================
+#endif //SUREFLAP_COMPONENT_ENABLE
+

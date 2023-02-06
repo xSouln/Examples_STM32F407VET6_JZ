@@ -1,4 +1,7 @@
 //==============================================================================
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//==============================================================================
 //includes:
 
 #include "SureFlap.h"
@@ -125,3 +128,4 @@ xResult SureFlapDeviceInit(SureFlapT* hub)
 	return xResultError;
 }
 //==============================================================================
+#endif //SUREFLAP_COMPONENT_ENABLE

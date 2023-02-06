@@ -2,6 +2,9 @@
 #ifndef _XTEA_H
 #define _XTEA_H
 //------------------------------------------------------------------------------
+#include "Libs_Config.h"
+#ifdef LIB_XTEA_ENABLE
+//------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -43,3 +46,4 @@ bool XTEA_64_Decrypt(uint8_t* source, uint32_t length, uint8_t* key);
 #endif
 //------------------------------------------------------------------------------
 #endif //_XTEA_H
+#endif //LIB_XTEA_ENABLE

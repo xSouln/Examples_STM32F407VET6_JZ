@@ -2,6 +2,9 @@
 #ifndef _SUREFLAP_ZIGBEE_ADAPTER_BASE_H_
 #define _SUREFLAP_ZIGBEE_ADAPTER_BASE_H_
 //------------------------------------------------------------------------------
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -91,3 +94,4 @@ typedef struct
 #endif
 //------------------------------------------------------------------------------
 #endif //_SUREFLAP_ZIGBEE_ADAPTER_BASE_H_
+#endif //SUREFLAP_COMPONENT_ENABLE

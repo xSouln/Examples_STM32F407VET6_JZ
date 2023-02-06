@@ -1,4 +1,7 @@
 //==============================================================================
+#include "SureFlap/SureFlap_ComponentConfig.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//==============================================================================
 //includes:
 
 #include "SureFlap_Tcp.h"
@@ -59,3 +62,5 @@ xResult _SureFlapTcpInit(SureFlapT* hub)
 	return xResultError;
 }
 //==============================================================================
+#endif //SUREFLAP_COMPONENT_ENABLE
+

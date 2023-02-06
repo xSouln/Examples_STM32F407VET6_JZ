@@ -257,6 +257,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/FirmwareSureFlap/trunk/Firmware/MQTT/AWS/src/aws_iot_shadow_records.c</locationURI>
 		</link>
 		<link>
+			<name>MQTT/AWS/jsmn.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/external_libs/jsmn/jsmn.h</locationURI>
+		</link>
+		<link>
 			<name>MQTT/inc/Backoff.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/MQTT/Backoff.h</locationURI>
@@ -592,19 +597,9 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/netif/ppp/eui64.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/LwIP/fs.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/apps/http/fs.c</locationURI>
-		</link>
-		<link>
 			<name>Middlewares/LwIP/fsm.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/netif/ppp/fsm.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/LwIP/httpd.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/apps/http/httpd.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/LwIP/icmp.c</name>
@@ -885,6 +880,11 @@
 			<name>Middlewares/LwIP/zepif.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/netif/zepif.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/wolfSSL/settings.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Examples_STM32H723_NUCLEO/Middlewares/Third_Party/wolfSSL_wolfSSL_wolfSSL/wolfssl/wolfssl/wolfcrypt/settings.h</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/crc.c</name>

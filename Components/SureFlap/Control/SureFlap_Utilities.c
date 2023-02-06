@@ -1,4 +1,7 @@
 //==============================================================================
+#include "SureFlap_Config.h"
+#ifdef SUREFLAP_COMPONENT_ENABLE
+//==============================================================================
 //includes:
 
 #include "SureFlap.h"
@@ -36,3 +39,4 @@ uint8_t SureFlapUtilitiesGetParity(int8_t *ParityMessage, int16_t size)
 	return parity;
 }
 //==============================================================================
+#endif //SUREFLAP_COMPONENT_ENABLE

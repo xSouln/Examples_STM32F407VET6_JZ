@@ -11,6 +11,7 @@
 #include "TCPServer_LWIP_RxAdapter.h"
 #include "Common/xMemory.h"
 #include <string.h>
+
 //==============================================================================
 //import:
 
@@ -27,8 +28,6 @@ static xResult private_tcp_server_open(TCPServerT* server);
 static void PrivateHandler(TCPServerT* server)
 {
 	TCPServerLWIPAdapterT* adapter = server->Adapter.Child;
-
-	//MX_LWIP_Process();
 
 	xRxReceiverRead(&adapter->RxReceiver, &adapter->RxCircleBuffer);
 
