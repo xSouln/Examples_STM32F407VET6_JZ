@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2022 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -49,14 +49,18 @@
 
 /* LwIP Stack Parameters (modified compared to initialization value in opt.h) -*/
 /* Parameters set in STM32CubeMX LwIP Configuration GUI -*/
-/*----- Default value in ETH configuration GUI in CubeMx: 1524 -----*/
-#define ETH_RX_BUFFER_SIZE 1524
+/*----- Value in opt.h for LWIP_DHCP: 0 -----*/
+#define LWIP_DHCP 1
+/*----- Default Value for LWIP_DNS: 0 ---*/
+#define LWIP_DNS 1
 /*----- Default Value for MEMP_NUM_TCP_PCB: 5 ---*/
 #define MEMP_NUM_TCP_PCB 3
 /*----- Value in opt.h for MEM_ALIGNMENT: 1 -----*/
 #define MEM_ALIGNMENT 4
 /*----- Value in opt.h for LWIP_ETHERNET: LWIP_ARP || PPPOE_SUPPORT -*/
 #define LWIP_ETHERNET 1
+/*----- Default Value for DNS_TABLE_SIZE: 4 ---*/
+#define DNS_TABLE_SIZE 1
 /*----- Value in opt.h for LWIP_DNS_SECURE: (LWIP_DNS_SECURE_RAND_XID | LWIP_DNS_SECURE_NO_MULTIPLE_OUTSTANDING | LWIP_DNS_SECURE_RAND_SRC_PORT) -*/
 #define LWIP_DNS_SECURE 7
 /*----- Value in opt.h for TCP_SND_QUEUELEN: (4*TCP_SND_BUF + (TCP_MSS - 1))/TCP_MSS -----*/
@@ -72,15 +76,15 @@
 /*----- Value in opt.h for TCPIP_THREAD_STACKSIZE: 0 -----*/
 #define TCPIP_THREAD_STACKSIZE 1024
 /*----- Value in opt.h for TCPIP_THREAD_PRIO: 1 -----*/
-#define TCPIP_THREAD_PRIO 48
+#define TCPIP_THREAD_PRIO 24
 /*----- Value in opt.h for TCPIP_MBOX_SIZE: 0 -----*/
-#define TCPIP_MBOX_SIZE 256
+#define TCPIP_MBOX_SIZE 6
 /*----- Value in opt.h for SLIPIF_THREAD_STACKSIZE: 0 -----*/
-#define SLIPIF_THREAD_STACKSIZE 2048
+#define SLIPIF_THREAD_STACKSIZE 1024
 /*----- Value in opt.h for SLIPIF_THREAD_PRIO: 1 -----*/
 #define SLIPIF_THREAD_PRIO 3
 /*----- Value in opt.h for DEFAULT_THREAD_STACKSIZE: 0 -----*/
-#define DEFAULT_THREAD_STACKSIZE 4098
+#define DEFAULT_THREAD_STACKSIZE 1024
 /*----- Value in opt.h for DEFAULT_THREAD_PRIO: 1 -----*/
 #define DEFAULT_THREAD_PRIO 3
 /*----- Value in opt.h for DEFAULT_UDP_RECVMBOX_SIZE: 0 -----*/
@@ -89,10 +93,16 @@
 #define DEFAULT_TCP_RECVMBOX_SIZE 6
 /*----- Value in opt.h for DEFAULT_ACCEPTMBOX_SIZE: 0 -----*/
 #define DEFAULT_ACCEPTMBOX_SIZE 6
+/*----- Default Value for LWIP_TCP_KEEPALIVE: 0 ---*/
+#define LWIP_TCP_KEEPALIVE 1
+/*----- Default Value for LWIP_SO_SNDTIMEO: 0 ---*/
+#define LWIP_SO_SNDTIMEO 1
+/*----- Default Value for LWIP_SO_RCVTIMEO: 0 ---*/
+#define LWIP_SO_RCVTIMEO 1
+/*----- Default Value for LWIP_SO_SNDRCVTIMEO_NONSTANDARD: 0 ---*/
+#define LWIP_SO_SNDRCVTIMEO_NONSTANDARD 1
 /*----- Value in opt.h for RECV_BUFSIZE_DEFAULT: INT_MAX -----*/
 #define RECV_BUFSIZE_DEFAULT 2000000000
-/*----- Default Value for LWIP_SNTP: 0 ---*/
-#define LWIP_SNTP 1
 /*----- Value in opt.h for LWIP_STATS: 1 -----*/
 #define LWIP_STATS 0
 /*----- Value in opt.h for CHECKSUM_GEN_IP: 1 -----*/

@@ -57,6 +57,8 @@
 
 /* External variables --------------------------------------------------------*/
 extern ETH_HandleTypeDef heth;
+extern CAN_HandleTypeDef hcan1;
+extern CAN_HandleTypeDef hcan2;
 extern TIM_HandleTypeDef htim4;
 extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart2_rx;
@@ -124,6 +126,48 @@ void DMA1_Stream5_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles CAN1 TX interrupts.
+  */
+void CAN1_TX_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_TX_IRQn 0 */
+
+  /* USER CODE END CAN1_TX_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  /* USER CODE BEGIN CAN1_TX_IRQn 1 */
+
+  /* USER CODE END CAN1_TX_IRQn 1 */
+}
+
+/**
+  * @brief This function handles CAN1 RX0 interrupts.
+  */
+void CAN1_RX0_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_RX0_IRQn 0 */
+
+  /* USER CODE END CAN1_RX0_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  /* USER CODE BEGIN CAN1_RX0_IRQn 1 */
+
+  /* USER CODE END CAN1_RX0_IRQn 1 */
+}
+
+/**
+  * @brief This function handles CAN1 SCE interrupt.
+  */
+void CAN1_SCE_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_SCE_IRQn 0 */
+
+  /* USER CODE END CAN1_SCE_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  /* USER CODE BEGIN CAN1_SCE_IRQn 1 */
+
+  /* USER CODE END CAN1_SCE_IRQn 1 */
+}
+
+/**
   * @brief This function handles EXTI line[9:5] interrupts.
   */
 void EXTI9_5_IRQHandler(void)
@@ -143,10 +187,10 @@ void EXTI9_5_IRQHandler(void)
 void TIM4_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM4_IRQn 0 */
-	Timer4->Status.UpdateInterrupt = false;
+
   /* USER CODE END TIM4_IRQn 0 */
   /* USER CODE BEGIN TIM4_IRQn 1 */
-	ComponentsTimeSynchronization();
+
   /* USER CODE END TIM4_IRQn 1 */
 }
 
@@ -182,27 +226,11 @@ void USART2_IRQHandler(void)
 void USART3_IRQHandler(void)
 {
   /* USER CODE BEGIN USART3_IRQn 0 */
-#ifdef SERIAL_PORT_UART_COMPONENT_ENABLE
-	SerialPortComponentIRQListener();
-#endif
+	xPortDirectlyIRQ(SerialPort, 0);
   /* USER CODE END USART3_IRQn 0 */
   /* USER CODE BEGIN USART3_IRQn 1 */
 
   /* USER CODE END USART3_IRQn 1 */
-}
-
-/**
-  * @brief This function handles EXTI line[15:10] interrupts.
-  */
-void EXTI15_10_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
-
-  /* USER CODE END EXTI15_10_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(AT86RF233_IRQ_Pin);
-  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
-  //SureFlapZigbeeAdapterEXTI_Interapt(&SureFlap.Zigbee);
-  /* USER CODE END EXTI15_10_IRQn 1 */
 }
 
 /**
@@ -248,17 +276,45 @@ void ETH_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles Ethernet wake-up interrupt through EXTI line 19.
+  * @brief This function handles CAN2 TX interrupts.
   */
-void ETH_WKUP_IRQHandler(void)
+void CAN2_TX_IRQHandler(void)
 {
-  /* USER CODE BEGIN ETH_WKUP_IRQn 0 */
+  /* USER CODE BEGIN CAN2_TX_IRQn 0 */
 
-  /* USER CODE END ETH_WKUP_IRQn 0 */
-  HAL_ETH_IRQHandler(&heth);
-  /* USER CODE BEGIN ETH_WKUP_IRQn 1 */
+  /* USER CODE END CAN2_TX_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan2);
+  /* USER CODE BEGIN CAN2_TX_IRQn 1 */
 
-  /* USER CODE END ETH_WKUP_IRQn 1 */
+  /* USER CODE END CAN2_TX_IRQn 1 */
+}
+
+/**
+  * @brief This function handles CAN2 RX0 interrupts.
+  */
+void CAN2_RX0_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN2_RX0_IRQn 0 */
+
+  /* USER CODE END CAN2_RX0_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan2);
+  /* USER CODE BEGIN CAN2_RX0_IRQn 1 */
+
+  /* USER CODE END CAN2_RX0_IRQn 1 */
+}
+
+/**
+  * @brief This function handles CAN2 SCE interrupt.
+  */
+void CAN2_SCE_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN2_SCE_IRQn 0 */
+
+  /* USER CODE END CAN2_SCE_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan2);
+  /* USER CODE BEGIN CAN2_SCE_IRQn 1 */
+
+  /* USER CODE END CAN2_SCE_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

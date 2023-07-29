@@ -23,7 +23,7 @@
 ******************************************************************************
 ** @attention
 **
-** Copyright (c) 2022 STMicroelectronics.
+** Copyright (c) 2023 STMicroelectronics.
 ** All rights reserved.
 **
 ** This software is licensed under terms that can be found in the LICENSE file
@@ -39,8 +39,8 @@ ENTRY(Reset_Handler)
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
 
-_Min_Heap_Size = 0x2000 ; /* required amount of heap */
-_Min_Stack_Size = 0x2000 ; /* required amount of stack */
+_Min_Heap_Size = 0x2000; /* required amount of heap */
+_Min_Stack_Size = 0x500; /* required amount of stack */
 
 /* Memories definition */
 MEMORY
@@ -186,12 +186,12 @@ SECTIONS
   /* User_heap_stack section, used to check that there is enough "RAM" Ram  type memory left */
   ._user_heap_stack :
   {
-    . = ALIGN(4);
+    . = ALIGN(8);
     PROVIDE ( end = . );
     PROVIDE ( _end = . );
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
-    . = ALIGN(4);
+    . = ALIGN(8);
   } >CCMRAM
 
   /* Remove information from the compiler libraries */

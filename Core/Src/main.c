@@ -19,11 +19,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "can.h"
 #include "crc.h"
 #include "dma.h"
 #include "i2c.h"
 #include "lwip.h"
 #include "rng.h"
+#include "rtc.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -31,13 +33,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "Components.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-//override RTOS heap - set "configAPPLICATION_ALLOCATED_HEAP=1" in project definitions
-uint8_t ucHeap[configTOTAL_HEAP_SIZE] __attribute__((section(".ccmram"))) = {0};
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -105,8 +106,11 @@ int main(void)
   MX_RNG_Init();
   MX_CRC_Init();
   MX_TIM2_Init();
+  MX_CAN1_Init();
+  MX_CAN2_Init();
+  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-  ComponentsInit(main);
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -115,7 +119,6 @@ int main(void)
 
   /* Start scheduler */
   osKernelStart();
-
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -124,7 +127,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  ComponentsHandler();
   }
   /* USER CODE END 3 */
 }
@@ -146,8 +148,9 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE|RCC_OSCILLATORTYPE_LSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 25;

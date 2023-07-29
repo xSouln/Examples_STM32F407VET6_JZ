@@ -92,15 +92,6 @@ void Error_Handler(void);
 #define USB_HS_DM_GPIO_Port GPIOB
 #define USB_HS_DP_Pin GPIO_PIN_15
 #define USB_HS_DP_GPIO_Port GPIOB
-#define AT86RF233_IRQ_Pin GPIO_PIN_12
-#define AT86RF233_IRQ_GPIO_Port GPIOD
-#define AT86RF233_IRQ_EXTI_IRQn EXTI15_10_IRQn
-#define AT86RF233_RST_Pin GPIO_PIN_13
-#define AT86RF233_RST_GPIO_Port GPIOD
-#define AT86RF233_SLP_TR_Pin GPIO_PIN_14
-#define AT86RF233_SLP_TR_GPIO_Port GPIOD
-#define AT86RF233_CS_Pin GPIO_PIN_15
-#define AT86RF233_CS_GPIO_Port GPIOD
 #define SDIO_D0_Pin GPIO_PIN_8
 #define SDIO_D0_GPIO_Port GPIOC
 #define SDIO_D1_Pin GPIO_PIN_9
@@ -141,6 +132,7 @@ void Error_Handler(void);
 #define I2C1_SCL_GPIO_Port GPIOB
 #define I2C1_SDA_Pin GPIO_PIN_9
 #define I2C1_SDA_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

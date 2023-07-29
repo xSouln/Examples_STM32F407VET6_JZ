@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2022 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -33,7 +33,7 @@
 
 /* Within 'USER CODE' section, code will be kept by default at each generation */
 /* USER CODE BEGIN 0 */
-#include "TCPServer/TCPServer_Component.h"
+
 /* USER CODE END 0 */
 
 /* Private define ------------------------------------------------------------*/
@@ -41,7 +41,7 @@
 #define TIME_WAITING_FOR_INPUT ( portMAX_DELAY )
 /* USER CODE BEGIN OS_THREAD_STACK_SIZE_WITH_RTOS */
 /* Stack size of the interface thread */
-#define INTERFACE_THREAD_STACK_SIZE ( 1024 )
+#define INTERFACE_THREAD_STACK_SIZE ( 350 )
 /* USER CODE END OS_THREAD_STACK_SIZE_WITH_RTOS */
 /* Network interface name */
 #define IFNAME0 's'
@@ -50,7 +50,6 @@
 /* ETH Setting  */
 #define ETH_DMA_TRANSMIT_TIMEOUT               ( 20U )
 #define ETH_TX_BUFFER_MAX             ((ETH_TX_DESC_CNT) * 2U)
-/* ETH_RX_BUFFER_SIZE parameter is defined in lwipopts.h */
 
 /* USER CODE BEGIN 1 */
 
@@ -73,7 +72,7 @@
        so that updated value will be generated in stm32xxxx_hal_conf.h
 
   2.a. Rx Buffers number must be between ETH_RX_DESC_CNT and 2*ETH_RX_DESC_CNT
-  2.b. Rx Buffers must have the same size: ETH_RX_BUFFER_SIZE, this value must
+  2.b. Rx Buffers must have the same size: ETH_RX_BUF_SIZE, this value must
        passed to ETH DMA in the init field (heth.Init.RxBuffLen)
   2.c  The RX Ruffers addresses and sizes must be properly defined to be aligned
        to L1-CACHE line size (32 bytes).
@@ -89,7 +88,7 @@ typedef enum
 typedef struct
 {
   struct pbuf_custom pbuf_custom;
-  uint8_t buff[(ETH_RX_BUFFER_SIZE + 31) & ~31] __ALIGNED(32);
+  uint8_t buff[(ETH_RX_BUF_SIZE + 31) & ~31] __ALIGNED(32);
 } RxBuff_t;
 
 /* Memory Pool Declaration */
@@ -614,10 +613,8 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef* ethHandle)
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
     /* Peripheral interrupt init */
-    HAL_NVIC_SetPriority(ETH_IRQn, 15, 0);
+    HAL_NVIC_SetPriority(ETH_IRQn, 7, 0);
     HAL_NVIC_EnableIRQ(ETH_IRQn);
-    HAL_NVIC_SetPriority(ETH_WKUP_IRQn, 10, 0);
-    HAL_NVIC_EnableIRQ(ETH_WKUP_IRQn);
   /* USER CODE BEGIN ETH_MspInit 1 */
 
   /* USER CODE END ETH_MspInit 1 */
@@ -653,8 +650,6 @@ void HAL_ETH_MspDeInit(ETH_HandleTypeDef* ethHandle)
 
     /* Peripheral interrupt Deinit*/
     HAL_NVIC_DisableIRQ(ETH_IRQn);
-
-    HAL_NVIC_DisableIRQ(ETH_WKUP_IRQn);
 
   /* USER CODE BEGIN ETH_MspDeInit 1 */
 
@@ -747,7 +742,7 @@ void ethernet_link_thread(void* argument)
 
   struct netif *netif = (struct netif *) argument;
 /* USER CODE BEGIN ETH link init */
-  //TCPServerComponentInit(ethernet_link_thread);
+
 /* USER CODE END ETH link init */
 
   for(;;)
@@ -795,17 +790,17 @@ void ethernet_link_thread(void* argument)
       MACConf.DuplexMode = duplex;
       MACConf.Speed = speed;
       HAL_ETH_SetMACConfig(&heth, &MACConf);
-      HAL_ETH_Start(&heth);
+      HAL_ETH_Start_IT(&heth);
       netif_set_up(netif);
       netif_set_link_up(netif);
     }
   }
 
 /* USER CODE BEGIN ETH link Thread core code for User BSP */
-  //TCPServerComponentHandler();
+
 /* USER CODE END ETH link Thread core code for User BSP */
 
-    osDelay(1);
+    osDelay(100);
   }
 }
 
@@ -821,7 +816,7 @@ void HAL_ETH_RxAllocateCallback(uint8_t **buff)
     /* Initialize the struct pbuf.
     * This must be performed whenever a buffer's allocated because it may be
     * changed by lwIP or the app, e.g., pbuf_free decrements ref. */
-    pbuf_alloced_custom(PBUF_RAW, 0, PBUF_REF, p, *buff, ETH_RX_BUFFER_SIZE);
+    pbuf_alloced_custom(PBUF_RAW, 0, PBUF_REF, p, *buff, ETH_RX_BUF_SIZE);
   }
   else
   {
@@ -878,9 +873,6 @@ void HAL_ETH_TxFreeCallback(uint32_t * buff)
 }
 
 /* USER CODE BEGIN 8 */
-err_t ethernetif_output(struct netif *netif, struct pbuf *p)
-{
-	return low_level_output(netif, p);
-}
+
 /* USER CODE END 8 */
 
