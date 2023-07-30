@@ -16,7 +16,7 @@ extern "C" {
 
 //------------------------------------------------------------------------------
 
-enum
+typedef enum
 {
 #if USART1_BASE && USART1_ENABLE
 	xUSART1,
@@ -43,7 +43,8 @@ enum
 #endif
 
 	xUSART_MAX_NUMBER_OF_PORTS
-};
+
+} xUSART_Numbers;
 //==============================================================================
 #ifdef __cplusplus
 }

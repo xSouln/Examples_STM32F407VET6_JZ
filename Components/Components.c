@@ -4,8 +4,8 @@
 #include "Components.h"
 #include "main.h"
 #include "Common/xList.h"
-#include "TransferLayer/Adapters/Terminal-TxTransferLayerAdapter.h"
-#include "TransferLayer/Adapters/Terminal-RxTransferLayerAdapter.h"
+#include "Templates/Adapters/Terminal-TransferLayer/Terminal-TxTransferLayerAdapter.h"
+#include "Templates/Adapters/Terminal-TransferLayer/Terminal-RxTransferLayerAdapter.h"
 #include "Abstractions/xTxRequest/xTxRequest.h"
 //==============================================================================
 //defines:

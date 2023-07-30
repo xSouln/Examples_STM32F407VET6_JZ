@@ -226,8 +226,8 @@ xResult LWIP_NetTcpServerComponentInit(void* parent)
 		{
 			.Adapter = &LWIP_NetPortAdapter,
 			.Init = &netPortInit,
-			.Initializer = LWIP_NetPortAdapterInit
-		}
+		},
+		.AdapterInitializer = LWIP_NetPortAdapterInit
 	};
 	xPortInit(&ServerPort, &port_init);
 

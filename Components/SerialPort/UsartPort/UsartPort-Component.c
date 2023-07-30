@@ -153,8 +153,8 @@ xResult UsartPortComponentInit(void* parent)
 		.AdapterInit =
 		{
 			.Adapter = PrivateUsartPortAdapter,
-			.Initializer = UsartPortAdapterInit
-		}
+		},
+		.AdapterInitializer = UsartPortAdapterInit
 	};
 
 	for (int i = 0; i < SERIAL_PORTS_COUNT; i++)

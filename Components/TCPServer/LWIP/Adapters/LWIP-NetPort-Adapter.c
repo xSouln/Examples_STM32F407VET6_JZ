@@ -54,54 +54,54 @@ static void PrivateIRQ(xPortT* port, void* arg)
 
 }
 //------------------------------------------------------------------------------
-static xResult PrivateRequestListener(xPortT* port, xPortRequestSelector selector, void* arg)
+static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector selector, void* arg)
 {
 	register LWIP_NetPortAdapterT* adapter = (LWIP_NetPortAdapterT*)port->Adapter.Content;
 	xNetSocketT* socket = port->Binding;
 
 	switch ((uint32_t)selector)
 	{
-		case xPortRequestUpdateTxStatus:
+		case xPortAdapterRequestUpdateTxStatus:
 			port->Tx.IsEnable = socket != 0 && (int)socket->Handle != -1;
 			break;
 
-		case xPortRequestUpdateRxStatus:
+		case xPortAdapterRequestUpdateRxStatus:
 			port->Rx.IsEnable = socket != 0 && (int)socket->Handle != -1;
 			break;
 
-		case xPortRequestGetRxBuffer:
+		case xPortAdapterRequestGetRxBuffer:
 			*(uint8_t**)arg = adapter->RxReceiver.Buffer;
 			break;
 
-		case xPortRequestGetRxBufferSize:
+		case xPortAdapterRequestGetRxBufferSize:
 			*(uint32_t*)arg = adapter->RxReceiver.BufferSize;
 			break;
 
-		case xPortRequestGetRxBufferFreeSize:
+		case xPortAdapterRequestGetRxBufferFreeSize:
 			*(uint32_t*)arg = adapter->RxReceiver.BufferSize - adapter->RxReceiver.BytesReceived;
 			break;
 
-		case xPortRequestClearRxBuffer:
+		case xPortAdapterRequestClearRxBuffer:
 			adapter->RxReceiver.BytesReceived = 0;
 			break;
 
-		case xPortRequestGetTxBufferSize:
+		case xPortAdapterRequestGetTxBufferSize:
 			*(uint32_t*)arg = socket != 0 && (int)socket->Handle != -1 ? 1000 : 0;
 			break;
 
-		case xPortRequestGetTxBufferFreeSize:
+		case xPortAdapterRequestGetTxBufferFreeSize:
 			*(uint32_t*)arg = socket != 0 && (int)socket->Handle != -1 ? 1000 : 0;
 			break;
 
-		case xPortRequestSetBinding:
+		case xPortAdapterRequestSetBinding:
 			port->Binding = arg;
 			break;
 
-		case xPortRequestStartTransmission:
+		case xPortAdapterRequestStartTransmission:
 			xSemaphoreTake(adapter->TransactionMutex, portMAX_DELAY);
 			break;
 
-		case xPortRequestEndTransmission:
+		case xPortAdapterRequestEndTransmission:
 			if (socket->State == xNetSocketEstablished)
 			{
 				xNetTransmit(socket, adapter->TxBuffer.Data, adapter->TxBuffer.DataSize);
@@ -116,7 +116,7 @@ static xResult PrivateRequestListener(xPortT* port, xPortRequestSelector selecto
 	return xResultAccept;
 }
 //------------------------------------------------------------------------------
-static void PrivateEventListener(xPortT* port, xPortEventSelector selector, void* arg)
+static void PrivateEventListener(xPortT* port, xPortAdapterEventSelector selector, void* arg)
 {
 	//register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
 
@@ -164,16 +164,16 @@ static void PrivateRxReceiverEventListener(xRxReceiverT* receiver, xRxReceiverEv
 //==============================================================================
 //initializations:
 
-static xPortInterfaceT PrivatePortInterface =
+static xPortAdapterInterfaceT PrivatePortInterface =
 {
-	.Handler = (xPortHandlerT)PrivateHandler,
-	.IRQ = (xPortIRQT)PrivateIRQ,
+	.Handler = (xPortAdapterHandlerT)PrivateHandler,
+	.IRQ = (xPortAdapterIRQT)PrivateIRQ,
 
-	.RequestListener = (xPortRequestListenerT)PrivateRequestListener,
-	.EventListener = (xPortEventListenerT)PrivateEventListener,
+	.RequestListener = (xPortAdapterRequestListenerT)PrivateRequestListener,
+	.EventListener = (xPortAdapterEventListenerT)PrivateEventListener,
 
-	.Transmit = (xPortTransmitActionT)PrivateTransmit,
-	.Receive = (xPortReceiveActionT)PrivateReceive
+	.Transmit = (xPortAdapterTransmitActionT)PrivateTransmit,
+	.Receive = (xPortAdapterReceiveActionT)PrivateReceive
 };
 //------------------------------------------------------------------------------
 static xRxReceiverInterfaceT PrivateRxReceiverInterface =
