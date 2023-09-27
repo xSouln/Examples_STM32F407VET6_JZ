@@ -18,6 +18,7 @@ extern "C" {
 //defines:
 
 #define xUSART_USER_CONFIG 1
+#define FREERTOS_USED 1
 //==============================================================================
 //types:
 

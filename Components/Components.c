@@ -108,7 +108,7 @@ void ComponentsEventListener(ObjectBaseT* object, int selector, void* arg)
  */
 void ComponentsHandler()
 {
-	UsartPortComponentHandler();
+	UsartPortsComponentHandler();
 	TerminalComponentHandler();
 	LWIP_NetTcpServerComponentHandler();
 	//ADC_ComponentHandler();
@@ -158,7 +158,7 @@ void ComponentsHandler()
 void ComponentsTimeSynchronization()
 {
 	TerminalComponentTimeSynchronization();
-	UsartPortComponentTimeSynchronization();
+	UsartPortsComponentTimeSynchronization();
 	//ADC_ComponentTimeSynchronization();
 }
 //------------------------------------------------------------------------------
@@ -209,7 +209,7 @@ xResult ComponentsInit(void* parent)
 
 	xSystemInit(parent);
 
-	UsartPortComponentInit(parent);
+	UsartPortsComponentInit(parent);
 	LWIP_NetTcpServerComponentInit(parent);
 
 	xTxRequestControlInit(&TxRequestControl, parent);

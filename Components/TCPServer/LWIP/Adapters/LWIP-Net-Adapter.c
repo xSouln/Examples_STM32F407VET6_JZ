@@ -19,7 +19,7 @@
 //variables:
 
 static int keepAlive = 1;
-static int keepIdle = 30;
+static int keepIdle = 1;
 static int keepInterval = 1;
 static int keepCount = 2;
 static xNetNTP_PacketT NTP_Packet;
@@ -285,16 +285,16 @@ static xResult PrivateRequestListener(void* object, xNetAdapterRequestSelector s
 	{
 		case xNetAdapterInitTcpSocket:
 		{
-			xNetSocketT* sock = arg;
+			xNetSocketT* netSocket = arg;
 
-			if (sock->State != xNetSocketIdle)
+			if (netSocket->State != xNetSocketIdle)
 			{
 				return xResultError;
 			}
 
-			sock->Handle = (void*)socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+			int socketNumber = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
 
-			if ((int)sock->Handle < 0)
+			if (socketNumber < 0)
 			{
 				return xResultError;
 			}
@@ -302,11 +302,12 @@ static xResult PrivateRequestListener(void* object, xNetAdapterRequestSelector s
 			struct timeval timeout = { 0 };
 			timeout.tv_sec = 3000;
 
-			setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
-			setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
+			setsockopt(socketNumber, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+			setsockopt(socketNumber, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout));
 
-			sock->Net = object;
-			sock->State = xNetSocketInit;
+			netSocket->Handle = (void*)socketNumber;
+			netSocket->Net = object;
+			netSocket->State = xNetSocketInit;
 		}
 		break;
 
@@ -417,7 +418,7 @@ static xResult PrivateRequestListener(void* object, xNetAdapterRequestSelector s
 
 			if (net->DHCP.State == xNetDHCP_StateIdle)
 			{
-				net->DHCP.Result = xResulInProgress;
+				net->DHCP.Result = xResultInProgress;
 				net->DHCP.TimeOut = request->TimeOut;
 				net->DHCP.State = xNetDHCP_Starting;
 
@@ -523,6 +524,7 @@ static int PrivateReceive(xNetSocketT* socket, void* data, int size)
 
 		if (received < 0)
 		{
+			PrivateCloseSocket(socket);
 			return -xResultError;
 		}
 		

@@ -12,7 +12,7 @@ extern "C" {
 //==============================================================================
 //import:
 
-extern DMA_HandleTypeDef hdma_usart3_rx;
+extern DMA_HandleTypeDef hdma_usart1_rx;
 //==============================================================================
 //defines:
 
@@ -49,16 +49,16 @@ enum
 #define SERIAL1_RX_CIRCLE_BUF_SIZE_MASK 0x1ff
 #define SERIAL1_RX_OBJECT_BUF_SIZE 0x1ff
 #define SERIAL1_TX_CIRCLE_BUF_SIZE_MASK 0x3ff
-#define SERIAL1_REG USART3
-#define SERIAL1_RX_DMA hdma_usart3_rx
+#define SERIAL1_REG USART1
+#define SERIAL1_RX_DMA hdma_usart1_rx
 #endif
 
 #ifdef SERIAL2_ENABLE
 #define SERIAL2_RX_CIRCLE_BUF_SIZE_MASK 0x1ff
 #define SERIAL2_RX_OBJECT_BUF_SIZE 0x1ff
 #define SERIAL2_TX_CIRCLE_BUF_SIZE_MASK 0x3ff
-#define SERIAL2_REG USART3
-#define SERIAL2_RX_DMA hdma_usart3_rx
+#define SERIAL2_REG USART2
+#define SERIAL2_RX_DMA hdma_usart2_rx
 #endif
 
 #ifdef SERIAL3_ENABLE

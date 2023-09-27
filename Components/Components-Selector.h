@@ -13,7 +13,7 @@ extern "C" {
 //components:
 
 #include "Components/Terminal/Terminal-Component.h"
-#include "SerialPort/UsartPort/UsartPort-Component.h"
+#include "Components/USART-SerialPorts/UsartPort-Component.h"
 #include "TcpServer/LWIP/LWIP-NetTcpServer-Component.h"
 //==============================================================================
 //defines:
