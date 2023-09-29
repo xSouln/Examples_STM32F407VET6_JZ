@@ -15,7 +15,7 @@ extern "C" {
 #define USART1_ENABLE 1
 #define USART2_ENABLE 1
 #define USART3_ENABLE 1
-
+#define USART6_ENABLE 1
 //------------------------------------------------------------------------------
 
 typedef enum
