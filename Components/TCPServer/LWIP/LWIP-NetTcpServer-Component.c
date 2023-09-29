@@ -57,17 +57,13 @@ static void PrivateEventListener(ObjectBaseT* object, int selector, void* arg)
 		{
 			case xPortObjectEventRxFoundEndLine:
 			{
-				xPortEventDataPacketArgT* packet = arg;
-
-				TerminalReceiveData(port, packet->Data, packet->Size);
+				TerminalReceiveData(port, arg);
 			}
 			break;
 
 			case xPortObjectEventRxBufferIsFull:
 			{
-				xPortEventDataPacketArgT* packet = arg;
-
-				TerminalReceiveData(port, packet->Data, packet->Size);
+				TerminalReceiveData(port, arg);
 			}
 			break;
 

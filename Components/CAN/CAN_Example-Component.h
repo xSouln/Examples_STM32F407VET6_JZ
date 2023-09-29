@@ -1,6 +1,8 @@
 //==============================================================================
-#ifndef _COMPONENTS_SELECTOR_H_
-#define _COMPONENTS_SELECTOR_H_
+//header:
+
+#ifndef _CAN_EXAMPLE_COMPONENT_H_
+#define _CAN_EXAMPLE_COMPONENT_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -8,22 +10,27 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Peripherals/xTimer/xTimer.h"
-#include "Peripherals/xUSART/xUSART.h"
-#include "Peripherals/CAN/xCAN.h"
-//==============================================================================
-//components:
-
-#include "Components/Terminal/Terminal-Component.h"
-#include "Components/USART-SerialPorts/UsartPort-Component.h"
-#include "CAN/CAN_Example-Component.h"
-#include "TcpServer/LWIP/LWIP-NetTcpServer-Component.h"
+#include "Components-Types.h"
 //==============================================================================
 //defines:
 
 
 //==============================================================================
-//macros:
+//functions:
+
+xResult CAN_ExampleComponentInit(void* parent);
+void CAN_ExampleComponentHandler();
+void CAN_ExampleComponentTimeSynchronization();
+//==============================================================================
+//import:
+
+
+//==============================================================================
+//override:
+
+
+//==============================================================================
+//export:
 
 
 //==============================================================================
@@ -31,5 +38,4 @@ extern "C" {
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_COMPONENTS_SELECTOR_H_
-
+#endif //_CAN_EXAMPLE_COMPONENT_H_

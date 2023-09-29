@@ -9,6 +9,7 @@ extern "C" {
 //includes:
 
 #include "FreeRTOS.h"
+#include "cmsis_os2.h"
 #include "task.h"
 #include "semphr.h"
 
@@ -18,6 +19,9 @@ extern "C" {
 //defines:
 
 #define xUSART_USER_CONFIG 1
+#define xTIMER_USER_CONFIG 1
+#define xCAN_USER_CONFIG 1
+
 #define FREERTOS_USED 1
 //==============================================================================
 //types:

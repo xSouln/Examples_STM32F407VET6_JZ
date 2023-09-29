@@ -212,6 +212,8 @@ xResult ComponentsInit(void* parent)
 	UsartPortsComponentInit(parent);
 	LWIP_NetTcpServerComponentInit(parent);
 
+	CAN_ExampleComponentInit(parent);
+
 	xTxRequestControlInit(&TxRequestControl, parent);
 	TerminalAddObject(&TxRequestControl.TerminalObject);
 

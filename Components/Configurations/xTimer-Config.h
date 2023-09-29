@@ -1,35 +1,34 @@
 //==============================================================================
-#ifndef _COMPONENTS_SELECTOR_H_
-#define _COMPONENTS_SELECTOR_H_
+#ifndef _X_TIMER_CONFIG_H_
+#define _X_TIMER_CONFIG_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 //==============================================================================
 //includes:
 
-#include "Peripherals/xTimer/xTimer.h"
-#include "Peripherals/xUSART/xUSART.h"
-#include "Peripherals/CAN/xCAN.h"
-//==============================================================================
-//components:
 
-#include "Components/Terminal/Terminal-Component.h"
-#include "Components/USART-SerialPorts/UsartPort-Component.h"
-#include "CAN/CAN_Example-Component.h"
-#include "TcpServer/LWIP/LWIP-NetTcpServer-Component.h"
 //==============================================================================
 //defines:
 
 
 //==============================================================================
-//macros:
+//types:
 
+typedef enum
+{
+	xTimer2,
+	xTimer4,
 
+	xTimersCount
+
+} xTimerNumber;
+//------------------------------------------------------------------------------
+#define xTimerHandleT REG_TIM_T
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_COMPONENTS_SELECTOR_H_
-
+#endif //_X_TIMER_CONFIG_H_
