@@ -68,11 +68,11 @@ xTxRequestT TxRequest1 =
 //==============================================================================
 //functions:
 
-static void PrivateTerminalComponentEventListener(TerminalT* terminal, TerminalSysEventSelector selector, void* arg)
+static void privateTerminalComponentEventListener(xTerminalT* terminal, xTerminalEventSelector selector, void* arg)
 {
 	switch((int)selector)
 	{
-		case TerminalSysEventTime_1000ms:
+		case xTerminalEventTime_1000ms:
 			//xTxTransferSetTxLine(&Terminal.Transfer, &SerialPortUART.Tx);
 			//xTxTransferStart(&Terminal.Transfer, "qwerty", 6);
 			break;
@@ -97,8 +97,8 @@ void ComponentsEventListener(ObjectBaseT* object, int selector, void* arg)
 
 	switch(object->Description->ObjectId)
 	{
-		case TERMINAL_OBJECT_ID:
-			PrivateTerminalComponentEventListener((TerminalT*)object, selector, arg);
+		case xTERMINAL_UID:
+			privateTerminalComponentEventListener((xTerminalT*)object, selector, arg);
 			break;
 	}
 }
@@ -112,6 +112,7 @@ void ComponentsHandler()
 	TerminalComponentHandler();
 	LWIP_NetTcpServerComponentHandler();
 	//ADC_ComponentHandler();
+	LocalDeviceComponentHandler();
 
 	xTxRequestHandler(&TxRequestControl);
 
@@ -193,7 +194,7 @@ static const xRxRequestT RxRequests[] =
 	{ 0 }
 };
 //------------------------------------------------------------------------------
-static TerminalObjectT TerminalObject =
+static xTerminalObjectT TerminalObject =
 {
 	.Requests = RxRequests
 };
@@ -205,6 +206,8 @@ static TerminalObjectT TerminalObject =
  */
 xResult ComponentsInit(void* parent)
 {
+	xSystemLayersInit();
+
 	TerminalComponentInit(parent);
 
 	xSystemInit(parent);
@@ -212,7 +215,8 @@ xResult ComponentsInit(void* parent)
 	UsartPortsComponentInit(parent);
 	LWIP_NetTcpServerComponentInit(parent);
 
-	CAN_ExampleComponentInit(parent);
+	//CAN_ExampleComponentInit(parent);
+	LocalDeviceComponentInit(parent);
 
 	xTxRequestControlInit(&TxRequestControl, parent);
 	TerminalAddObject(&TxRequestControl.TerminalObject);
@@ -242,18 +246,8 @@ xResult ComponentsInit(void* parent)
 	xTransferLayerInit(&RxTransferLayer,  &transferLayerInit);
 	xTransferLayerSetBinding(&RxTransferLayer, &SerialPort);
 
-	TerminalAddObjectList(&TxTransferLayer.Objects);
-	TerminalAddObjectList(&RxTransferLayer.Objects);
-
-	TerminalRemoveObjectList(&TxTransferLayer.Objects);
-	TerminalRemoveObjectList(&RxTransferLayer.Objects);
-
-	TerminalAddObjectList(&TxTransferLayer.Objects);
-	TerminalAddObjectList(&RxTransferLayer.Objects);
-
-	TerminalRemoveObjectList(&TxTransferLayer.Objects);
-	TerminalAddObjectList(&TxTransferLayer.Objects);
-
+	TerminalAddGroup(&TxTransferLayer.Objects);
+	TerminalAddGroup(&RxTransferLayer.Objects);
 	TerminalAddObject(&TerminalObject);
 
 	return xResultAccept;

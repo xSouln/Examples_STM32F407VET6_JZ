@@ -1,6 +1,8 @@
 //==============================================================================
-#ifndef _COMPONENTS_SELECTOR_H_
-#define _COMPONENTS_SELECTOR_H_
+//header:
+
+#ifndef _DEVICE_CONTROL_COMPONENT_H_
+#define _DEVICE_CONTROL_COMPONENT_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -8,28 +10,36 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Peripherals/xTimer/xTimer.h"
-#include "Peripherals/xUSART/xUSART.h"
-#include "Peripherals/CAN/xCAN.h"
-//==============================================================================
-/// @defgroup SelectedComponents SelectedComponents
-/// @brief подключенные компоненты
-/// @{
-
-#include "Components/Terminal/Terminal-Component.h"
-#include "Components/USART-Ports/USART-Ports-Component.h"
-#include "CAN/CAN_Example-Component.h"
-#include "TcpServer/LWIP/LWIP-NetTcpServer-Component.h"
-#include "DeviceControl/DeviceControl-Component.h"
-#include "Devices/LoaclDevice/LocalDevice-Component.h"
-
-/// @}
+#include "Components-Types.h"
+#include "DeviceControl-ComponentConfig.h"
 //==============================================================================
 //defines:
 
 
 //==============================================================================
-//macros:
+//types:
+
+typedef struct
+{
+	void* Parent;
+
+} DeviceControlComponentInitT;
+//==============================================================================
+//functions:
+
+xResult DeviceControlComponentInit(void* parent);
+void DeviceControlComponentHandler();
+void DeviceControlComponentTimeSynchronization();
+//==============================================================================
+//import:
+
+
+//==============================================================================
+//override:
+
+
+//==============================================================================
+//export:
 
 
 //==============================================================================
@@ -37,5 +47,4 @@ extern "C" {
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_COMPONENTS_SELECTOR_H_
-
+#endif //_DEVICE_CONTROL_COMPONENT_H_

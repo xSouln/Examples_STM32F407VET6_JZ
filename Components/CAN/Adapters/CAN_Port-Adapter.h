@@ -63,6 +63,19 @@ typedef struct
 	uint16_t TxBufferSizeMask;
 
 } CAN_PortAdapterInitT;
+
+typedef struct
+{
+	uint8_t ProtocolType : 4;
+	uint8_t DataLength : 4;
+
+	uint8_t FrameID;
+
+	uint16_t SenderId;
+
+	uint8_t Data[4];
+
+} CAN_SegmentT;
 //==============================================================================
 //functions:
 

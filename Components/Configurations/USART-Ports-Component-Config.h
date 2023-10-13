@@ -1,6 +1,6 @@
 //==============================================================================
-#ifndef _USART_PORT_COMPONENT_CONFIG_H_
-#define _USART_PORT_COMPONENT_CONFIG_H_
+#ifndef _USART_PORTS_COMPONENT_CONFIG_H_
+#define _USART_PORTS_COMPONENT_CONFIG_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -122,4 +122,4 @@ extern DMA_HandleTypeDef hdma_usart6_rx;
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_USART_PORT_COMPONENT_CONFIG_H_
+#endif //_USART_PORTS_COMPONENT_CONFIG_H_

@@ -102,7 +102,7 @@
 					<sourceEntries>
 						<entry excluding="Components|xLib|xLib/Templates/Adapters/Terminal-TransferLayer" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
-						<entry excluding="Peripherals/xUSART/Adapters|Peripherals/xUSART/Adapters/STM32F4xx|Components/USART-SerialPorts/Adapters/STM32H7xx|Components/USART-SerialPorts/Adapters/STM32F1xx|Drivers|Templates|Drivers/OV2640|Registers/registers_stm32h7xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xLib"/>
+						<entry excluding="Components/USART-Ports/Adapters/STM32H7xx|Components/USART-Ports/Adapters/STM32F1xx|Peripherals/xUSART/Adapters|Peripherals/xUSART/Adapters/STM32F4xx|Components/USART-SerialPorts/Adapters/STM32H7xx|Components/USART-SerialPorts/Adapters/STM32F1xx|Drivers|Templates|Drivers/OV2640|Registers/registers_stm32h7xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xLib"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xLib/Templates/Adapters/Terminal-TransferLayer"/>
 					</sourceEntries>
 				</configuration>
@@ -197,6 +197,9 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.572019247" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec"/>
 						</toolChain>
 					</folderInfo>
+					<sourceEntries>
+						<entry excluding="xLib/Components/USART-Ports/Adapters/STM32H7xx|xLib/Components/USART-Ports/Adapters/STM32F1xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
