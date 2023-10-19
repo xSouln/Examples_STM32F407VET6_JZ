@@ -112,7 +112,6 @@ void ComponentsHandler()
 	TerminalComponentHandler();
 	LWIP_NetTcpServerComponentHandler();
 	//ADC_ComponentHandler();
-	LocalDeviceComponentHandler();
 
 	xTxRequestHandler(&TxRequestControl);
 
@@ -215,7 +214,6 @@ xResult ComponentsInit(void* parent)
 	UsartPortsComponentInit(parent);
 	LWIP_NetTcpServerComponentInit(parent);
 
-	//CAN_ExampleComponentInit(parent);
 	LocalDeviceComponentInit(parent);
 
 	xTxRequestControlInit(&TxRequestControl, parent);

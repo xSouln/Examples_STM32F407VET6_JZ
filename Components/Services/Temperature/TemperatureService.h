@@ -9,6 +9,7 @@ extern "C" {
 //includes:
 
 #include "Abstractions/xDevice/xService.h"
+#include "TemperatureService-AdapterBase.h"
 //==============================================================================
 /// @defgroup xServices temperature service types
 /// @brief функции предостовляемые TemperatureService.c
@@ -18,10 +19,13 @@ typedef struct
 {
 	xServiceT Base;
 
+	TemperatureServiceAdapterBaseT Adapter;
+
 	float Temperature;
 
 } TemperatureServiceT;
 //------------------------------------------------------------------------------
+
 typedef struct
 {
 	xServiceInitT Base;

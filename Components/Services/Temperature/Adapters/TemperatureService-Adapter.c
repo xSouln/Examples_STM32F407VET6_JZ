@@ -17,12 +17,12 @@
 //==============================================================================
 //functions:
 
-static void PrivateHandler(xServiceT* service)
+static void PrivateHandler(TemperatureServiceT* service)
 {
 
 }
 //------------------------------------------------------------------------------
-static xResult PrivateRequestListener(xServiceT* service, xServiceAdapterRequestSelector selector, void* arg)
+static xResult PrivateRequestListener(TemperatureServiceT* service, TemperatureServiceAdapterRequestSelector selector, void* arg)
 {
 	switch ((uint32_t)selector)
 	{
@@ -33,7 +33,7 @@ static xResult PrivateRequestListener(xServiceT* service, xServiceAdapterRequest
 	return xResultAccept;
 }
 //------------------------------------------------------------------------------
-static void PrivateEventListener(xServiceT* service, xServiceAdapterEventSelector selector, void* arg)
+static void PrivateEventListener(TemperatureServiceT* service, TemperatureServiceAdapterEventSelector selector, void* arg)
 {
 	//register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
 
@@ -45,12 +45,12 @@ static void PrivateEventListener(xServiceT* service, xServiceAdapterEventSelecto
 //==============================================================================
 //initializations:
 
-static xServiceAdapterInterfaceT privateInterface =
+static TemperatureServiceAdapterInterfaceT privateInterface =
 {
-	.Handler = (xServiceAdapterHandlerT)PrivateHandler,
+	.Handler = (TemperatureServiceAdapterHandlerT)PrivateHandler,
 
-	.RequestListener = (xServiceAdapterRequestListenerT)PrivateRequestListener,
-	.EventListener = (xServiceAdapterEventListenerT)PrivateEventListener,
+	.RequestListener = (TemperatureServiceAdapterRequestListenerT)PrivateRequestListener,
+	.EventListener = (TemperatureServiceAdapterEventListenerT)PrivateEventListener,
 };
 //------------------------------------------------------------------------------
 xResult TemperatureServiceAdapterInit(TemperatureServiceT* service,
@@ -59,9 +59,9 @@ xResult TemperatureServiceAdapterInit(TemperatureServiceT* service,
 {
 	if (service && init)
 	{
-		service->Base.Adapter.Content = adapter;
-		service->Base.Adapter.Interface = &privateInterface;
-		service->Base.Adapter.Description = nameof(TemperatureServiceAdapterT);
+		service->Adapter.Content = adapter;
+		service->Adapter.Interface = &privateInterface;
+		service->Adapter.Description = nameof(TemperatureServiceAdapterT);
 
 		return xResultAccept;
 	}

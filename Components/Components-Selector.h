@@ -20,7 +20,6 @@ extern "C" {
 #include "Components/USART-Ports/USART-Ports-Component.h"
 #include "CAN/CAN_Example-Component.h"
 #include "TcpServer/LWIP/LWIP-NetTcpServer-Component.h"
-#include "DeviceControl/DeviceControl-Component.h"
 #include "Devices/LoaclDevice/LocalDevice-Component.h"
 
 /// @}
