@@ -18,22 +18,33 @@ static const ObjectDescriptionT privateObjectDescription =
 //==============================================================================
 //functions:
 
-static void PrivateHandler(TemperatureServiceT* service)
+static void privateHandler(TemperatureServiceT* service)
 {
 	service->Adapter.Interface->Handler((void*)service);
 }
 //------------------------------------------------------------------------------
-static xResult PrivateRequestListener(TemperatureServiceT* service, xServiceAdapterRequestSelector selector, void* arg)
+static xResult privateRequestListener(TemperatureServiceT* service, xServiceAdapterRequestSelector selector, void* arg)
 {
-	switch ((uint32_t)selector)
+	if (selector > xServiceBaseRequestOffset && service->Base.Info.Type != xServiceTypeTemperatureControl)
 	{
+		return xResultInvalidRequest;
+	}
+
+	switch ((int)selector)
+	{
+		case TemperatureServiceRequestGetTemperature:
+		{
+			*(float*)arg = service->Temperature;
+			break;
+		}
+
 		default : return xResultRequestIsNotFound;
 	}
 
 	return xResultAccept;
 }
 //------------------------------------------------------------------------------
-static void PrivateEventListener(TemperatureServiceT* service, xServiceAdapterEventSelector selector, void* arg)
+static void privateEventListener(TemperatureServiceT* service, xServiceAdapterEventSelector selector, void* arg)
 {
 	switch((int)selector)
 	{
@@ -45,10 +56,10 @@ static void PrivateEventListener(TemperatureServiceT* service, xServiceAdapterEv
 
 static xServiceAdapterInterfaceT privateInterface =
 {
-	.Handler = (xServiceAdapterHandlerT)PrivateHandler,
+	.Handler = (xServiceAdapterHandlerT)privateHandler,
 
-	.RequestListener = (xServiceAdapterRequestListenerT)PrivateRequestListener,
-	.EventListener = (xServiceAdapterEventListenerT)PrivateEventListener,
+	.RequestListener = (xServiceAdapterRequestListenerT)privateRequestListener,
+	.EventListener = (xServiceAdapterEventListenerT)privateEventListener,
 };
 //------------------------------------------------------------------------------
 

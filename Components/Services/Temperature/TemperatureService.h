@@ -11,9 +11,22 @@ extern "C" {
 #include "Abstractions/xDevice/xService.h"
 #include "TemperatureService-AdapterBase.h"
 //==============================================================================
+//includes:
+
+#define TEMPERATURE_SERVICE_UID 0x5C78700
+//==============================================================================
 /// @defgroup xServices temperature service types
 /// @brief функции предостовляемые TemperatureService.c
 /// @{
+
+typedef enum
+{
+	TemperatureServiceRequestIdle = xServiceBaseRequestOffset,
+
+	TemperatureServiceRequestGetTemperature
+
+} TemperatureServiceRequests;
+//------------------------------------------------------------------------------
 
 typedef struct
 {

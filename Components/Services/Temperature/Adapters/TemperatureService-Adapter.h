@@ -21,6 +21,15 @@ typedef struct
 	SemaphoreHandle_t TransactionMutex;
 #endif
 
+	uint32_t TimeStamp;
+
+} TemperatureServiceAdapterInternalT;
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	TemperatureServiceAdapterInternalT Internal;
+
 } TemperatureServiceAdapterT;
 //------------------------------------------------------------------------------
 typedef struct

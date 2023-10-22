@@ -1,6 +1,8 @@
 //==============================================================================
 //includes:
 
+#include <stdlib.h>
+#include "Abstractions/xSystem/xSystem.h"
 #include "TemperatureService-Adapter.h"
 //==============================================================================
 //defines:
@@ -17,12 +19,21 @@
 //==============================================================================
 //functions:
 
-static void PrivateHandler(TemperatureServiceT* service)
+static void privateHandler(TemperatureServiceT* service)
 {
+	TemperatureServiceAdapterT* adapter = service->Adapter.Content;
 
+	uint32_t totalTime = xSystemGetTime(service);
+
+	if (adapter->Internal.TimeStamp - totalTime > 500)
+	{
+		adapter->Internal.TimeStamp = totalTime;
+
+		service->Temperature = 10.0f + (float)(rand() & 0x3fff) / 1000;
+	}
 }
 //------------------------------------------------------------------------------
-static xResult PrivateRequestListener(TemperatureServiceT* service, TemperatureServiceAdapterRequestSelector selector, void* arg)
+static xResult privateRequestListener(TemperatureServiceT* service, int selector, void* arg)
 {
 	switch ((uint32_t)selector)
 	{
@@ -33,7 +44,7 @@ static xResult PrivateRequestListener(TemperatureServiceT* service, TemperatureS
 	return xResultAccept;
 }
 //------------------------------------------------------------------------------
-static void PrivateEventListener(TemperatureServiceT* service, TemperatureServiceAdapterEventSelector selector, void* arg)
+static void privateEventListener(TemperatureServiceT* service, TemperatureServiceAdapterEventSelector selector, void* arg)
 {
 	//register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
 
@@ -47,10 +58,10 @@ static void PrivateEventListener(TemperatureServiceT* service, TemperatureServic
 
 static TemperatureServiceAdapterInterfaceT privateInterface =
 {
-	.Handler = (TemperatureServiceAdapterHandlerT)PrivateHandler,
+	.Handler = (TemperatureServiceAdapterHandlerT)privateHandler,
 
-	.RequestListener = (TemperatureServiceAdapterRequestListenerT)PrivateRequestListener,
-	.EventListener = (TemperatureServiceAdapterEventListenerT)PrivateEventListener,
+	.RequestListener = (TemperatureServiceAdapterRequestListenerT)privateRequestListener,
+	.EventListener = (TemperatureServiceAdapterEventListenerT)privateEventListener,
 };
 //------------------------------------------------------------------------------
 xResult TemperatureServiceAdapterInit(TemperatureServiceT* service,

@@ -4,10 +4,7 @@
 #include "LocalDevice-Component.h"
 #include "Components.h"
 
-#include "Abstractions/xDevice/Communication/xDevice-RxTransactions.h"
-#include "Abstractions/xDevice/Communication/xService-RxTransactions.h"
-#include "Services/Temperature/Communication/TemperatureService-RxTransactions.h"
-
+#include "Abstractions/xDevice/Communication/xDeviceControl-RxTransactions.h"
 #include "Services/Temperature/Adapters/TemperatureService-Adapter.h"
 #include "Adapters/LocalDevice-Adapter.h"
 //==============================================================================
@@ -81,21 +78,9 @@ static LocalDeviceAdapterT privateLocalDeviceAdapter;
 static TemperatureServiceAdapterT privateTemperatureServiceAdapter1;
 static TemperatureServiceAdapterT privateTemperatureServiceAdapter2;
 //------------------------------------------------------------------------------
-static xTerminalObjectT privateServiceTerminalObject =
+static xTerminalObjectT privateTerminalObject =
 {
-	.Requests = xServiceRxRequests,
-	.Object = (void*)&LocalDevice
-};
-//------------------------------------------------------------------------------
-static xTerminalObjectT privateDeviceTerminalObject =
-{
-	.Requests = xDeviceRxRequests,
-	.Object = (void*)&LocalDevice
-};
-//------------------------------------------------------------------------------
-static xTerminalObjectT privateTemperatureServiceTerminalObject =
-{
-	.Requests = TemperatureServiceRxRequests,
+	.Requests = xDeviceControlRxRequests,
 	.Object = (void*)&LocalDevice
 };
 //==============================================================================
@@ -128,9 +113,7 @@ xResult LocalDeviceComponentInit(void* parent)
 	xDeviceAddService(&LocalDevice, (xServiceT*)&TemperatureService1);
 	xDeviceAddService(&LocalDevice, (xServiceT*)&TemperatureService2);
 
-	TerminalAddObject(&privateDeviceTerminalObject);
-	TerminalAddObject(&privateServiceTerminalObject);
-	TerminalAddObject(&privateTemperatureServiceTerminalObject);
+	TerminalAddObject(&privateTerminalObject);
 
 	taskHandle =
 				xTaskCreateStatic(privateTask, // Function that implements the task.

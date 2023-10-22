@@ -28,6 +28,9 @@ typedef enum
 {
 	TemperatureServiceAdapterRequestIdle,
 
+	TemperatureServiceAdapterRequestsGet = 50,
+	TemperatureServiceAdapterRequestGetTemperature
+
 } TemperatureServiceAdapterRequestSelector;
 //------------------------------------------------------------------------------
 

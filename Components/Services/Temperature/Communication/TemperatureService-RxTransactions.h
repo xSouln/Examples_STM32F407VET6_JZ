@@ -1,34 +1,26 @@
 //==============================================================================
-#ifndef _X_TIMER_CONFIG_H_
-#define _X_TIMER_CONFIG_H_
+#ifndef _TEMPERATURE_SERVICE_RX_TRANSACTIONS_H_
+#define _TEMPERATURE_SERVICE_RX_TRANSACTIONS_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif 
 //==============================================================================
 //includes:
 
-#include "Registers/registers.h"
-//==============================================================================
-//defines:
-
-
+#include "Common/xRxTransaction.h"
 //==============================================================================
 //types:
 
-typedef enum
-{
-	xTimer2,
-	xTimer4,
-
-	xTimersCount
-
-} xTimerNumber;
+/**
+ * @brief перечисление запросов возможных ActionKey
+ */
 //------------------------------------------------------------------------------
-#define xTimerHandleT REG_TIM_T
+
+extern const xRxRequestT TemperatureServiceRxRequests[];
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_X_TIMER_CONFIG_H_
+#endif //_TEMPERATURE_SERVICE_RX_TRANSACTIONS_H_

@@ -3,6 +3,7 @@
 
 #include "Components.h"
 #include "main.h"
+#include "Peripherals/xTimer/xTimer.h"
 #include "Common/xList.h"
 #include "Templates/Adapters/Terminal-TransferLayer/Terminal-TxTransferLayerAdapter.h"
 #include "Templates/Adapters/Terminal-TransferLayer/Terminal-RxTransferLayerAdapter.h"
@@ -122,7 +123,7 @@ void ComponentsHandler()
 	{
 		led_toggle_time_stamp = xSystemGetTime(ComponentsHandler);
 
-		if(TxRequest0.State == xTxRequesStateIdle)
+		/*if(TxRequest0.State == xTxRequesStateIdle)
 		{
 			xTxRequestSetPort(&TxRequest0, &SerialPort);
 			xTxRequestAdd(&TxRequestControl, &TxRequest0);
@@ -132,7 +133,7 @@ void ComponentsHandler()
 		{
 			xTxRequestSetPort(&TxRequest1, &SerialPort);
 			xTxRequestAdd(&TxRequestControl, &TxRequest1);
-		}
+		}*/
 
 		//xTransferLayerStrartTransfer(&RxTransferLayer, rx_transfer_data, sizeof_str(rx_transfer_data));
 		//xTransferLayerStrartTransfer(&TxTransferLayer, tx_transfer_data, sizeof_str(tx_transfer_data));
@@ -160,6 +161,13 @@ void ComponentsTimeSynchronization()
 	TerminalComponentTimeSynchronization();
 	UsartPortsComponentTimeSynchronization();
 	//ADC_ComponentTimeSynchronization();
+}
+//------------------------------------------------------------------------------
+void Timer4_IRQ_Handler(xTimerT* timer, xTimerHandleT* handle)
+{
+	handle->Status.UpdateInterrupt = false;
+
+	ComponentsTimeSynchronization();
 }
 //------------------------------------------------------------------------------
 static xResult RxRequest0ReceiveData(xRxRequestManagerT* manager, uint8_t* data, uint16_t size)
@@ -211,6 +219,8 @@ xResult ComponentsInit(void* parent)
 
 	xSystemInit(parent);
 
+	xTimerCoreBind(xTimer4, Timer4_IRQ_Handler, rTimer4, 0);
+
 	UsartPortsComponentInit(parent);
 	LWIP_NetTcpServerComponentInit(parent);
 
@@ -247,6 +257,9 @@ xResult ComponentsInit(void* parent)
 	TerminalAddGroup(&TxTransferLayer.Objects);
 	TerminalAddGroup(&RxTransferLayer.Objects);
 	TerminalAddObject(&TerminalObject);
+
+	rTimer4->DMAOrInterrupts.UpdateInterruptEnable = true;
+	rTimer4->Control1.CounterEnable = true;
 
 	return xResultAccept;
 }

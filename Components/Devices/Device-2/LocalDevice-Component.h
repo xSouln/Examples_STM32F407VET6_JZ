@@ -1,34 +1,42 @@
 //==============================================================================
-#ifndef _X_TIMER_CONFIG_H_
-#define _X_TIMER_CONFIG_H_
+//header:
+
+#ifndef _LOCAL_DEVICE_COMPONENT_H_
+#define _LOCAL_DEVICE_COMPONENT_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif 
 //==============================================================================
 //includes:
 
-#include "Registers/registers.h"
+#include "Components-Types.h"
+#include "Abstractions/xDevice/xDevice.h"
 //==============================================================================
 //defines:
 
 
 //==============================================================================
-//types:
+//functions:
 
-typedef enum
-{
-	xTimer2,
-	xTimer4,
+xResult LocalDeviceComponentInit(void* parent);
+void LocalDeviceComponentHandler();
+void LocalDeviceComponentTimeSynchronization();
+//==============================================================================
+//import:
 
-	xTimersCount
 
-} xTimerNumber;
-//------------------------------------------------------------------------------
-#define xTimerHandleT REG_TIM_T
+//==============================================================================
+//override:
+
+
+//==============================================================================
+//export:
+
+extern xDeviceT LocalDevice;
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_X_TIMER_CONFIG_H_
+#endif //_LOCAL_DEVICE_COMPONENT_H_
