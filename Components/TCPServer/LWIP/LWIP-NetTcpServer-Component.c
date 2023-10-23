@@ -9,7 +9,7 @@
 //==============================================================================
 //defines:
 
-#define TASK_STACK_SIZE 0x200
+#define TASK_STACK_SIZE 0x180
 #define RX_OPERATION_BUFFER_SIZE 0x200
 #define RX_BUFFER_SIZE 0x200
 #define TX_BUFFER_SIZE 0x400
@@ -26,7 +26,7 @@ static uint8_t private_tx_buffer[RX_BUFFER_SIZE];
 
 static TaskHandle_t task_handle;
 static StaticTask_t task_buffer;
-static StackType_t task_stack[TASK_STACK_SIZE];
+static StackType_t taskStack[TASK_STACK_SIZE];
 
 xNetSocketT ListenSocket =
 {
@@ -235,7 +235,7 @@ xResult LWIP_NetTcpServerComponentInit(void* parent)
 								TASK_STACK_SIZE, // Number of indexes in the xStack array.
 								NULL, // Parameter passed into the task.
 								osPriorityNormal, // Priority at which the task is created.
-								task_stack, // Array to use as the task's stack.
+								taskStack, // Array to use as the task's stack.
 								&task_buffer);
 
 	return xResultAccept;

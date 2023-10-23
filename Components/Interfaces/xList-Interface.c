@@ -11,17 +11,17 @@
 
 void xListLock(xListT* list)
 {
-	if (list->Sync)
+	if (list->Content)
 	{
-		xSemaphoreTake(list->Sync, portMAX_DELAY);
+		xSemaphoreTake(list->Content, portMAX_DELAY);
 	}
 }
 //------------------------------------------------------------------------------
 void xListUnLock(xListT* list)
 {
-	if (list->Sync)
+	if (list->Content)
 	{
-		xSemaphoreGive(list->Sync);
+		xSemaphoreGive(list->Content);
 	}
 }
 //==============================================================================

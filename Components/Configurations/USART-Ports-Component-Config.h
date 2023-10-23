@@ -79,7 +79,7 @@ extern DMA_HandleTypeDef hdma_usart2_rx;
 #ifdef SERIAL3_ENABLE
 extern DMA_HandleTypeDef hdma_usart3_rx;
 
-#define SERIAL3_RX_CIRCLE_BUF_SIZE_MASK 0x1ff
+#define SERIAL3_RX_CIRCLE_BUF_SIZE_MASK 0xff
 #define SERIAL3_RX_OBJECT_BUF_SIZE 0x1ff
 #define SERIAL3_TX_CIRCLE_BUF_SIZE_MASK 0x3ff
 #define SERIAL3_REG USART3
@@ -108,7 +108,7 @@ extern DMA_HandleTypeDef hdma_usart3_rx;
 #ifdef SERIAL6_ENABLE
 extern DMA_HandleTypeDef hdma_usart6_rx;
 
-#define SERIAL6_RX_CIRCLE_BUF_SIZE_MASK 0x1ff
+#define SERIAL6_RX_CIRCLE_BUF_SIZE_MASK 0xff
 #define SERIAL6_RX_OBJECT_BUF_SIZE 0x1ff
 #define SERIAL6_TX_CIRCLE_BUF_SIZE_MASK 0x3ff
 #define SERIAL6_REG USART6

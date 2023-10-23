@@ -1,6 +1,8 @@
 //==============================================================================
 //includes:
 
+#include <malloc.h>
+
 #include "Components.h"
 #include "main.h"
 #include "Peripherals/xTimer/xTimer.h"
@@ -19,6 +21,8 @@
 #define HTTP_GET_HEADER "GET /v0.4/devices/" HTTP_REPORT_DEVICE_ID " HTTP/1.1\r\n" HTTP_HOST_AUTHORIZATION "\r\n" "Host: " HTTP_HOST "\r\n\r\n"
 //==============================================================================
 //variables:
+
+struct mallinfo HeapInfo;
 
 static uint32_t led_toggle_time_stamp;
 static uint32_t sntp_update_time_stamp;
@@ -151,6 +155,7 @@ void ComponentsHandler()
 
 	RTOS_FreeHeapSize = xPortGetFreeHeapSize();
 	RTOS_ComponentsTaskStackWaterMark = uxTaskGetStackHighWaterMark(NULL);
+	HeapInfo = mallinfo();
 }
 //------------------------------------------------------------------------------
 /**
@@ -216,17 +221,22 @@ xResult ComponentsInit(void* parent)
 	xSystemLayersInit();
 
 	TerminalComponentInit(parent);
+	HeapInfo = mallinfo();
 
 	xSystemInit(parent);
 
 	xTimerCoreBind(xTimer4, Timer4_IRQ_Handler, rTimer4, 0);
 
 	UsartPortsComponentInit(parent);
+	HeapInfo = mallinfo();
+
 	LWIP_NetTcpServerComponentInit(parent);
+	HeapInfo = mallinfo();
 
 	LocalDeviceComponentInit(parent);
+	HeapInfo = mallinfo();
 
-	xTxRequestControlInit(&TxRequestControl, parent);
+	/*xTxRequestControlInit(&TxRequestControl, parent);
 	TerminalAddObject(&TxRequestControl.TerminalObject);
 
 	TerminalTxTransferLayerAdapterInitT txTransferLayerAdapterInit =
@@ -255,8 +265,10 @@ xResult ComponentsInit(void* parent)
 	xTransferLayerSetBinding(&RxTransferLayer, &SerialPort);
 
 	TerminalAddGroup(&TxTransferLayer.Objects);
-	TerminalAddGroup(&RxTransferLayer.Objects);
+	TerminalAddGroup(&RxTransferLayer.Objects);*/
+
 	TerminalAddObject(&TerminalObject);
+	HeapInfo = mallinfo();
 
 	rTimer4->DMAOrInterrupts.UpdateInterruptEnable = true;
 	rTimer4->Control1.CounterEnable = true;

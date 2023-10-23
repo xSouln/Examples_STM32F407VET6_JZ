@@ -7,17 +7,21 @@
 #include "Abstractions/xDevice/Communication/xDevice-RxTransactions.h"
 #include "Abstractions/xDevice/Communication/xService-RxTransactions.h"
 #include "Services/Temperature/Communication/TemperatureService-RxTransactions.h"
+#include "Services/Relay/Communication/RelayService-RxTransactions.h"
 
 #include "Services/Temperature/Adapters/TemperatureService-Adapter.h"
+#include "Services/Relay/Adapters/RelayService-Adapter.h"
 #include "Adapters/LocalDevice-Adapter.h"
 //==============================================================================
 //defines:
 
-#define TASK_STACK_SIZE 0x300
+#define TASK_STACK_SIZE 0x180
 
 #define LOCAL_DEVICE_ID 598745
 #define TEMPERATURE_SERVICE1_ID 32545
 #define TEMPERATURE_SERVICE2_ID 32546
+
+#define RELAY_SERVICE1_ID 20000
 //==============================================================================
 //import:
 
@@ -32,6 +36,8 @@ static StackType_t taskStack[TASK_STACK_SIZE];
 TemperatureServiceT TemperatureService1;
 TemperatureServiceT TemperatureService2;
 
+RelayServiceT RelayService;
+
 xDeviceT LocalDevice;
 //==============================================================================
 //functions:
@@ -45,6 +51,14 @@ static void privateServiceEventListener(xServiceT* service, xServiceAdapterEvent
 }
 //------------------------------------------------------------------------------
 static void privateDeviceEventListener(xDeviceT* object, xDeviceEventSelector selector, void* arg)
+{
+	switch ((int)selector)
+	{
+		default: break;
+	}
+}
+//------------------------------------------------------------------------------
+static void privateRelayServiceEventListener(xServiceT* service, xServiceAdapterEventSelector selector, void* arg)
 {
 	switch ((int)selector)
 	{
@@ -80,6 +94,8 @@ static LocalDeviceAdapterT privateLocalDeviceAdapter;
 
 static TemperatureServiceAdapterT privateTemperatureServiceAdapter1;
 static TemperatureServiceAdapterT privateTemperatureServiceAdapter2;
+
+static RelayServiceAdapterT privateRelayServiceAdapter1;
 //------------------------------------------------------------------------------
 static xTerminalObjectT privateServiceTerminalObject =
 {
@@ -98,11 +114,26 @@ static xTerminalObjectT privateTemperatureServiceTerminalObject =
 	.Requests = TemperatureServiceRxRequests,
 	.Object = (void*)&LocalDevice
 };
+//------------------------------------------------------------------------------
+static xTerminalObjectT privateRelayServiceTerminalObject =
+{
+	.Requests = RelayServiceRxRequests,
+	.Object = (void*)&LocalDevice
+};
 //==============================================================================
 //initialization:
 
 xResult LocalDeviceComponentInit(void* parent)
 {
+	LocalDeviceAdapterInitT deviceAdapterInit;
+	LocalDeviceAdapterInit(&LocalDevice, &privateLocalDeviceAdapter, &deviceAdapterInit);
+
+	xDeviceInitT deviceInit = { 0 };
+	deviceInit.Parent = parent;
+	deviceInit.Id = LOCAL_DEVICE_ID;
+	deviceInit.EventListener = (void*)privateDeviceEventListener;
+	xDeviceInit(&LocalDevice, &deviceInit);
+
 	TemperatureServiceAdapterInitT temperatureServiceAdapterInit;
 	TemperatureServiceAdapterInit(&TemperatureService1, &privateTemperatureServiceAdapter1, &temperatureServiceAdapterInit);
 	TemperatureServiceAdapterInit(&TemperatureService2, &privateTemperatureServiceAdapter2, &temperatureServiceAdapterInit);
@@ -116,21 +147,27 @@ xResult LocalDeviceComponentInit(void* parent)
 	temperatureServiceInit.Base.Id = TEMPERATURE_SERVICE2_ID;
 	TemperatureServiceInit(&TemperatureService2, &temperatureServiceInit);
 
-	LocalDeviceAdapterInitT deviceAdapterInit;
-	LocalDeviceAdapterInit(&LocalDevice, &privateLocalDeviceAdapter, &deviceAdapterInit);
-
-	xDeviceInitT deviceInit = { 0 };
-	deviceInit.Parent = parent;
-	deviceInit.Id = LOCAL_DEVICE_ID;
-	deviceInit.EventListener = (void*)privateDeviceEventListener;
-	xDeviceInit(&LocalDevice, &deviceInit);
-
 	xDeviceAddService(&LocalDevice, (xServiceT*)&TemperatureService1);
 	xDeviceAddService(&LocalDevice, (xServiceT*)&TemperatureService2);
+
+	RelayServiceAdapterInitT relayServiceAdapterInit;
+	RelayServiceAdapterInit(&RelayService, &privateRelayServiceAdapter1, &relayServiceAdapterInit);
+
+	RelayServiceInitT relayServiceInit;
+	relayServiceInit.Base.EventListener = (void*)privateRelayServiceEventListener;
+	relayServiceInit.Base.Id = RELAY_SERVICE1_ID;
+	RelayServiceInit(&RelayService, &relayServiceInit);
+
+	xDeviceAddService(&LocalDevice, (xServiceT*)&RelayService);
+
+	xServiceSubscribe(&TemperatureService1, &RelayService);
+	xServiceSubscribe(&TemperatureService2, &RelayService);
+	xServiceSubscribe(&TemperatureService2, &TemperatureService1);
 
 	TerminalAddObject(&privateDeviceTerminalObject);
 	TerminalAddObject(&privateServiceTerminalObject);
 	TerminalAddObject(&privateTemperatureServiceTerminalObject);
+	TerminalAddObject(&privateRelayServiceTerminalObject);
 
 	taskHandle =
 				xTaskCreateStatic(privateTask, // Function that implements the task.
