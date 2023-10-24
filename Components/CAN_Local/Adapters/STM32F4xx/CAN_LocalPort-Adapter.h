@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _CAN_PORT_ADAPTER_H_
-#define _CAN_PORT_ADAPTER_H_
+#ifndef _CAN_LOCAL_PORT_ADAPTER_H_
+#define _CAN_LOCAL_PORT_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -18,6 +18,17 @@ extern "C" {
 //==============================================================================
 //types:
 
+typedef struct PACKED_PREFIX
+{
+	uint32_t AddressIsExtended : 1;
+	uint32_t Address : 11;
+	uint32_t ExtendedAddress : 18;
+
+	uint8_t DataLength;
+	uint8_t Data[8];
+
+} CAN_LocalSegmentT;
+//------------------------------------------------------------------------------
 typedef struct
 {
 #ifdef INC_FREERTOS_H
@@ -27,10 +38,8 @@ typedef struct
 	CAN_HandleTypeDef* CAN;
 	CAN_RegT* CAN_Register;
 
-	xCircleBufferT RxCircleBuffer;
-	xRxReceiverT RxReceiver;
-
 	xCircleBufferT TxCircleBuffer;
+	xCircleBufferT RxCircleBuffer;
 
 	CAN_TxHeaderTypeDef TxHeader;
 
@@ -44,32 +53,39 @@ typedef struct
 	uint8_t TxRequestsCount;
 	uint8_t TxAcceptedRequestsCount;
 
-} CAN_PortAdapterT;
+} CAN_LocalPortAdapterT;
 //------------------------------------------------------------------------------
 typedef struct
 {
 	CAN_HandleTypeDef* CAN;
 	xCAN_Numbers CAN_Number;
 
-	CAN_FilterTypeDef* FilterConfig;
+	uint16_t FilterBank : 5;
+	uint16_t SlaveStartFilterBank : 5;
+	uint16_t FilterMode : 1;
+	uint16_t FilterScale : 1;
+	uint16_t FilterFIFOAssignment : 4;
 
-	uint8_t* RxBuffer;
+	uint32_t FilterIdHigh;
+	uint32_t FilterIdLow;
+
+	uint32_t FilterMaskIdHigh;
+	uint32_t FilterMaskIdLow;
+
+	CAN_LocalSegmentT* RxBuffer;
 	uint16_t RxBufferSizeMask;
 
-	uint8_t* RxResponseBuffer;
-	uint16_t RxResponseBufferSize;
-
-	uint8_t* TxBuffer;
+	CAN_LocalSegmentT* TxBuffer;
 	uint16_t TxBufferSizeMask;
 
-} CAN_PortAdapterInitT;
+} CAN_LocalPortAdapterInitT;
 //==============================================================================
 //functions:
 
-xResult CAN_PortAdapterInit(xPortT* port, xPortAdapterInitT* init);
+xResult CAN_LocalPortAdapterInit(xPortT* port, struct xPortAdapterInitT* init);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_CAN_PORT_ADAPTER_H_
+#endif //_CAN_LOCAL_PORT_ADAPTER_H_

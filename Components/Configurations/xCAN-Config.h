@@ -8,6 +8,7 @@ extern "C" {
 //==============================================================================
 //includes:
 
+#include "xTypes-Config.h"
 #include "Registers/registers.h"
 //==============================================================================
 //defines:
@@ -17,7 +18,7 @@ extern "C" {
 #define CAN3_ENABLE 1
 //------------------------------------------------------------------------------
 
-typedef enum
+typedef enum PACKED_PREFIX
 {
 #if rCAN1_IsDefined && CAN1_ENABLE
 	xCAN1,

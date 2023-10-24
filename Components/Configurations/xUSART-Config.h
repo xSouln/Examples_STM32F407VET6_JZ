@@ -8,6 +8,7 @@ extern "C" {
 //==============================================================================
 //includes:
 
+#include "xTypes-Config.h"
 #include "Registers/registers.h"
 //==============================================================================
 //defines:
@@ -18,7 +19,7 @@ extern "C" {
 #define USART6_ENABLE 1
 //------------------------------------------------------------------------------
 
-typedef enum
+typedef enum PACKED_PREFIX
 {
 #if USART1_BASE && USART1_ENABLE
 	xUSART1,

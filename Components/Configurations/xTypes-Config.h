@@ -23,6 +23,8 @@ extern "C" {
 #define xCAN_USER_CONFIG 1
 
 #define FREERTOS_USED 1
+
+#define PACKED_PREFIX __packed
 //==============================================================================
 //types:
 

@@ -22,6 +22,12 @@ extern "C" {
 #include "TcpServer/LWIP/LWIP-NetTcpServer-Component.h"
 #include "Devices/LoaclDevice/LocalDevice-Component.h"
 
+#include "CAN_Local/CAN_Local-Component.h"
+
+#include "Devices/Device-1/Device1-Component.h"
+#include "Devices/Device-2/Device2-Component.h"
+#include "Devices/Device-3/Device3-Component.h"
+
 /// @}
 //==============================================================================
 //defines:

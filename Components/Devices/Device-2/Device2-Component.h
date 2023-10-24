@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _LOCAL_DEVICE_COMPONENT_H_
-#define _LOCAL_DEVICE_COMPONENT_H_
+#ifndef _DEVICE_2_COMPONENT_H_
+#define _DEVICE_2_COMPONENT_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -19,9 +19,9 @@ extern "C" {
 //==============================================================================
 //functions:
 
-xResult LocalDeviceComponentInit(void* parent);
-void LocalDeviceComponentHandler();
-void LocalDeviceComponentTimeSynchronization();
+xResult Device2ComponentInit(void* parent);
+void Device2ComponentHandler();
+void Device2ComponentTimeSynchronization();
 //==============================================================================
 //import:
 
@@ -33,10 +33,10 @@ void LocalDeviceComponentTimeSynchronization();
 //==============================================================================
 //export:
 
-extern xDeviceT LocalDevice;
+extern xDeviceT Device2;
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_LOCAL_DEVICE_COMPONENT_H_
+#endif //_DEVICE_2_COMPONENT_H_

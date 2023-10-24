@@ -25,7 +25,7 @@ static void privateHandler(TemperatureServiceT* service)
 //------------------------------------------------------------------------------
 static xResult privateRequestListener(TemperatureServiceT* service, xServiceAdapterRequestSelector selector, void* arg)
 {
-	if (selector > xServiceBaseRequestOffset && service->Base.Info.Type != xServiceTypeTemperatureControl)
+	if ((int)selector > xServiceBaseRequestOffset && service->Base.Info.Type != xServiceTypeTemperatureControl)
 	{
 		return xResultInvalidRequest;
 	}

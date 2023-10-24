@@ -49,11 +49,6 @@ static void PrivateHandler(xPortT* port)
 	}
 }
 //------------------------------------------------------------------------------
-static void PrivateIRQ(xPortT* port, void* arg)
-{
-
-}
-//------------------------------------------------------------------------------
 static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector selector, void* arg)
 {
 	register LWIP_NetPortAdapterT* adapter = (LWIP_NetPortAdapterT*)port->Adapter.Content;
@@ -167,7 +162,6 @@ static void PrivateRxReceiverEventListener(xRxReceiverT* receiver, xRxReceiverEv
 static xPortAdapterInterfaceT PrivatePortInterface =
 {
 	.Handler = (xPortAdapterHandlerT)PrivateHandler,
-	.IRQ = (xPortAdapterIRQT)PrivateIRQ,
 
 	.RequestListener = (xPortAdapterRequestListenerT)PrivateRequestListener,
 	.EventListener = (xPortAdapterEventListenerT)PrivateEventListener,

@@ -11,7 +11,8 @@
 
 #include "Services/Temperature/Adapters/TemperatureService-Adapter.h"
 #include "Services/Relay/Adapters/RelayService-Adapter.h"
-#include "Adapters/LocalDevice-Adapter.h"
+
+#include "Devices/Adapters/LocalDevice-Adapter.h"
 //==============================================================================
 //defines:
 
@@ -33,8 +34,8 @@ static TaskHandle_t taskHandle;
 static StaticTask_t taskBuffer;
 static StackType_t taskStack[TASK_STACK_SIZE];
 
-TemperatureServiceT TemperatureService1;
-TemperatureServiceT TemperatureService2;
+static TemperatureServiceT TemperatureService1;
+static TemperatureServiceT TemperatureService2;
 
 RelayServiceT RelayService;
 

@@ -1,32 +1,42 @@
 //==============================================================================
 //header:
 
-#ifndef _LOCAL_DEVICE_COMPONENT_CONFIG_H_
-#define _LOCAL_DEVICE_COMPONENT_CONFIG_H_
+#ifndef _DEVICE_3_COMPONENT_H_
+#define _DEVICE_3_COMPONENT_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif 
 //==============================================================================
 //includes:
 
 #include "Components-Types.h"
-#include "LocalDevice-ComponentConfig.h"
-//==============================================================================
-//macros:
-
-
-//==============================================================================
-//import:
-
-
+#include "Abstractions/xDevice/xDevice.h"
 //==============================================================================
 //defines:
 
 
 //==============================================================================
+//functions:
+
+xResult Device3ComponentInit(void* parent);
+void Device3ComponentHandler();
+void Device3ComponentTimeSynchronization();
+//==============================================================================
+//import:
+
+
+//==============================================================================
+//override:
+
+
+//==============================================================================
+//export:
+
+extern xDeviceT Device3;
+//==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_LOCAL_DEVICE_COMPONENT_CONFIG_H_
+#endif //_DEVICE_3_COMPONENT_H_

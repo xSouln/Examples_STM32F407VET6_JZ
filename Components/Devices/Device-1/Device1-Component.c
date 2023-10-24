@@ -1,20 +1,16 @@
 //==============================================================================
 //includes:
 
-#include "LocalDevice-Component.h"
-#include "Components.h"
+#include "Device1-Component.h"
 
-#include "Abstractions/xDevice/Communication/xDeviceControl-RxTransactions.h"
 #include "Services/Temperature/Adapters/TemperatureService-Adapter.h"
-#include "Adapters/LocalDevice-Adapter.h"
+#include "Devices/Adapters/LocalDevice-Adapter.h"
 //==============================================================================
 //defines:
 
-#define TASK_STACK_SIZE 0x300
-
-#define LOCAL_DEVICE_ID 598745
-#define TEMPERATURE_SERVICE1_ID 32545
-#define TEMPERATURE_SERVICE2_ID 32546
+#define DEVICE_ID 35475
+#define TEMPERATURE_SERVICE1_ID 10000
+#define TEMPERATURE_SERVICE2_ID 10001
 //==============================================================================
 //import:
 
@@ -22,18 +18,14 @@
 //==============================================================================
 //variables:
 
-static TaskHandle_t taskHandle;
-static StaticTask_t taskBuffer;
-static StackType_t taskStack[TASK_STACK_SIZE];
+static TemperatureServiceT TemperatureService1;
+static TemperatureServiceT TemperatureService2;
 
-TemperatureServiceT TemperatureService1;
-TemperatureServiceT TemperatureService2;
-
-xDeviceT LocalDevice;
+xDeviceT Device1;
 //==============================================================================
 //functions:
 
-static void privateServiceEventListener(xServiceT* service, xServiceAdapterEventSelector selector, void* arg)
+static void privateServiceEventListener(xServiceT* service, int selector, void* arg)
 {
 	switch ((int)selector)
 	{
@@ -49,24 +41,12 @@ static void privateDeviceEventListener(xDeviceT* object, xDeviceEventSelector se
 	}
 }
 //------------------------------------------------------------------------------
-static void privateTask(void* arg)
+void Device1ComponentHandler()
 {
-	vTaskDelay(pdMS_TO_TICKS(1000));
-
-	while (true)
-	{
-		xDeviceHandler(&LocalDevice);
-
-		vTaskDelay(pdMS_TO_TICKS(1));
-	}
+	xDeviceHandler(&Device1);
 }
 //------------------------------------------------------------------------------
-void LocalDeviceComponentHandler()
-{
-
-}
-//------------------------------------------------------------------------------
-void LocalDeviceComponentTimeSynchronization()
+void Device1ComponentTimeSynchronization()
 {
 
 }
@@ -77,17 +57,20 @@ static LocalDeviceAdapterT privateLocalDeviceAdapter;
 
 static TemperatureServiceAdapterT privateTemperatureServiceAdapter1;
 static TemperatureServiceAdapterT privateTemperatureServiceAdapter2;
-//------------------------------------------------------------------------------
-static xTerminalObjectT privateTerminalObject =
-{
-	.Requests = xDeviceControlRxRequests,
-	.Object = (void*)&LocalDevice
-};
 //==============================================================================
 //initialization:
 
-xResult LocalDeviceComponentInit(void* parent)
+xResult Device1ComponentInit(void* parent)
 {
+	LocalDeviceAdapterInitT deviceAdapterInit;
+	LocalDeviceAdapterInit(&Device1, &privateLocalDeviceAdapter, &deviceAdapterInit);
+
+	xDeviceInitT deviceInit = { 0 };
+	deviceInit.Parent = parent;
+	deviceInit.Id = DEVICE_ID;
+	deviceInit.EventListener = (void*)privateDeviceEventListener;
+	xDeviceInit(&Device1, &deviceInit);
+
 	TemperatureServiceAdapterInitT temperatureServiceAdapterInit;
 	TemperatureServiceAdapterInit(&TemperatureService1, &privateTemperatureServiceAdapter1, &temperatureServiceAdapterInit);
 	TemperatureServiceAdapterInit(&TemperatureService2, &privateTemperatureServiceAdapter2, &temperatureServiceAdapterInit);
@@ -101,28 +84,8 @@ xResult LocalDeviceComponentInit(void* parent)
 	temperatureServiceInit.Base.Id = TEMPERATURE_SERVICE2_ID;
 	TemperatureServiceInit(&TemperatureService2, &temperatureServiceInit);
 
-	LocalDeviceAdapterInitT deviceAdapterInit;
-	LocalDeviceAdapterInit(&LocalDevice, &privateLocalDeviceAdapter, &deviceAdapterInit);
-
-	xDeviceInitT deviceInit = { 0 };
-	deviceInit.Parent = parent;
-	deviceInit.Id = LOCAL_DEVICE_ID;
-	deviceInit.EventListener = (void*)privateDeviceEventListener;
-	xDeviceInit(&LocalDevice, &deviceInit);
-
-	xDeviceAddService(&LocalDevice, (xServiceT*)&TemperatureService1);
-	xDeviceAddService(&LocalDevice, (xServiceT*)&TemperatureService2);
-
-	TerminalAddObject(&privateTerminalObject);
-
-	taskHandle =
-				xTaskCreateStatic(privateTask, // Function that implements the task.
-									"device control task", // Text name for the task.
-									TASK_STACK_SIZE, // Number of indexes in the xStack array.
-									NULL, // Parameter passed into the task.
-									osPriorityNormal, // Priority at which the task is created.
-									taskStack, // Array to use as the task's stack.
-									&taskBuffer);
+	xDeviceAddService(&Device1, (xServiceT*)&TemperatureService1);
+	xDeviceAddService(&Device1, (xServiceT*)&TemperatureService2);
 
 	return xResultAccept;
 }
