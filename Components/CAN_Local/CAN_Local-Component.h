@@ -35,6 +35,14 @@ void CAN_LocalComponentTimeSynchronization();
 //export:
 
 extern xPortT CAN_LocalPorts[CAN_LOCAL_PORTS_COUNT];
+
+#ifdef CAN_LOCAL1_ENABLE
+#define CAN_Local1 CAN_LocalPorts[CAN_LOCAL1]
+#endif
+
+#ifdef CAN_LOCAL2_ENABLE
+#define CAN_Local2 CAN_LocalPorts[CAN_LOCAL2]
+#endif
 //==============================================================================
 #ifdef __cplusplus
 }

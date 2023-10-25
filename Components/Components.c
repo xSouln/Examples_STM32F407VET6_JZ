@@ -75,9 +75,11 @@ void ComponentsHandler()
 
 #ifdef DEVICE_CONTROL_ENABLE
 
+	CAN_LocalComponentHandler();
+
 	Device1ComponentHandler();
-	Device2ComponentHandler();
-	Device3ComponentHandler();
+	//Device2ComponentHandler();
+	//Device3ComponentHandler();
 
 #endif
 
@@ -106,8 +108,8 @@ inline void ComponentsTimeSynchronization()
 #ifdef DEVICE_CONTROL_ENABLE
 
 	Device1ComponentTimeSynchronization();
-	Device2ComponentTimeSynchronization();
-	Device3ComponentTimeSynchronization();
+	//Device2ComponentTimeSynchronization();
+	//Device3ComponentTimeSynchronization();
 
 #endif
 }
@@ -139,12 +141,12 @@ xResult ComponentsInit(void* parent)
 
 #ifdef DEVICE_CONTROL_ENABLE
 
-	//CAN_LocalComponentInit(parent);
+	CAN_LocalComponentInit(parent);
 	LocalDeviceComponentInit(parent);
 
 	Device1ComponentInit(parent);
-	Device2ComponentInit(parent);
-	Device3ComponentInit(parent);
+	//Device2ComponentInit(parent);
+	//Device3ComponentInit(parent);
 
 #endif
 

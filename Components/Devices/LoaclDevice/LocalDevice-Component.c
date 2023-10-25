@@ -127,6 +127,7 @@ static xTerminalObjectT privateRelayServiceTerminalObject =
 xResult LocalDeviceComponentInit(void* parent)
 {
 	LocalDeviceAdapterInitT deviceAdapterInit;
+	deviceAdapterInit.Port = &CAN_Local1;
 	LocalDeviceAdapterInit(&LocalDevice, &privateLocalDeviceAdapter, &deviceAdapterInit);
 
 	xDeviceInitT deviceInit = { 0 };

@@ -15,20 +15,10 @@ extern "C" {
 #include "Common/xRxReceiver.h"
 #include "Common/xDataBuffer.h"
 #include "can.h"
+#include "CAN_Local/Control/CAN_Local-Types.h"
 //==============================================================================
 //types:
 
-typedef struct PACKED_PREFIX
-{
-	uint32_t AddressIsExtended : 1;
-	uint32_t Address : 11;
-	uint32_t ExtendedAddress : 18;
-
-	uint8_t DataLength;
-	uint8_t Data[8];
-
-} CAN_LocalSegmentT;
-//------------------------------------------------------------------------------
 typedef struct
 {
 #ifdef INC_FREERTOS_H

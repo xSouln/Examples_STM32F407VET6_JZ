@@ -2,7 +2,8 @@
 //includes:
 
 #include "CAN_Local-Component.h"
-#include "Components.h"
+#include "Abstractions/xSystem/xSystem.h"
+
 #if defined(STM32F1)
 #include "Adapters/STM32F1xx/UsartPort-Adapter.h"
 #elif defined(STM32F4)
@@ -101,6 +102,27 @@ static const CAN_LocalPortAdapterInitT adapterInits[CAN_LOCAL_PORTS_COUNT] =
 };
 
 xPortT CAN_LocalPorts[CAN_LOCAL_PORTS_COUNT];
+
+static uint32_t timeStamp;
+static uint32_t CAN_Local1_RxHandlerIndex;
+static uint32_t CAN_Local2_RxHandlerIndex;
+
+CAN_LocalSegmentT CAN_Local1_RequestTransmit =
+{
+	.Identifier = 23,
+	.Data.DoubleWord = 3452356612324,
+	.DataLength = 8
+};
+
+CAN_LocalSegmentT CAN_Local2_RequestTransmit =
+{
+	.Identifier = 24,
+	.Data.DoubleWord = 3613412345,
+	.DataLength = 8
+};
+
+CAN_LocalSegmentT CAN_Local1_Response;
+CAN_LocalSegmentT CAN_Local2_Response;
 //==============================================================================
 //import:
 
@@ -126,6 +148,31 @@ void CAN_LocalComponentHandler()
 	{
 		xPortHandler(&CAN_LocalPorts[i]);
 	}
+
+	/*uint32_t time = xSystemGetTime(NULL);
+	if (time - timeStamp > 1000)
+	{
+		timeStamp = time;
+
+		xPortExtendedTransmition(&CAN_Local1, &CAN_Local1_RequestTransmit);
+		xPortExtendedTransmition(&CAN_Local2, &CAN_Local2_RequestTransmit);
+	}
+
+	xCircleBufferT* rxBuffer = xPortGetRxCircleBuffer(&CAN_Local1);
+
+	if (rxBuffer != NULL && rxBuffer->TotalIndex != CAN_Local1_RxHandlerIndex)
+	{
+		memcpy(&CAN_Local1_Response, xCircleBufferGetElement(rxBuffer, CAN_Local1_RxHandlerIndex), sizeof(CAN_Local1_Response));
+		CAN_Local1_RxHandlerIndex = rxBuffer->TotalIndex;
+	}
+
+	rxBuffer = xPortGetRxCircleBuffer(&CAN_Local2);
+
+	if (rxBuffer != NULL && rxBuffer->TotalIndex != CAN_Local2_RxHandlerIndex)
+	{
+		memcpy(&CAN_Local2_Response, xCircleBufferGetElement(rxBuffer, CAN_Local2_RxHandlerIndex), sizeof(CAN_Local2_Response));
+		CAN_Local2_RxHandlerIndex = rxBuffer->TotalIndex;
+	}*/
 }
 //------------------------------------------------------------------------------
 /**

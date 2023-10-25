@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _LOCAL_DEVICE_ADAPTER_H_
-#define _LOCAL_DEVICE_ADAPTER_H_
+#ifndef _CLIENT_DEVICE_ADAPTER_H_
+#define _CLIENT_DEVICE_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -26,31 +26,35 @@ typedef struct
 	xDeviceCommandT* Command;
 	xResult CommandExecutionResult;
 
-	uint32_t RxPacketHandlerIndex;
+	uint32_t OperationTimeStamp;
+	uint32_t OperationTimeOut;
+	uint16_t Operation;
+
+	uint16_t RxPacketHandlerIndex;
 	xCircleBufferT* PortRxCircleBuffer;
 
-} LocalDeviceAdapterContentT;
+} ClientDeviceAdapterContentT;
 //------------------------------------------------------------------------------
 typedef struct
 {
-	LocalDeviceAdapterContentT Content;
+	ClientDeviceAdapterContentT Content;
 
 	xPortT* Port;
 
-} LocalDeviceAdapterT;
+} ClientDeviceAdapterT;
 //------------------------------------------------------------------------------
 typedef struct
 {
 	xPortT* Port;
 
-} LocalDeviceAdapterInitT;
+} ClientDeviceAdapterInitT;
 //==============================================================================
 //functions:
 
-xResult LocalDeviceAdapterInit(xDeviceT* device, LocalDeviceAdapterT* adapter, LocalDeviceAdapterInitT* init);
+xResult ClientDeviceAdapterInit(xDeviceT* device, ClientDeviceAdapterT* adapter, ClientDeviceAdapterInitT* init);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_LOCAL_DEVICE_ADAPTER_H_
+#endif //_CLIENT_DEVICE_ADAPTER_H_

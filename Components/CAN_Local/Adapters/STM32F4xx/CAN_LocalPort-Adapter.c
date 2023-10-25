@@ -9,23 +9,7 @@
 //==============================================================================
 //types:
 
-typedef struct
-{
-	uint32_t Identifier;
-	uint8_t DataLength;
 
-	union
-	{
-		struct
-		{
-			uint32_t DataL;
-			uint32_t DataH;
-		};
-
-		uint8_t Data[8];
-	};
-
-} CAN_PacketT;
 //==============================================================================
 //variables:
 
@@ -60,24 +44,36 @@ static void PrivateHandler(xPortT* port)
 
 			if (!adapter->TxError)
 			{
-				xCircleBufferOffsetHandlerIndex(&adapter->TxCircleBuffer, adapter->TxHeader.DLC);
+				xCircleBufferOffsetHandlerIndex(&adapter->TxCircleBuffer, 1);
 			}
 		}
 
-		uint8_t data[8];
-		int dataSize = xCircleBufferTryRead(&adapter->TxCircleBuffer, data, sizeof(data));
-
-		if (dataSize)
+		if (adapter->TxCircleBuffer.HandlerIndex != adapter->TxCircleBuffer.TotalIndex)
 		{
+			CAN_LocalSegmentT* segment = ((CAN_LocalSegmentT*)adapter->TxCircleBuffer.Memory) + adapter->TxCircleBuffer.HandlerIndex;
+
 			uint32_t txMailbox;
 
-			adapter->TxHeader.DLC = dataSize;
+			if (!segment->ExtansionIsEnabled)
+			{
+				adapter->TxHeader.StdId = segment->Identifier;
+				adapter->TxHeader.IDE = CAN_ID_STD;
+			}
+			else
+			{
+				adapter->TxHeader.ExtId = segment->Identifier;
+				adapter->TxHeader.ExtId <<= 18;
+				adapter->TxHeader.ExtId |= segment->Extansion;
+				adapter->TxHeader.IDE = CAN_ID_EXT;
+			}
+
+			adapter->TxHeader.DLC = segment->DataLength;
 
 			adapter->TxError = 0;
 			adapter->AwaitTxValidation = true;
 			adapter->TxValidationComplite = false;
 
-			if (HAL_CAN_AddTxMessage(adapter->CAN, &adapter->TxHeader, data, &txMailbox) != HAL_OK)
+			if (HAL_CAN_AddTxMessage(adapter->CAN, &adapter->TxHeader, segment->Data.Bytes, &txMailbox) != HAL_OK)
 			{
 				adapter->AwaitTxValidation = false;
 			}
@@ -104,14 +100,16 @@ static void PrivateRxIRQ(xCAN_T* can, xCAN_HandleT* reg, CAN_LocalPortAdapterT* 
 
 	if (reg->RxFIFO0.MessagePending)
 	{
-		CAN_PacketT packet;
+		CAN_LocalSegmentT segment;
+		segment.Identifier = reg->RxMailBox[0].Identifier.StandardIdentifier;
+		segment.Extansion = reg->RxMailBox[0].Identifier.ExtendedIdentifie;
+		segment.ExtansionIsEnabled = reg->RxMailBox[0].Identifier.IdentifierExtension;
+		segment.DataLength = reg->RxMailBox[0].DataControlAndTimeStamp.DataLengthCode;
 
-		packet.Identifier = reg->RxMailBox[0].Identifier.StandardIdentifier;
-		packet.DataLength = reg->RxMailBox[0].DataControlAndTimeStamp.DataLengthCode;
-		packet.DataL = reg->RxMailBox[0].DataLow.Value;
-		packet.DataH = reg->RxMailBox[0].DataHigh.Value;
+		segment.Data.Words[0] = reg->RxMailBox[0].DataLow.Value;
+		segment.Data.Words[1] = reg->RxMailBox[0].DataHigh.Value;
 
-		xCircleBufferAdd(&adapter->RxCircleBuffer, packet.Data, packet.DataLength);
+		xCircleBufferAddObject(&adapter->RxCircleBuffer, &segment, 1, 0, 0);
 
 		reg->RxFIFO0.ReleaseOutputMailbox = true;
 	}
@@ -159,9 +157,31 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 				adapter->TxCircleBuffer.HandlerIndex = adapter->TxCircleBuffer.TotalIndex;
 				break;
 
+			case xPortAdapterRequestGetRxCircleBuffer:
+			{
+				xCircleBufferT** out = arg;
+				*out = &adapter->RxCircleBuffer;
+
+				break;
+			}
+
+			case xPortAdapterRequestGetTxCircleBuffer:
+			{
+				xCircleBufferT** out = arg;
+				*out = &adapter->TxCircleBuffer;
+
+				break;
+			}
+
 			case xPortAdapterRequestSetBinding:
 				port->Binding = arg;
 				break;
+
+			case xPortAdapterRequesExtendedTransmission:
+			{
+				xCircleBufferAddObject(&adapter->TxCircleBuffer, arg, 1, 0, 0);
+				break;
+			}
 
 			case xPortAdapterRequestStartTransmission:
 	#ifdef INC_FREERTOS_H
@@ -262,8 +282,8 @@ xResult CAN_LocalPortAdapterInit(xPortT* port, struct xPortAdapterInitT* init)
 		adapter->TransactionMutex = xSemaphoreCreateMutex();
 #endif
 
-		//xCircleBufferInit(&adapter->RxCircleBuffer, adapterInit->RxBuffer, adapterInit->RxBufferSizeMask, sizeof(uint8_t));
-		//xCircleBufferInit(&adapter->TxCircleBuffer, adapterInit->TxBuffer, adapterInit->TxBufferSizeMask, sizeof(uint8_t));
+		xCircleBufferInit(&adapter->RxCircleBuffer, adapterInit->RxBuffer, adapterInit->RxBufferSizeMask, sizeof(CAN_LocalSegmentT));
+		xCircleBufferInit(&adapter->TxCircleBuffer, adapterInit->TxBuffer, adapterInit->TxBufferSizeMask, sizeof(CAN_LocalSegmentT));
 
 		adapter->TxHeader.StdId = 0x10 + adapterInit->CAN_Number;
 		adapter->TxHeader.RTR = CAN_RTR_DATA;

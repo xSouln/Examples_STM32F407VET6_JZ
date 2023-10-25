@@ -2,9 +2,10 @@
 //includes:
 
 #include "Device1-Component.h"
+#include "CAN_Local/CAN_Local-Component.h"
 
 #include "Services/Temperature/Adapters/TemperatureService-Adapter.h"
-#include "Devices/Adapters/LocalDevice-Adapter.h"
+#include "Devices/Adapters/ClientDevice-Adapter.h"
 //==============================================================================
 //defines:
 
@@ -53,7 +54,7 @@ void Device1ComponentTimeSynchronization()
 //==============================================================================
 //initializations:
 
-static LocalDeviceAdapterT privateLocalDeviceAdapter;
+static ClientDeviceAdapterT privateDeviceAdapter;
 
 static TemperatureServiceAdapterT privateTemperatureServiceAdapter1;
 static TemperatureServiceAdapterT privateTemperatureServiceAdapter2;
@@ -62,8 +63,10 @@ static TemperatureServiceAdapterT privateTemperatureServiceAdapter2;
 
 xResult Device1ComponentInit(void* parent)
 {
-	LocalDeviceAdapterInitT deviceAdapterInit;
-	LocalDeviceAdapterInit(&Device1, &privateLocalDeviceAdapter, &deviceAdapterInit);
+	ClientDeviceAdapterInitT deviceAdapterInit;
+	deviceAdapterInit.Port = &CAN_Local2;
+	Device1.MAC = 0x1122334466880001;
+	ClientDeviceAdapterInit(&Device1, &privateDeviceAdapter, &deviceAdapterInit);
 
 	xDeviceInitT deviceInit = { 0 };
 	deviceInit.Parent = parent;
