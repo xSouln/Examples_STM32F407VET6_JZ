@@ -7,13 +7,13 @@
 #include "main.h"
 #include "Peripherals/xTimer/xTimer.h"
 #include "Common/xList.h"
-#include "Templates/Adapters/Terminal-TransferLayer/Terminal-TxTransferLayerAdapter.h"
-#include "Templates/Adapters/Terminal-TransferLayer/Terminal-RxTransferLayerAdapter.h"
 #include "Abstractions/xTxRequest/xTxRequest.h"
 //==============================================================================
 //defines:
 
 #define DEVICE_CONTROL_ENABLE 1
+
+#define TASK_STACK_SIZE 0x180
 
 #define HTTP_HOST "device-api.sintez.by"
 #define HTTP_HOST_AUTHORIZATION "X-Sintez-Auth: 6b9f7b57e10f498e634204e77009e472"
@@ -28,6 +28,8 @@ static uint32_t ledToggleTimeStamp;
 
 int RTOS_FreeHeapSize;
 int RTOS_ComponentsTaskStackWaterMark;
+
+static TaskHandle_t taskHandle;
 //==============================================================================
 //functions:
 
@@ -71,11 +73,11 @@ void ComponentsHandler()
 {
 	UsartPortsComponentHandler();
 	TerminalComponentHandler();
-	LWIP_NetTcpServerComponentHandler();
+	//LWIP_NetTcpServerComponentHandler();
 
 #ifdef DEVICE_CONTROL_ENABLE
 
-	CAN_LocalComponentHandler();
+	TransferLayerComponentHandler();
 
 	Device1ComponentHandler();
 	//Device2ComponentHandler();
@@ -120,6 +122,14 @@ void Timer4_IRQ_Handler(xTimerT* timer, xTimerHandleT* handle)
 
 	ComponentsTimeSynchronization();
 }
+//------------------------------------------------------------------------------
+static void privateTask(void* arg)
+{
+	while (true)
+	{
+		CAN_LocalComponentHandler();
+	}
+}
 //==============================================================================
 //initialization:
 
@@ -137,11 +147,12 @@ xResult ComponentsInit(void* parent)
 	xSystemInit(parent);
 
 	UsartPortsComponentInit(parent);
-	LWIP_NetTcpServerComponentInit(parent);
+	//LWIP_NetTcpServerComponentInit(parent);
 
 #ifdef DEVICE_CONTROL_ENABLE
 
 	CAN_LocalComponentInit(parent);
+	TransferLayerComponentInit(parent);
 	LocalDeviceComponentInit(parent);
 
 	Device1ComponentInit(parent);
@@ -153,6 +164,13 @@ xResult ComponentsInit(void* parent)
 	xTimerCoreBind(xTimer4, Timer4_IRQ_Handler, rTimer4, 0);
 	rTimer4->DMAOrInterrupts.UpdateInterruptEnable = true;
 	rTimer4->Control1.CounterEnable = true;
+
+	xTaskCreate(privateTask, // Function that implements the task.
+				"CAN local task", // Text name for the task.
+				TASK_STACK_SIZE, // Number of indexes in the xStack array.
+				NULL, // Parameter passed into the task.
+				osPriorityNormal, // Priority at which the task is created.
+				&taskHandle);
 
 	return xResultAccept;
 }

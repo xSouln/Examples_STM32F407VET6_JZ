@@ -76,8 +76,8 @@ static int privateConnectionHandler(xDeviceT* device, CAN_LocalSegmentT* segment
 
 		CAN_LocalSegmentT request;
 		request.Identifier = CAN_LocalPacketIdentifierDeviceApplyId;
-		request.Extansion = extansion.Value;
-		request.ExtansionIsEnabled = true;
+		request.Extension = extansion.Value;
+		request.ExtensionIsEnabled = true;
 		request.Data.DoubleWord = content.Value;
 		request.DataLength = sizeof(CAN_LocalPacketDeviceApplyIdT);
 

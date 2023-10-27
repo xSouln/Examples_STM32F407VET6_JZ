@@ -38,7 +38,7 @@ static void PrivateHandler(xDeviceT* device)
 		if (segment->Identifier == CAN_LocalPacketIdentifierDeviceApplyId)
 		{
 			CAN_LocalPacketDeviceApplyIdT content = { .Value = segment->Data.DoubleWord };
-			CAN_LocalExtansionDeviceApplyIdT extansion = { .Value = segment->Extansion };
+			CAN_LocalExtansionDeviceApplyIdT extansion = { .Value = segment->Extension };
 
 			if (content.MAC == device->MAC)
 			{
@@ -66,8 +66,8 @@ static void PrivateHandler(xDeviceT* device)
 
 		CAN_LocalSegmentT segment;
 		segment.Identifier = CAN_LocalPacketIdentifierNewDevice;
-		segment.Extansion = extansion.Value;
-		segment.ExtansionIsEnabled = true;
+		segment.Extension = extansion.Value;
+		segment.ExtensionIsEnabled = true;
 		segment.Data.DoubleWord = data.Value;
 		segment.DataLength = sizeof(CAN_LocalPacketNewDeviceT);
 

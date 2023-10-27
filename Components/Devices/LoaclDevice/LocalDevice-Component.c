@@ -18,11 +18,11 @@
 
 #define TASK_STACK_SIZE 0x180
 
-#define LOCAL_DEVICE_ID 598745
-#define TEMPERATURE_SERVICE1_ID 32545
-#define TEMPERATURE_SERVICE2_ID 32546
+#define LOCAL_DEVICE_ID 2000
+#define TEMPERATURE_SERVICE1_ID 22
+#define TEMPERATURE_SERVICE2_ID 23
 
-#define RELAY_SERVICE1_ID 20000
+#define RELAY_SERVICE1_ID 50
 //==============================================================================
 //import:
 
@@ -137,6 +137,7 @@ xResult LocalDeviceComponentInit(void* parent)
 	xDeviceInit(&LocalDevice, &deviceInit);
 
 	TemperatureServiceAdapterInitT temperatureServiceAdapterInit;
+	temperatureServiceAdapterInit.Port = &CAN_Local1;
 	TemperatureServiceAdapterInit(&TemperatureService1, &privateTemperatureServiceAdapter1, &temperatureServiceAdapterInit);
 	TemperatureServiceAdapterInit(&TemperatureService2, &privateTemperatureServiceAdapter2, &temperatureServiceAdapterInit);
 

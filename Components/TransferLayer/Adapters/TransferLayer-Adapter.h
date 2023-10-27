@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _TEMPERATURE_SERVICE_ADAPTER_H_
-#define _TEMPERATURE_SERVICE_ADAPTER_H_
+#ifndef _TRANSFER_LAYER_ADAPTER_H_
+#define _TRANSFER_LAYER_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -10,50 +10,52 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "../TemperatureService.h"
-#include "Abstractions/xDevice/xDevice.h"
-#include "Services/Temperature/TemperatureService.h"
-#include "Abstractions/xPort/xPort.h"
+#include "Abstractions/xTransferLayer/xTransferLayer.h"
 #include "Common/xCircleBuffer.h"
+#include "Abstractions/xPort/xPort.h"
+#include "CAN_Local/Control/CAN_Local-Types.h"
 //==============================================================================
 //types:
 
 typedef struct
 {
 #ifdef INC_FREERTOS_H
-	SemaphoreHandle_t TransactionMutex;
+	SemaphoreHandle_t CoreMutex;
+	SemaphoreHandle_t CommandAccomplishSemaphore;
 #endif
 
-	uint32_t TimeStamp;
+	uint32_t RxPacketHandlerIndex;
+	xCircleBufferT* PortRxCircleBuffer;
 
-	uint16_t RxPacketHandlerIndex;
+	void* CommandArgs;
+	xResult CommandResult;
+	xTransferCommandT Command;
 
-} TemperatureServiceAdapterInternalT;
+} TransferLayerAdapterContentT;
 //------------------------------------------------------------------------------
 
 typedef struct
 {
-	TemperatureServiceAdapterInternalT Internal;
+	TransferLayerAdapterContentT Content;
 	xPortT* Port;
 
-} TemperatureServiceAdapterT;
+} TransferLayerAdapterT;
 //------------------------------------------------------------------------------
+
 typedef struct
 {
-	xServiceAdapterBaseInitT Base;
-
 	xPortT* Port;
 
-} TemperatureServiceAdapterInitT;
+} TransferLayerAdapterInitT;
 //==============================================================================
 //functions:
 
-xResult TemperatureServiceAdapterInit(TemperatureServiceT* service,
-		TemperatureServiceAdapterT* adapter,
-		TemperatureServiceAdapterInitT* init);
+xResult TransferLayerAdapterInit(xTransferLayerT* manager,
+		TransferLayerAdapterT* adapter,
+		TransferLayerAdapterInitT* init);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_TEMPERATURE_SERVICE_ADAPTER_H_
+#endif //_TRANSFER_LAYER_ADAPTER_H_

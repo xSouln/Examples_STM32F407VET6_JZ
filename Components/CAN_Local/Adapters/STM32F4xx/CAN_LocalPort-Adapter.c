@@ -13,7 +13,9 @@
 //==============================================================================
 //variables:
 
-
+static uint32_t CAN_LocalRequestsCount;
+static uint32_t CAN_LocalRequestsValidationCount;
+static uint32_t CAN_LocalResponsesCount;
 //==============================================================================
 //functions:
 
@@ -36,9 +38,9 @@ static void PrivateHandler(xPortT* port)
 		adapter->CAN_Register->TxStatus.Mailbox2_AbortRequest = true;
 	}
 
-	if (!adapter->AwaitTxValidation)
+	//if (!adapter->AwaitTxValidation)
 	{
-		if (adapter->TxValidationComplite)
+		/*if (adapter->TxValidationComplite)
 		{
 			adapter->TxValidationComplite = false;
 
@@ -46,7 +48,7 @@ static void PrivateHandler(xPortT* port)
 			{
 				xCircleBufferOffsetHandlerIndex(&adapter->TxCircleBuffer, 1);
 			}
-		}
+		}*/
 
 		if (adapter->TxCircleBuffer.HandlerIndex != adapter->TxCircleBuffer.TotalIndex)
 		{
@@ -54,7 +56,7 @@ static void PrivateHandler(xPortT* port)
 
 			uint32_t txMailbox;
 
-			if (!segment->ExtansionIsEnabled)
+			if (!segment->ExtensionIsEnabled)
 			{
 				adapter->TxHeader.StdId = segment->Identifier;
 				adapter->TxHeader.IDE = CAN_ID_STD;
@@ -63,7 +65,7 @@ static void PrivateHandler(xPortT* port)
 			{
 				adapter->TxHeader.ExtId = segment->Identifier;
 				adapter->TxHeader.ExtId <<= 18;
-				adapter->TxHeader.ExtId |= segment->Extansion;
+				adapter->TxHeader.ExtId |= segment->Extension;
 				adapter->TxHeader.IDE = CAN_ID_EXT;
 			}
 
@@ -75,8 +77,13 @@ static void PrivateHandler(xPortT* port)
 
 			if (HAL_CAN_AddTxMessage(adapter->CAN, &adapter->TxHeader, segment->Data.Bytes, &txMailbox) != HAL_OK)
 			{
-				adapter->AwaitTxValidation = false;
+				//adapter->AwaitTxValidation = false;
+				return;
 			}
+
+			CAN_LocalRequestsCount++;
+
+			xCircleBufferOffsetHandlerIndex(&adapter->TxCircleBuffer, 1);
 		}
 	}
 }
@@ -102,8 +109,8 @@ static void PrivateRxIRQ(xCAN_T* can, xCAN_HandleT* reg, CAN_LocalPortAdapterT* 
 	{
 		CAN_LocalSegmentT segment;
 		segment.Identifier = reg->RxMailBox[0].Identifier.StandardIdentifier;
-		segment.Extansion = reg->RxMailBox[0].Identifier.ExtendedIdentifie;
-		segment.ExtansionIsEnabled = reg->RxMailBox[0].Identifier.IdentifierExtension;
+		segment.Extension = reg->RxMailBox[0].Identifier.ExtendedIdentifie;
+		segment.ExtensionIsEnabled = reg->RxMailBox[0].Identifier.IdentifierExtension;
 		segment.DataLength = reg->RxMailBox[0].DataControlAndTimeStamp.DataLengthCode;
 
 		segment.Data.Words[0] = reg->RxMailBox[0].DataLow.Value;
@@ -112,6 +119,8 @@ static void PrivateRxIRQ(xCAN_T* can, xCAN_HandleT* reg, CAN_LocalPortAdapterT* 
 		xCircleBufferAddObject(&adapter->RxCircleBuffer, &segment, 1, 0, 0);
 
 		reg->RxFIFO0.ReleaseOutputMailbox = true;
+
+		CAN_LocalResponsesCount++;
 	}
 }
 //------------------------------------------------------------------------------
@@ -137,6 +146,11 @@ static void PrivateTxIRQ(xCAN_T* can, xCAN_HandleT* reg, CAN_LocalPortAdapterT* 
 
 	adapter->TxValidationComplite = true;
 	adapter->AwaitTxValidation = false;
+
+	if (!adapter->TxError)
+	{
+		CAN_LocalRequestsValidationCount++;
+	}
 }
 //------------------------------------------------------------------------------
 static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector selector, void* arg)
