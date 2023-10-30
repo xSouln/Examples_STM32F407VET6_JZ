@@ -8,6 +8,7 @@
 #include "Peripherals/xTimer/xTimer.h"
 #include "Common/xList.h"
 #include "Abstractions/xTxRequest/xTxRequest.h"
+#include "CAN_Local/Control/CAN_Local-Types.h"
 //==============================================================================
 //defines:
 
@@ -25,6 +26,10 @@
 struct mallinfo HeapInfo;
 
 static uint32_t ledToggleTimeStamp;
+static uint32_t startTransmittingEventTimeStamp;
+static uint32_t eventTransmissionTime;
+
+static uint32_t receivedEventsCount;
 
 int RTOS_FreeHeapSize;
 int RTOS_ComponentsTaskStackWaterMark;
@@ -73,7 +78,7 @@ void ComponentsHandler()
 {
 	UsartPortsComponentHandler();
 	TerminalComponentHandler();
-	//LWIP_NetTcpServerComponentHandler();
+	LWIP_NetTcpServerComponentHandler();
 
 #ifdef DEVICE_CONTROL_ENABLE
 
@@ -84,14 +89,36 @@ void ComponentsHandler()
 	//Device3ComponentHandler();
 
 #endif
-
-	if (xSystemGetTime(ComponentsHandler) - ledToggleTimeStamp > 999)
+	uint32_t time = xSystemGetTime(ComponentsHandler);
+	if (time - ledToggleTimeStamp > 999)
 	{
-		ledToggleTimeStamp = xSystemGetTime(ComponentsHandler);
+		ledToggleTimeStamp = time;
 
 		PortE->Output.LED1 ^= 1;
 		PortE->Output.LED2 ^= PortE->Output.LED1;
 		PortE->Output.LED3 ^= PortE->Output.LED1 && PortE->Output.LED2;
+
+		CAN_LocalTemperatureSensoreEventContentT temperatureSensoreEventContent;
+		temperatureSensoreEventContent.Temperature = (float)time / 100;
+
+		CAN_LocalBaseEventPacketT eventPacket;
+		eventPacket.ContentType = 0;
+		eventPacket.Id = TEMPERATURE_SERVICE3_ID;
+		eventPacket.Content = temperatureSensoreEventContent.Value;
+		eventPacket.EventType = 0;
+		eventPacket.Content = temperatureSensoreEventContent.Value;
+
+		CAN_LocalSegmentT packet;
+		packet.Header.MessageType = CAN_LocalMessageTypeNotification;
+		packet.Header.ServiceType = xServiceTypeTemperatureControl;
+		packet.ExtensionIsEnabled = false;
+		packet.DataLength = sizeof(uint16_t) + sizeof(CAN_LocalTemperatureSensoreEventContentT);
+		packet.Data.DoubleWord = eventPacket.Value;
+
+		packet.DataLength = 8;
+
+		startTransmittingEventTimeStamp = time;
+		xPortExtendedTransmition(&CAN_Local1, &packet);
 	}
 
 	RTOS_FreeHeapSize = xPortGetFreeHeapSize();
@@ -130,9 +157,26 @@ static void privateTask(void* arg)
 		CAN_LocalComponentHandler();
 	}
 }
+//------------------------------------------------------------------------------
+static void privateCustomSubscriberEventListener(xServiceT* service, xServiceSubscriberT* Subscriber, int selector, void* arg)
+{
+	CAN_LocalTemperatureSensoreEventContentT* content = arg;
+
+	if (content->Temperature > 20.0f)
+	{
+		receivedEventsCount++;
+	}
+
+	eventTransmissionTime = xSystemGetTime(NULL) - startTransmittingEventTimeStamp;
+}
 //==============================================================================
 //initialization:
 
+static xServiceSubscriberT privateCustomSubscriber =
+{
+	.EventListener = privateCustomSubscriberEventListener
+};
+//------------------------------------------------------------------------------
 /**
  * @brief initializing the component
  * @param parent binding to the parent object
@@ -147,7 +191,7 @@ xResult ComponentsInit(void* parent)
 	xSystemInit(parent);
 
 	UsartPortsComponentInit(parent);
-	//LWIP_NetTcpServerComponentInit(parent);
+	LWIP_NetTcpServerComponentInit(parent);
 
 #ifdef DEVICE_CONTROL_ENABLE
 
@@ -159,6 +203,8 @@ xResult ComponentsInit(void* parent)
 	//Device2ComponentInit(parent);
 	//Device3ComponentInit(parent);
 
+	xServiceSubscribe((void*)&TemperatureService3, &privateCustomSubscriber);
+
 #endif
 
 	xTimerCoreBind(xTimer4, Timer4_IRQ_Handler, rTimer4, 0);
@@ -169,7 +215,7 @@ xResult ComponentsInit(void* parent)
 				"CAN local task", // Text name for the task.
 				TASK_STACK_SIZE, // Number of indexes in the xStack array.
 				NULL, // Parameter passed into the task.
-				osPriorityNormal, // Priority at which the task is created.
+				osPriorityHigh, // Priority at which the task is created.
 				&taskHandle);
 
 	return xResultAccept;

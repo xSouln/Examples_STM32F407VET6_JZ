@@ -1,6 +1,6 @@
 //==============================================================================
-#ifndef _TEMPERATURE_SERVICE_H_
-#define _TEMPERATURE_SERVICE_H_
+#ifndef _DEVICE_SERVICE_H_
+#define _DEVICE_SERVICE_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -9,48 +9,46 @@ extern "C" {
 //includes:
 
 #include "Abstractions/xDevice/xService.h"
-#include "TemperatureService-AdapterBase.h"
+#include "DeviceService-AdapterBase.h"
 //==============================================================================
 //includes:
 
 #define TEMPERATURE_SERVICE_UID 0x5C78700
 //==============================================================================
 /// @defgroup xServices temperature service types
-/// @brief функции предостовляемые TemperatureService.c
+/// @brief функции предостовляемые DeviceService.c
 /// @{
 
 typedef enum
 {
-	TemperatureServiceRequestIdle = xServiceBaseRequestOffset,
+	DeviceServiceRequestIdle = xServiceBaseRequestOffset,
 
-	TemperatureServiceRequestGetTemperature
+	DeviceServiceRequestGetTemperature
 
-} TemperatureServiceRequests;
+} DeviceServiceRequests;
 //------------------------------------------------------------------------------
 
-typedef struct TemperatureServiceT
+typedef struct DeviceServiceT
 {
 	xServiceT Base;
 
-	TemperatureServiceAdapterBaseT Adapter;
+	DeviceServiceAdapterBaseT Adapter;
 
-	float Temperature;
-
-} TemperatureServiceT;
+} DeviceServiceT;
 //------------------------------------------------------------------------------
 
 typedef struct
 {
 	xServiceInitT Base;
 
-} TemperatureServiceInitT;
+} DeviceServiceInitT;
 /// @}
 //==============================================================================
 /// @defgroup xServices temperature service functions
-/// @brief функции предостовляемые слоем TemperatureService.c
+/// @brief функции предостовляемые слоем DeviceService.c
 /// @{
 
-xResult TemperatureServiceInit(TemperatureServiceT* service, TemperatureServiceInitT* init);
+xResult DeviceServiceInit(DeviceServiceT* service, DeviceServiceInitT* init);
 
 /// @}
 //==============================================================================
@@ -58,4 +56,4 @@ xResult TemperatureServiceInit(TemperatureServiceT* service, TemperatureServiceI
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_TEMPERATURE_SERVICE_H_
+#endif //_DEVICE_SERVICE_H_

@@ -8,6 +8,8 @@
 #include "Abstractions/xTransferLayer/xTransferLayer.h"
 #include "Abstractions/xSystem/xSystem.h"
 #include "Adapters/TransferLayer-Adapter.h"
+
+#include "Components.h"
 //==============================================================================
 //defines:
 
@@ -28,6 +30,7 @@ xTransferLayerT ExternalTransferLayer;
 
 static uint32_t privateTimeStamp;
 static uint32_t privateTimeStamp1;
+
 static uint32_t privateBeginningTransferTimeStamp;
 static uint32_t privateBeginningTransferTimeDifference;
 
@@ -40,22 +43,19 @@ uint8_t transferRxData[sizeof_str(transferTxData)];
 //==============================================================================
 //functions:
 
-static void transferComplite(xTransferT* transfer)
+static void transferComplite(xTransferLayerT* layer, xTransferT* transfer)
 {
 	transfer->State = xTransferStateIdle;
-	privateBeginningTransferTimeDifference = transfer->TimeStamp - privateBeginningTransferTimeStamp;
+	privateBeginningTransferTimeDifference = transfer->Internal.TimeStamp - privateBeginningTransferTimeStamp;
 }
 //------------------------------------------------------------------------------
-static void privateEventAccomplish(xTransferT* transfer)
+static void privateEventAccomplish(xTransferLayerT* layer, xTransferT* transfer)
 {
 	transfer->State = xTransferStateIdle;
 
 	if (memcmp(transferTxData, transferRxData, sizeof(transferRxData)) != 0)
 	{
-		while (true)
-		{
 
-		}
 	}
 }
 //------------------------------------------------------------------------------
@@ -64,6 +64,8 @@ void TransferLayerComponentHandler()
 	xTransferLayerHandlerDirect(LocalTransferLayer);
 	xTransferLayerHandlerDirect(ExternalTransferLayer);
 
+	//return;
+
 	uint32_t time = xSystemGetTime(NULL);
 	if (time - privateTimeStamp > 2000)
 	{
@@ -71,51 +73,61 @@ void TransferLayerComponentHandler()
 
 		if (privateTransfer.Base.State == xTransferStateIdle)
 		{
+			privateTransfer.Base.Holder = LocalDevice.Services.Head->Value;
+			privateTransfer.Base.Id = TemperatureService3.Base.Id;
+			privateTransfer.Base.Type = xTransferTypeTransmite;
+			privateTransfer.Base.ValidationIsEnabled = true;
+
 			privateTransfer.Base.Data = (uint8_t*)transferTxData;
 			privateTransfer.Base.DataLength = sizeof_str(transferTxData);
-			privateTransfer.Base.Holder = TransferLayerComponentHandler;
-			privateTransfer.Base.Id = 2000;
+			privateTransfer.Base.Token = 3;
 			privateTransfer.Base.TimeOut = 1000;
 			privateTransfer.Base.EventAccomplish = transferComplite;
 			privateTransfer.Base.TransmittingAttempts = 1;
 
-			xTransferLayerAdd(&ExternalTransferLayer, (void*)&privateTransfer);
+			xTransferLayerAdd(&LocalTransferLayer, (void*)&privateTransfer);
 			privateBeginningTransferTimeStamp = xSystemGetTime(NULL);
 		}
 
-		xTransferT* transfer = xTransferLayerNewTransfer(&LocalTransferLayer);
+		xTransferT* transfer = xTransferLayerNewTransfer(&ExternalTransferLayer);
 
 		if (transfer)
 		{
-			transfer->Token = 69;
-			transfer->Id = 2000;
+			transfer->Holder = &TemperatureService3;
+			transfer->Id = LocalDevice.Id;
+			transfer->Type = xTransferTypeReceive;
+			transfer->ValidationIsEnabled = true;
+
 			transfer->Data = transferRxData;
 			transfer->DataLength = sizeof(transferRxData);
+			transfer->Token = 3;
 			transfer->TimeOut = 1000;
+			transfer->TransmittingAttempts = 1;
+
 			transfer->EventAccomplish = privateEventAccomplish;
-			transfer->TimeStamp = time;
 
 			memset(transferRxData, 0, sizeof(transferRxData));
 
-			xTransferLayerAdd(&LocalTransferLayer, transfer);
-			transfer->State = xTransferStateReceiving;
+			xTransferLayerAdd(&ExternalTransferLayer, transfer);
 		}
 	}
 
-	if (time - privateTimeStamp1 > 3)
+	if (time - privateTimeStamp1 > 10)
 	{
 		privateTimeStamp1 = time;
 
 		CAN_LocalSegmentT packet;
 		packet.ExtensionHeader.MessageType = CAN_LocalMessageTypeNotification;
-		packet.ExtensionHeader.DeviceType = 11;
-		packet.ExtensionHeader.Address = 333;
+		packet.ExtensionHeader.ServiceType = 11;
+		packet.ExtensionHeader.ServiceId = 333;
 		packet.ExtensionIsEnabled = true;
 
 		packet.DataLength = 8;
 
-		//xPortExtendedTransmition(&CAN_Local1, &packet);
-		//xPortExtendedTransmition(&CAN_Local2, &packet);
+		xPortExtendedTransmition(&CAN_Local1, &packet);
+
+		packet.ExtensionHeader.ServiceId = 334;
+		xPortExtendedTransmition(&CAN_Local2, &packet);
 	}
 }
 //==============================================================================

@@ -2,8 +2,9 @@
 //includes:
 
 #include <stdlib.h>
+#include "Common/xCircleBuffer.h"
+#include "DeviceService-Adapter.h"
 #include "Abstractions/xSystem/xSystem.h"
-#include "TemperatureService-Adapter.h"
 #include "CAN_Local/Control/CAN_Local-Types.h"
 #include "TransferLayer/TransferLayer-Component.h"
 //==============================================================================
@@ -17,20 +18,18 @@
 //==============================================================================
 //variables:
 
-static uint32_t privateCount;
+
 //==============================================================================
 //functions:
 
-static void privateOpenTransferHandler(TemperatureServiceT* service,
-		TemperatureServiceAdapterT* adapter,
+static void privateOpenTransferHandler(DeviceServiceT* service,
+		DeviceServiceAdapterT* adapter,
 		volatile CAN_LocalSegmentT* segment)
 {
-	volatile CAN_LocalPacketOpenTransferRequestT request = { .Value = segment->Data.DoubleWord };
+	CAN_LocalPacketOpenTransferRequestT request = { .Value = segment->Data.DoubleWord };
 
 	if (request.ServiceId == service->Base.Id)
 	{
-		privateCount++;
-
 		CAN_LocalPacketOpenTransferResponseT response;
 		response.ServiceId = segment->ExtensionHeader.ServiceId;
 		response.Action = request.Action;
@@ -38,11 +37,11 @@ static void privateOpenTransferHandler(TemperatureServiceT* service,
 		response.Result = 0;
 
 		CAN_LocalSegmentT packet;
-		packet.TransferHeader.MessageType = CAN_LocalMessageTypeTransfer;
-		packet.TransferHeader.PacketType = CAN_LocalTransferPacketTypeApproveTransfer;
-		packet.TransferHeader.Characteristic = service->Base.Info.Type;
-		packet.TransferHeader.ServiceId = service->Base.Id;
-		packet.TransferHeader.IsEnabled = true;
+		packet.ExtensionHeader.MessageType = CAN_LocalMessageTypeTransfer;
+		packet.ExtensionHeader.PacketType = CAN_LocalTransferPacketTypeApproveTransfer;
+		packet.ExtensionHeader.ServiceType = service->Base.Info.Type;
+		packet.ExtensionHeader.ServiceId = service->Base.Id;
+		packet.ExtensionIsEnabled = true;
 
 		packet.Data.DoubleWord = response.Value;
 		packet.DataLength = sizeof(response);
@@ -51,8 +50,8 @@ static void privateOpenTransferHandler(TemperatureServiceT* service,
 	}
 }
 //------------------------------------------------------------------------------
-static void privateNotificationHandler(TemperatureServiceT* service,
-		TemperatureServiceAdapterT* adapter,
+static void privateNotificationHandler(DeviceServiceT* service,
+		DeviceServiceAdapterT* adapter,
 		CAN_LocalSegmentT* segment)
 {
 	CAN_LocalBaseEventPacketT content = { .Value = segment->Data.DoubleWord };
@@ -75,18 +74,9 @@ static void privateNotificationHandler(TemperatureServiceT* service,
 	}
 }
 //------------------------------------------------------------------------------
-static void privateHandler(TemperatureServiceT* service)
+static void privateHandler(DeviceServiceT* service)
 {
-	TemperatureServiceAdapterT* adapter = service->Adapter.Content;
-
-	uint32_t totalTime = xSystemGetTime(service);
-
-	if (adapter->Internal.TimeStamp - totalTime > 500)
-	{
-		adapter->Internal.TimeStamp = totalTime;
-
-		service->Temperature = 10.0f + (float)(rand() & 0x3fff) / 1000;
-	}
+	DeviceServiceAdapterT* adapter = service->Adapter.Content;
 
 	xCircleBufferT* circleBuffer = xPortGetRxCircleBuffer(adapter->Port);
 
@@ -127,7 +117,7 @@ static void privateHandler(TemperatureServiceT* service)
 	}
 }
 //------------------------------------------------------------------------------
-static xResult privateRequestListener(TemperatureServiceT* service, int selector, void* arg)
+static xResult privateRequestListener(DeviceServiceT* service, int selector, void* arg)
 {
 	switch ((uint32_t)selector)
 	{
@@ -137,35 +127,24 @@ static xResult privateRequestListener(TemperatureServiceT* service, int selector
 
 	return xResultAccept;
 }
-//------------------------------------------------------------------------------
-static void privateEventListener(TemperatureServiceT* service, TemperatureServiceAdapterEventSelector selector, void* arg)
-{
-	//register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
-
-	switch((int)selector)
-	{
-		default: return;
-	}
-}
 //==============================================================================
 //initializations:
 
-static TemperatureServiceAdapterInterfaceT privateInterface =
+static DeviceServiceAdapterInterfaceT privateInterface =
 {
-	.Handler = (TemperatureServiceAdapterHandlerT)privateHandler,
-
-	.RequestListener = (TemperatureServiceAdapterRequestListenerT)privateRequestListener
+	.Handler = (DeviceServiceAdapterHandlerT)privateHandler,
+	.RequestListener = (DeviceServiceAdapterRequestListenerT)privateRequestListener
 };
 //------------------------------------------------------------------------------
-xResult TemperatureServiceAdapterInit(TemperatureServiceT* service,
-		TemperatureServiceAdapterT* adapter,
-		TemperatureServiceAdapterInitT* init)
+xResult DeviceServiceAdapterInit(DeviceServiceT* service,
+		DeviceServiceAdapterT* adapter,
+		DeviceServiceAdapterInitT* init)
 {
 	if (service && init)
 	{
 		service->Adapter.Content = adapter;
 		service->Adapter.Interface = &privateInterface;
-		service->Adapter.Description = nameof(TemperatureServiceAdapterT);
+		service->Adapter.Description = nameof(DeviceServiceAdapterT);
 
 		adapter->Port = init->Port;
 

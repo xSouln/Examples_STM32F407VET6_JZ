@@ -1,7 +1,7 @@
 //==============================================================================
 //includes:
 
-#include "TemperatureService.h"
+#include "DeviceService.h"
 //==============================================================================
 //defines:
 
@@ -9,21 +9,21 @@
 //==============================================================================
 //variables:
 
-static const ObjectDescriptionT privateObjectDescription =
+/*static const ObjectDescriptionT privateObjectDescription =
 {
 	.Key = OBJECT_DESCRIPTION_KEY,
 	.ObjectId = UID,
-	.Type = nameof(TemperatureServiceT)
-};
+	.Type = nameof(DeviceServiceT)
+};*/
 //==============================================================================
 //functions:
 
-static void privateHandler(TemperatureServiceT* service)
+static void privateHandler(DeviceServiceT* service)
 {
 	service->Adapter.Interface->Handler((void*)service);
 }
 //------------------------------------------------------------------------------
-static xResult privateRequestListener(TemperatureServiceT* service, xServiceAdapterRequestSelector selector, void* arg)
+static xResult privateRequestListener(DeviceServiceT* service, xServiceAdapterRequestSelector selector, void* arg)
 {
 	if ((int)selector > xServiceBaseRequestOffset && service->Base.Info.Type != xServiceTypeTemperatureControl)
 	{
@@ -32,12 +32,6 @@ static xResult privateRequestListener(TemperatureServiceT* service, xServiceAdap
 
 	switch ((int)selector)
 	{
-		case TemperatureServiceRequestGetTemperature:
-		{
-			*(float*)arg = service->Temperature;
-			break;
-		}
-
 		default : return xResultRequestIsNotFound;
 	}
 
@@ -53,15 +47,14 @@ static xServiceAdapterInterfaceT privateInterface =
 };
 //------------------------------------------------------------------------------
 
-xResult TemperatureServiceInit(TemperatureServiceT* service, TemperatureServiceInitT* init)
+xResult DeviceServiceInit(DeviceServiceT* service, DeviceServiceInitT* init)
 {
 	xServiceInit((xServiceT*)service, (xServiceInitT*)init);
 
-	service->Base.Base.Description = &privateObjectDescription;
-	service->Base.Info.Type = xServiceTypeTemperatureControl;
+	service->Base.Info.Type = xServiceTypeDeviceControl;
 
 	service->Base.Adapter.Interface = &privateInterface;
-	service->Base.Adapter.Description = nameof(TemperatureServiceT);
+	service->Base.Adapter.Description = nameof(DeviceServiceT);
 
 	return xResultAccept;
 }

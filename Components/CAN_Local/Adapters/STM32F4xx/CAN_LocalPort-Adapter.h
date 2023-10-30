@@ -23,6 +23,7 @@ typedef struct
 {
 #ifdef INC_FREERTOS_H
 	SemaphoreHandle_t TransactionMutex;
+	SemaphoreHandle_t TxSemaphore;
 #endif
 
 	CAN_HandleTypeDef* CAN;

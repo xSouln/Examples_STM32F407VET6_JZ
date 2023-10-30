@@ -10,8 +10,6 @@
 //defines:
 
 #define DEVICE_ID 2001
-#define TEMPERATURE_SERVICE1_ID 10000
-#define TEMPERATURE_SERVICE2_ID 10001
 //==============================================================================
 //import:
 
@@ -19,8 +17,8 @@
 //==============================================================================
 //variables:
 
-static TemperatureServiceT TemperatureService1;
-static TemperatureServiceT TemperatureService2;
+TemperatureServiceT TemperatureService3;
+TemperatureServiceT TemperatureService4;
 
 xDeviceT Device1;
 //==============================================================================
@@ -75,20 +73,21 @@ xResult Device1ComponentInit(void* parent)
 	xDeviceInit(&Device1, &deviceInit);
 
 	TemperatureServiceAdapterInitT temperatureServiceAdapterInit;
-	TemperatureServiceAdapterInit(&TemperatureService1, &privateTemperatureServiceAdapter1, &temperatureServiceAdapterInit);
-	TemperatureServiceAdapterInit(&TemperatureService2, &privateTemperatureServiceAdapter2, &temperatureServiceAdapterInit);
+	temperatureServiceAdapterInit.Port = &CAN_Local2;
+	TemperatureServiceAdapterInit(&TemperatureService3, &privateTemperatureServiceAdapter1, &temperatureServiceAdapterInit);
+	TemperatureServiceAdapterInit(&TemperatureService4, &privateTemperatureServiceAdapter2, &temperatureServiceAdapterInit);
 
 	TemperatureServiceInitT temperatureServiceInit;
 	temperatureServiceInit.Base.EventListener = (void*)privateServiceEventListener;
 
-	temperatureServiceInit.Base.Id = TEMPERATURE_SERVICE1_ID;
-	TemperatureServiceInit(&TemperatureService1, &temperatureServiceInit);
+	temperatureServiceInit.Base.Id = TEMPERATURE_SERVICE3_ID;
+	TemperatureServiceInit(&TemperatureService3, &temperatureServiceInit);
 
-	temperatureServiceInit.Base.Id = TEMPERATURE_SERVICE2_ID;
-	TemperatureServiceInit(&TemperatureService2, &temperatureServiceInit);
+	temperatureServiceInit.Base.Id = TEMPERATURE_SERVICE4_ID;
+	TemperatureServiceInit(&TemperatureService4, &temperatureServiceInit);
 
-	xDeviceAddService(&Device1, (xServiceT*)&TemperatureService1);
-	xDeviceAddService(&Device1, (xServiceT*)&TemperatureService2);
+	xDeviceAddService(&Device1, (xServiceT*)&TemperatureService3);
+	xDeviceAddService(&Device1, (xServiceT*)&TemperatureService4);
 
 	return xResultAccept;
 }

@@ -1,6 +1,6 @@
 //==============================================================================
-#ifndef _RELAY_SERVICE_ADAPTER_BASE_H_
-#define _RELAY_SERVICE_ADAPTER_BASE_H_
+#ifndef _DEVICE_SERVICE_ADAPTER_BASE_H_
+#define _DEVICE_SERVICE_ADAPTER_BASE_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -10,41 +10,40 @@ extern "C" {
 
 #include "Common/xTypes.h"
 //==============================================================================
-/// @defgroup RelayServiceBaseAdapter RelayService adapter base types
-/// @brief типы предостовляемые RelayService-AdapterBase.h
+/// @defgroup DeviceServiceBaseAdapter DeviceService adapter base types
+/// @brief типы предостовляемые DeviceService-AdapterBase.h
 /// @{
 
-struct RelayServiceT;
+struct DeviceServiceT;
 //------------------------------------------------------------------------------
 
 typedef enum
 {
-	RelayServiceAdapterEventIdle,
+	DeviceServiceAdapterEventIdle,
 	
-} RelayServiceAdapterEventSelector;
+} DeviceServiceAdapterEventSelector;
 //------------------------------------------------------------------------------
 
 typedef enum
 {
-	RelayServiceAdapterRequestIdle,
+	DeviceServiceAdapterRequestIdle,
 
-	RelayServiceAdapterRequestsGet = 50,
-	RelayServiceAdapterRequestGetRelay
+	DeviceServiceAdapterRequestsGet = 50,
 
-} RelayServiceAdapterRequestSelector;
+} DeviceServiceAdapterRequestSelector;
 //------------------------------------------------------------------------------
 
-typedef void (*RelayServiceAdapterHandlerT) (struct RelayServiceT* service);
-typedef void (*RelayServiceAdapterEventListenerT) (struct RelayServiceT* service, RelayServiceAdapterEventSelector selector, void* arg);
-typedef xResult (*RelayServiceAdapterRequestListenerT) (struct RelayServiceT* service, RelayServiceAdapterRequestSelector selector, void* arg);
+typedef void (*DeviceServiceAdapterHandlerT) (struct DeviceServiceT* service);
+typedef void (*DeviceServiceAdapterEventListenerT) (struct DeviceServiceT* service, DeviceServiceAdapterEventSelector selector, void* arg);
+typedef xResult (*DeviceServiceAdapterRequestListenerT) (struct DeviceServiceT* service, DeviceServiceAdapterRequestSelector selector, void* arg);
 //------------------------------------------------------------------------------
 
 typedef struct
 {
-	RelayServiceAdapterHandlerT Handler;
-	RelayServiceAdapterRequestListenerT RequestListener;
+	DeviceServiceAdapterHandlerT Handler;
+	DeviceServiceAdapterRequestListenerT RequestListener;
 
-} RelayServiceAdapterInterfaceT;
+} DeviceServiceAdapterInterfaceT;
 //------------------------------------------------------------------------------
 
 typedef struct
@@ -52,16 +51,16 @@ typedef struct
 	char* Description;
 	void* Content;
 
-	RelayServiceAdapterInterfaceT* Interface;
+	DeviceServiceAdapterInterfaceT* Interface;
 
-} RelayServiceAdapterBaseT;
+} DeviceServiceAdapterBaseT;
 //------------------------------------------------------------------------------
 
 typedef struct
 {
 	void* Content;
 
-} RelayServiceAdapterBaseInitT;
+} DeviceServiceAdapterBaseInitT;
 
 /// @}
 //==============================================================================
@@ -69,4 +68,4 @@ typedef struct
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_RELAY_SERVICE_ADAPTER_BASE_H_
+#endif //_DEVICE_SERVICE_ADAPTER_BASE_H_

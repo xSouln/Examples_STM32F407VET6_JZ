@@ -14,7 +14,6 @@
 //variables:
 
 static uint32_t CAN_LocalRequestsCount;
-static uint32_t CAN_LocalRequestsValidationCount;
 static uint32_t CAN_LocalResponsesCount;
 //==============================================================================
 //functions:
@@ -22,6 +21,8 @@ static uint32_t CAN_LocalResponsesCount;
 static void PrivateHandler(xPortT* port)
 {
 	CAN_LocalPortAdapterT* adapter = (CAN_LocalPortAdapterT*)port->Adapter.Content;
+
+	xSemaphoreTake(adapter->TxSemaphore, 5);
 
 	if (adapter->CAN_Register->TxStatus.Mailbox0_TransmissionError)
 	{
@@ -38,9 +39,9 @@ static void PrivateHandler(xPortT* port)
 		adapter->CAN_Register->TxStatus.Mailbox2_AbortRequest = true;
 	}
 
-	//if (!adapter->AwaitTxValidation)
+	if (!adapter->AwaitTxValidation)
 	{
-		/*if (adapter->TxValidationComplite)
+		if (adapter->TxValidationComplite)
 		{
 			adapter->TxValidationComplite = false;
 
@@ -48,7 +49,7 @@ static void PrivateHandler(xPortT* port)
 			{
 				xCircleBufferOffsetHandlerIndex(&adapter->TxCircleBuffer, 1);
 			}
-		}*/
+		}
 
 		if (adapter->TxCircleBuffer.HandlerIndex != adapter->TxCircleBuffer.TotalIndex)
 		{
@@ -77,13 +78,11 @@ static void PrivateHandler(xPortT* port)
 
 			if (HAL_CAN_AddTxMessage(adapter->CAN, &adapter->TxHeader, segment->Data.Bytes, &txMailbox) != HAL_OK)
 			{
-				//adapter->AwaitTxValidation = false;
+				adapter->AwaitTxValidation = false;
 				return;
 			}
 
 			CAN_LocalRequestsCount++;
-
-			xCircleBufferOffsetHandlerIndex(&adapter->TxCircleBuffer, 1);
 		}
 	}
 }
@@ -147,10 +146,8 @@ static void PrivateTxIRQ(xCAN_T* can, xCAN_HandleT* reg, CAN_LocalPortAdapterT* 
 	adapter->TxValidationComplite = true;
 	adapter->AwaitTxValidation = false;
 
-	if (!adapter->TxError)
-	{
-		CAN_LocalRequestsValidationCount++;
-	}
+	BaseType_t yield = pdFALSE;
+	xSemaphoreGiveFromISR(adapter->TxSemaphore, &yield);
 }
 //------------------------------------------------------------------------------
 static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector selector, void* arg)
@@ -194,6 +191,7 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 			case xPortAdapterRequesExtendedTransmission:
 			{
 				xCircleBufferAddObject(&adapter->TxCircleBuffer, arg, 1, 0, 0);
+				xSemaphoreGive(adapter->TxSemaphore);
 				break;
 			}
 
@@ -294,6 +292,7 @@ xResult CAN_LocalPortAdapterInit(xPortT* port, struct xPortAdapterInitT* init)
 
 #ifdef INC_FREERTOS_H
 		adapter->TransactionMutex = xSemaphoreCreateMutex();
+		adapter->TxSemaphore = xSemaphoreCreateBinary();
 #endif
 
 		xCircleBufferInit(&adapter->RxCircleBuffer, adapterInit->RxBuffer, adapterInit->RxBufferSizeMask, sizeof(CAN_LocalSegmentT));

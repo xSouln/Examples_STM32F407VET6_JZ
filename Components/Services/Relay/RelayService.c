@@ -42,23 +42,13 @@ static xResult privateRequestListener(RelayServiceT* service, int selector, void
 
 	return xResultAccept;
 }
-//------------------------------------------------------------------------------
-static void privateEventListener(RelayServiceT* service, xServiceAdapterEventSelector selector, void* arg)
-{
-	switch((int)selector)
-	{
-		default: return;
-	}
-}
 //==============================================================================
 //initialization:
 
 static xServiceAdapterInterfaceT privateInterface =
 {
 	.Handler = (xServiceAdapterHandlerT)privateHandler,
-
-	.RequestListener = (xServiceAdapterRequestListenerT)privateRequestListener,
-	.EventListener = (xServiceAdapterEventListenerT)privateEventListener,
+	.RequestListener = (xServiceAdapterRequestListenerT)privateRequestListener
 };
 //------------------------------------------------------------------------------
 

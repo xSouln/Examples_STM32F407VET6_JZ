@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _TEMPERATURE_SERVICE_ADAPTER_H_
-#define _TEMPERATURE_SERVICE_ADAPTER_H_
+#ifndef _DEVICE_SERVICE_ADAPTER_H_
+#define _DEVICE_SERVICE_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -11,9 +11,8 @@ extern "C" {
 //includes:
 
 #include "Abstractions/xDevice/xDevice.h"
-#include "Services/Temperature/TemperatureService.h"
+#include "Services/Device/DeviceService.h"
 #include "Abstractions/xPort/xPort.h"
-#include "Common/xCircleBuffer.h"
 //==============================================================================
 //types:
 
@@ -27,15 +26,15 @@ typedef struct
 
 	uint16_t RxPacketHandlerIndex;
 
-} TemperatureServiceAdapterInternalT;
+} DeviceServiceAdapterInternalT;
 //------------------------------------------------------------------------------
 
 typedef struct
 {
-	TemperatureServiceAdapterInternalT Internal;
+	DeviceServiceAdapterInternalT Internal;
 	xPortT* Port;
 
-} TemperatureServiceAdapterT;
+} DeviceServiceAdapterT;
 //------------------------------------------------------------------------------
 typedef struct
 {
@@ -43,16 +42,16 @@ typedef struct
 
 	xPortT* Port;
 
-} TemperatureServiceAdapterInitT;
+} DeviceServiceAdapterInitT;
 //==============================================================================
 //functions:
 
-xResult TemperatureServiceAdapterInit(TemperatureServiceT* service,
-		TemperatureServiceAdapterT* adapter,
-		TemperatureServiceAdapterInitT* init);
+xResult DeviceServiceAdapterInit(DeviceServiceT* service,
+		DeviceServiceAdapterT* adapter,
+		DeviceServiceAdapterInitT* init);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_TEMPERATURE_SERVICE_ADAPTER_H_
+#endif //_DEVICE_SERVICE_ADAPTER_H_

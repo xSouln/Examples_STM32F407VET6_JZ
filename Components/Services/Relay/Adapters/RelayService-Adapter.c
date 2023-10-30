@@ -43,25 +43,13 @@ static xResult privateRequestListener(RelayServiceT* service, int selector, void
 
 	return xResultAccept;
 }
-//------------------------------------------------------------------------------
-static void privateEventListener(RelayServiceT* service, RelayServiceAdapterEventSelector selector, void* arg)
-{
-	//register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
-
-	switch((int)selector)
-	{
-		default: return;
-	}
-}
 //==============================================================================
 //initializations:
 
 static RelayServiceAdapterInterfaceT privateInterface =
 {
 	.Handler = (RelayServiceAdapterHandlerT)privateHandler,
-
-	.RequestListener = (RelayServiceAdapterRequestListenerT)privateRequestListener,
-	.EventListener = (RelayServiceAdapterEventListenerT)privateEventListener,
+	.RequestListener = (RelayServiceAdapterRequestListenerT)privateRequestListener
 };
 //------------------------------------------------------------------------------
 xResult RelayServiceAdapterInit(RelayServiceT* service,

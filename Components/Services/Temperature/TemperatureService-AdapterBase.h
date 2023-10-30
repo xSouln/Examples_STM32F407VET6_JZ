@@ -43,7 +43,6 @@ typedef struct
 {
 	TemperatureServiceAdapterHandlerT Handler;
 	TemperatureServiceAdapterRequestListenerT RequestListener;
-	TemperatureServiceAdapterEventListenerT EventListener;
 
 } TemperatureServiceAdapterInterfaceT;
 //------------------------------------------------------------------------------

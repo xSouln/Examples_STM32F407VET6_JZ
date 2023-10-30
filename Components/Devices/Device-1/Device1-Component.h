@@ -12,10 +12,12 @@ extern "C" {
 
 #include "Components-Types.h"
 #include "Abstractions/xDevice/xDevice.h"
+#include "Services/Temperature/TemperatureService.h"
 //==============================================================================
 //defines:
 
-
+#define TEMPERATURE_SERVICE3_ID 2022
+#define TEMPERATURE_SERVICE4_ID 2023
 //==============================================================================
 //functions:
 
@@ -34,6 +36,8 @@ void Device1ComponentTimeSynchronization();
 //export:
 
 extern xDeviceT Device1;
+extern TemperatureServiceT TemperatureService3;
+extern TemperatureServiceT TemperatureService4;
 //==============================================================================
 #ifdef __cplusplus
 }
