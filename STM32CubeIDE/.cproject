@@ -101,7 +101,7 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry excluding="Components|xLib|xLib/Templates/Adapters/Terminal-TransferLayer" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
-						<entry excluding="Services/DeviceControl" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
+						<entry excluding="Devices/Device-3|Devices/Device-2|Services/DeviceControl" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
 						<entry excluding="Components/USART-Ports/Adapters/STM32H7xx|Components/USART-Ports/Adapters/STM32F1xx|Peripherals/xUSART/Adapters|Peripherals/xUSART/Adapters/STM32F4xx|Components/USART-SerialPorts/Adapters/STM32H7xx|Components/USART-SerialPorts/Adapters/STM32F1xx|Drivers|Templates|Drivers/OV2640|Registers/registers_stm32h7xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xLib"/>
 					</sourceEntries>
 				</configuration>
@@ -197,7 +197,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Components/Services/DeviceControl|xLib/Templates/Adapters/Terminal-TransferLayer|xLib/Components/USART-Ports/Adapters/STM32H7xx|xLib/Components/USART-Ports/Adapters/STM32F1xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Components/Devices/Device-3|Components/Devices/Device-2|Components/Services/DeviceControl|xLib/Templates/Adapters/Terminal-TransferLayer|xLib/Components/USART-Ports/Adapters/STM32H7xx|xLib/Components/USART-Ports/Adapters/STM32F1xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

@@ -21,15 +21,10 @@ typedef struct
 {
 #ifdef INC_FREERTOS_H
 	SemaphoreHandle_t CoreMutex;
-	SemaphoreHandle_t CommandAccomplishSemaphore;
 #endif
 
 	uint32_t RxPacketHandlerIndex;
 	xCircleBufferT* PortRxCircleBuffer;
-
-	void* CommandArgs;
-	xResult CommandResult;
-	xTransferCommandT Command;
 
 } TransferLayerAdapterContentT;
 //------------------------------------------------------------------------------

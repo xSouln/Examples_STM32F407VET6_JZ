@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _TRANSACTION_MANAGER_COMPONENT_H_
-#define _TRANSACTION_MANAGER_COMPONENT_H_
+#ifndef _TRANSFER_LAYER_COMPONENT_H_
+#define _TRANSFER_LAYER_COMPONENT_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -11,11 +11,24 @@ extern "C" {
 //includes:
 
 #include "Components-Types.h"
+#include "CAN_Local/Control/CAN_Local-Types.h"
 #include "Abstractions/xTransferLayer/xTransferLayer.h"
 //==============================================================================
 //defines:
 
 
+//==============================================================================
+//types:
+
+
+//==============================================================================
+//variables:
+
+static const uint8_t transferTxData[] = "11223344556677889900112233445566778111111111111111111111111111111111111642724574864978764363474626326358888888888888843566313453452363568679567983563253agdgasdbjfDFSDFASGHA89900"
+		"11223344556677889900112233445566778111111111111111111111111111111111111642724574864978764363474626326358888888888888843566313453452363568679567983563253agdgasdbjfDFSDFASGHA89900"
+		"11223344556677889900112233445566778111111111111111111111111111111111111642724574864978764363474626326358888888888888843566313453452363568679567983563253agdgasdbjfDFSDFASGHA89900";
+
+static uint8_t transferRxData[sizeof_str(transferTxData)];
 //==============================================================================
 //functions:
 
@@ -42,4 +55,4 @@ extern xTransferLayerT ExternalTransferLayer;
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_TRANSACTION_MANAGER_COMPONENT_H_
+#endif //_TRANSFER_LAYER_COMPONENT_H_

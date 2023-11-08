@@ -1,6 +1,6 @@
 //==============================================================================
-#ifndef _DEVICE_SERVICE_ADAPTER_BASE_H_
-#define _DEVICE_SERVICE_ADAPTER_BASE_H_
+#ifndef _GAP_SERVICE_ADAPTER_BASE_H_
+#define _GAP_SERVICE_ADAPTER_BASE_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -10,40 +10,40 @@ extern "C" {
 
 #include "Common/xTypes.h"
 //==============================================================================
-/// @defgroup DeviceServiceBaseAdapter DeviceService adapter base types
-/// @brief типы предостовляемые DeviceService-AdapterBase.h
+/// @defgroup GAPServiceBaseAdapter GAPService adapter base types
+/// @brief типы предостовляемые GAPService-AdapterBase.h
 /// @{
 
-struct DeviceServiceT;
+struct GAPServiceT;
 //------------------------------------------------------------------------------
 
 typedef enum
 {
-	DeviceServiceAdapterEventIdle,
+	GAPServiceAdapterEventIdle,
 	
-} DeviceServiceAdapterEventSelector;
+} GAPServiceAdapterEventSelector;
 //------------------------------------------------------------------------------
 
 typedef enum
 {
-	DeviceServiceAdapterRequestIdle,
+	GAPServiceAdapterRequestIdle,
 
-	DeviceServiceAdapterRequestsGet = 50,
+	GAPServiceAdapterRequestDispose,
 
-} DeviceServiceAdapterRequestSelector;
+} GAPServiceAdapterRequestSelector;
 //------------------------------------------------------------------------------
 
-typedef void (*DeviceServiceAdapterHandlerT) (struct DeviceServiceT* service);
-typedef void (*DeviceServiceAdapterEventListenerT) (struct DeviceServiceT* service, DeviceServiceAdapterEventSelector selector, void* arg);
-typedef xResult (*DeviceServiceAdapterRequestListenerT) (struct DeviceServiceT* service, DeviceServiceAdapterRequestSelector selector, void* arg);
+typedef void (*GAPServiceAdapterHandlerT) (struct GAPServiceT* service);
+typedef void (*GAPServiceAdapterEventListenerT) (struct GAPServiceT* service, GAPServiceAdapterEventSelector selector, void* arg);
+typedef xResult (*GAPServiceAdapterRequestListenerT) (struct GAPServiceT* service, GAPServiceAdapterRequestSelector selector, void* arg);
 //------------------------------------------------------------------------------
 
 typedef struct
 {
-	DeviceServiceAdapterHandlerT Handler;
-	DeviceServiceAdapterRequestListenerT RequestListener;
+	GAPServiceAdapterHandlerT Handler;
+	GAPServiceAdapterRequestListenerT RequestListener;
 
-} DeviceServiceAdapterInterfaceT;
+} GAPServiceAdapterInterfaceT;
 //------------------------------------------------------------------------------
 
 typedef struct
@@ -51,16 +51,16 @@ typedef struct
 	char* Description;
 	void* Content;
 
-	DeviceServiceAdapterInterfaceT* Interface;
+	GAPServiceAdapterInterfaceT* Interface;
 
-} DeviceServiceAdapterBaseT;
+} GAPServiceAdapterBaseT;
 //------------------------------------------------------------------------------
 
 typedef struct
 {
 	void* Content;
 
-} DeviceServiceAdapterBaseInitT;
+} GAPServiceAdapterBaseInitT;
 
 /// @}
 //==============================================================================
@@ -68,4 +68,4 @@ typedef struct
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_DEVICE_SERVICE_ADAPTER_BASE_H_
+#endif //_GAP_SERVICE_ADAPTER_BASE_H_

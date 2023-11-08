@@ -7,7 +7,6 @@
 #include "main.h"
 #include "Peripherals/xTimer/xTimer.h"
 #include "Common/xList.h"
-#include "Abstractions/xTxRequest/xTxRequest.h"
 #include "CAN_Local/Control/CAN_Local-Types.h"
 //==============================================================================
 //defines:
@@ -34,7 +33,7 @@ static uint32_t receivedEventsCount;
 int RTOS_FreeHeapSize;
 int RTOS_ComponentsTaskStackWaterMark;
 
-static TaskHandle_t taskHandle;
+//static TaskHandle_t taskHandle;
 //==============================================================================
 //functions:
 
@@ -98,7 +97,7 @@ void ComponentsHandler()
 		PortE->Output.LED2 ^= PortE->Output.LED1;
 		PortE->Output.LED3 ^= PortE->Output.LED1 && PortE->Output.LED2;
 
-		CAN_LocalTemperatureSensoreEventContentT temperatureSensoreEventContent;
+		/*CAN_LocalContentTemperatureSensoreEventT temperatureSensoreEventContent;
 		temperatureSensoreEventContent.Temperature = (float)time / 100;
 
 		CAN_LocalBaseEventPacketT eventPacket;
@@ -112,13 +111,13 @@ void ComponentsHandler()
 		packet.Header.MessageType = CAN_LocalMessageTypeNotification;
 		packet.Header.ServiceType = xServiceTypeTemperatureControl;
 		packet.ExtensionIsEnabled = false;
-		packet.DataLength = sizeof(uint16_t) + sizeof(CAN_LocalTemperatureSensoreEventContentT);
+		packet.DataLength = sizeof(uint16_t) + sizeof(CAN_LocalContentTemperatureSensoreEventT);
 		packet.Data.DoubleWord = eventPacket.Value;
 
 		packet.DataLength = 8;
 
 		startTransmittingEventTimeStamp = time;
-		xPortExtendedTransmition(&CAN_Local1, &packet);
+		xPortExtendedTransmition(&CAN_Local1, &packet);*/
 	}
 
 	RTOS_FreeHeapSize = xPortGetFreeHeapSize();
@@ -150,17 +149,9 @@ void Timer4_IRQ_Handler(xTimerT* timer, xTimerHandleT* handle)
 	ComponentsTimeSynchronization();
 }
 //------------------------------------------------------------------------------
-static void privateTask(void* arg)
-{
-	while (true)
-	{
-		CAN_LocalComponentHandler();
-	}
-}
-//------------------------------------------------------------------------------
 static void privateCustomSubscriberEventListener(xServiceT* service, xServiceSubscriberT* Subscriber, int selector, void* arg)
 {
-	CAN_LocalTemperatureSensoreEventContentT* content = arg;
+	CAN_LocalContentTemperatureSensoreEventT* content = arg;
 
 	if (content->Temperature > 20.0f)
 	{
@@ -197,7 +188,7 @@ xResult ComponentsInit(void* parent)
 
 	CAN_LocalComponentInit(parent);
 	TransferLayerComponentInit(parent);
-	LocalDeviceComponentInit(parent);
+	HostDeviceComponentInit(parent);
 
 	Device1ComponentInit(parent);
 	//Device2ComponentInit(parent);
@@ -211,12 +202,12 @@ xResult ComponentsInit(void* parent)
 	rTimer4->DMAOrInterrupts.UpdateInterruptEnable = true;
 	rTimer4->Control1.CounterEnable = true;
 
-	xTaskCreate(privateTask, // Function that implements the task.
+	/*xTaskCreate(privateTask, // Function that implements the task.
 				"CAN local task", // Text name for the task.
 				TASK_STACK_SIZE, // Number of indexes in the xStack array.
 				NULL, // Parameter passed into the task.
 				osPriorityHigh, // Priority at which the task is created.
-				&taskHandle);
+				&taskHandle);*/
 
 	return xResultAccept;
 }

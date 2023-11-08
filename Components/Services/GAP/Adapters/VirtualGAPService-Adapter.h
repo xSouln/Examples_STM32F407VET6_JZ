@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _LOCAL_DEVICE_ADAPTER_H_
-#define _LOCAL_DEVICE_ADAPTER_H_
+#ifndef _VIRTUAL_GAP_SERVICE_ADAPTER_H_
+#define _VIRTUAL_GAP_SERVICE_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -11,46 +11,40 @@ extern "C" {
 //includes:
 
 #include "Abstractions/xDevice/xDevice.h"
+#include "Services/GAP/GAPService.h"
 #include "Abstractions/xPort/xPort.h"
-#include "Common/xCircleBuffer.h"
 //==============================================================================
 //types:
 
 typedef struct
 {
-#ifdef INC_FREERTOS_H
-	SemaphoreHandle_t CommandExecutionMutex;
-	SemaphoreHandle_t CommandAccomplishSemaphore;
-#endif
+	uint32_t TimeStamp;
 
-	xDeviceCommandT* Command;
-	xResult CommandExecutionResult;
+	uint16_t RxPacketHandlerIndex;
 
-	uint32_t RxPacketHandlerIndex;
-	xCircleBufferT* PortRxCircleBuffer;
+} VirtualGAPServiceAdapterInternalT;
+//------------------------------------------------------------------------------
 
-} LocalDeviceAdapterContentT;
+typedef struct
+{
+	VirtualGAPServiceAdapterInternalT Internal;
+
+} VirtualGAPServiceAdapterT;
 //------------------------------------------------------------------------------
 typedef struct
 {
-	LocalDeviceAdapterContentT Content;
+	xServiceAdapterBaseInitT Base;
 
-	xPortT* Port;
-
-} LocalDeviceAdapterT;
-//------------------------------------------------------------------------------
-typedef struct
-{
-	xPortT* Port;
-
-} LocalDeviceAdapterInitT;
+} VirtualGAPServiceAdapterInitT;
 //==============================================================================
 //functions:
 
-xResult LocalDeviceAdapterInit(xDeviceT* device, LocalDeviceAdapterT* adapter, LocalDeviceAdapterInitT* init);
+xResult VirtualGAPServiceAdapterInit(GAPServiceT* service,
+		VirtualGAPServiceAdapterT* adapter,
+		VirtualGAPServiceAdapterInitT* init);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_LOCAL_DEVICE_ADAPTER_H_
+#endif //_VIRTUAL_GAP_SERVICE_ADAPTER_H_

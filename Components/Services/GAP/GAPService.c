@@ -1,7 +1,7 @@
 //==============================================================================
 //includes:
 
-#include "DeviceService.h"
+#include "GAPService.h"
 //==============================================================================
 //defines:
 
@@ -13,17 +13,17 @@
 {
 	.Key = OBJECT_DESCRIPTION_KEY,
 	.ObjectId = UID,
-	.Type = nameof(DeviceServiceT)
+	.Type = nameof(GAPServiceT)
 };*/
 //==============================================================================
 //functions:
 
-static void privateHandler(DeviceServiceT* service)
+static void privateHandler(GAPServiceT* service)
 {
 	service->Adapter.Interface->Handler((void*)service);
 }
 //------------------------------------------------------------------------------
-static xResult privateRequestListener(DeviceServiceT* service, xServiceAdapterRequestSelector selector, void* arg)
+static xResult privateRequestListener(GAPServiceT* service, xServiceAdapterRequestSelector selector, void* arg)
 {
 	if ((int)selector > xServiceBaseRequestOffset && service->Base.Info.Type != xServiceTypeTemperatureControl)
 	{
@@ -32,6 +32,12 @@ static xResult privateRequestListener(DeviceServiceT* service, xServiceAdapterRe
 
 	switch ((int)selector)
 	{
+		case xServiceAdapterRequestDispose:
+		{
+			service->Base.Adapter.Interface->RequestListener(service, GAPServiceAdapterRequestDispose, NULL);
+			break;
+		}
+
 		default : return xResultRequestIsNotFound;
 	}
 
@@ -47,14 +53,14 @@ static xServiceAdapterInterfaceT privateInterface =
 };
 //------------------------------------------------------------------------------
 
-xResult DeviceServiceInit(DeviceServiceT* service, DeviceServiceInitT* init)
+xResult GAPServiceInit(GAPServiceT* service, GAPServiceInitT* init)
 {
 	xServiceInit((xServiceT*)service, (xServiceInitT*)init);
 
-	service->Base.Info.Type = xServiceTypeDeviceControl;
+	service->Base.Info.Type = xServiceTypeGAP;
 
 	service->Base.Adapter.Interface = &privateInterface;
-	service->Base.Adapter.Description = nameof(DeviceServiceT);
+	service->Base.Adapter.Description = nameof(GAPServiceT);
 
 	return xResultAccept;
 }

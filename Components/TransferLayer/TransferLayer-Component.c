@@ -31,32 +31,21 @@ xTransferLayerT ExternalTransferLayer;
 static uint32_t privateTimeStamp;
 static uint32_t privateTimeStamp1;
 
-static uint32_t privateBeginningTransferTimeStamp;
-static uint32_t privateBeginningTransferTimeDifference;
+static xTransferT privateTransfer;
+static xTransferT* privateMasterTransfer;
 
-static CAN_LocalTransferT privateTransfer;
+volatile static struct
+{
+	uint32_t CAN_Local1NoiseIsEnable : 1;
+	uint32_t CAN_Local2NoiseIsEnable : 1;
 
-const uint8_t transferTxData[] = "11223344556677889900112233445566778111111111111111111111111111111111111642724574864978764363474626326358888888888888843566313453452363568679567983563253agdgasdbjfDFSDFASGHA89900"
-		"11223344556677889900112233445566778111111111111111111111111111111111111642724574864978764363474626326358888888888888843566313453452363568679567983563253agdgasdbjfDFSDFASGHA89900"
-		"11223344556677889900112233445566778111111111111111111111111111111111111642724574864978764363474626326358888888888888843566313453452363568679567983563253agdgasdbjfDFSDFASGHA89900";
-uint8_t transferRxData[sizeof_str(transferTxData)];
+} privateFlags;
 //==============================================================================
 //functions:
 
-static void transferComplite(xTransferLayerT* layer, xTransferT* transfer)
+static void transferComplite(xTransferLayerT* layer, xTransferT* transfer, int selector, void* arg)
 {
 	transfer->State = xTransferStateIdle;
-	privateBeginningTransferTimeDifference = transfer->Internal.TimeStamp - privateBeginningTransferTimeStamp;
-}
-//------------------------------------------------------------------------------
-static void privateEventAccomplish(xTransferLayerT* layer, xTransferT* transfer)
-{
-	transfer->State = xTransferStateIdle;
-
-	if (memcmp(transferTxData, transferRxData, sizeof(transferRxData)) != 0)
-	{
-
-	}
 }
 //------------------------------------------------------------------------------
 void TransferLayerComponentHandler()
@@ -71,44 +60,32 @@ void TransferLayerComponentHandler()
 	{
 		privateTimeStamp = time;
 
-		if (privateTransfer.Base.State == xTransferStateIdle)
+		privateMasterTransfer = &privateTransfer;
+		if (privateMasterTransfer->State == xTransferStateIdle)
 		{
-			privateTransfer.Base.Holder = LocalDevice.Services.Head->Value;
-			privateTransfer.Base.Id = TemperatureService3.Base.Id;
-			privateTransfer.Base.Type = xTransferTypeTransmite;
-			privateTransfer.Base.ValidationIsEnabled = true;
+			privateMasterTransfer->Holder = HostDevice.Services.Head->Value;
+			privateMasterTransfer->Id = TemperatureService3.Base.Id;
+			//privateMasterTransfer.Base.Type = xTransferTypeTransmite;
+			//privateMasterTransfer.Base.ValidationIsEnabled = true;
+			privateMasterTransfer->MasterModeIsEnabled = true;
 
-			privateTransfer.Base.Data = (uint8_t*)transferTxData;
-			privateTransfer.Base.DataLength = sizeof_str(transferTxData);
-			privateTransfer.Base.Token = 3;
-			privateTransfer.Base.TimeOut = 1000;
-			privateTransfer.Base.EventAccomplish = transferComplite;
-			privateTransfer.Base.TransmittingAttempts = 1;
+			privateMasterTransfer->TimeOut = 1000;
+			privateMasterTransfer->EventListener = transferComplite;
+			privateMasterTransfer->TransmittingAttempts = 1;
 
-			xTransferLayerAdd(&LocalTransferLayer, (void*)&privateTransfer);
-			privateBeginningTransferTimeStamp = xSystemGetTime(NULL);
-		}
+			if (privateMasterTransfer->Type == xTransferTypeTransmite)
+			{
+				privateMasterTransfer->Data = (uint8_t*)transferTxData;
+				privateMasterTransfer->DataLength = sizeof_str(transferTxData);
+			}
+			else if (privateMasterTransfer->Type == xTransferTypeReceive)
+			{
+				memset(transferRxData, 0, sizeof(transferRxData));
+				privateMasterTransfer->Data = (uint8_t*)transferRxData;
+				privateMasterTransfer->DataLength = sizeof(transferRxData);
+			}
 
-		xTransferT* transfer = xTransferLayerNewTransfer(&ExternalTransferLayer);
-
-		if (transfer)
-		{
-			transfer->Holder = &TemperatureService3;
-			transfer->Id = LocalDevice.Id;
-			transfer->Type = xTransferTypeReceive;
-			transfer->ValidationIsEnabled = true;
-
-			transfer->Data = transferRxData;
-			transfer->DataLength = sizeof(transferRxData);
-			transfer->Token = 3;
-			transfer->TimeOut = 1000;
-			transfer->TransmittingAttempts = 1;
-
-			transfer->EventAccomplish = privateEventAccomplish;
-
-			memset(transferRxData, 0, sizeof(transferRxData));
-
-			xTransferLayerAdd(&ExternalTransferLayer, transfer);
+			xTransferLayerAdd(&LocalTransferLayer, privateMasterTransfer);
 		}
 	}
 
@@ -124,10 +101,17 @@ void TransferLayerComponentHandler()
 
 		packet.DataLength = 8;
 
-		xPortExtendedTransmition(&CAN_Local1, &packet);
+		if (privateFlags.CAN_Local1NoiseIsEnable)
+		{
+			xPortExtendedTransmition(&CAN_Local1, &packet);
+		}
 
 		packet.ExtensionHeader.ServiceId = 334;
-		xPortExtendedTransmition(&CAN_Local2, &packet);
+
+		if (privateFlags.CAN_Local2NoiseIsEnable)
+		{
+			xPortExtendedTransmition(&CAN_Local2, &packet);
+		}
 	}
 }
 //==============================================================================

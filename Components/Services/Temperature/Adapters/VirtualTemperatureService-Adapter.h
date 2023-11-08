@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _DEVICE_SERVICE_ADAPTER_H_
-#define _DEVICE_SERVICE_ADAPTER_H_
+#ifndef _VIRTUAL_TEMPERATURE_SERVICE_ADAPTER_H_
+#define _VIRTUAL_TEMPERATURE_SERVICE_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -11,47 +11,40 @@ extern "C" {
 //includes:
 
 #include "Abstractions/xDevice/xDevice.h"
-#include "Services/Device/DeviceService.h"
+#include "Services/Temperature/TemperatureService.h"
 #include "Abstractions/xPort/xPort.h"
 //==============================================================================
 //types:
 
 typedef struct
 {
-#ifdef INC_FREERTOS_H
-	SemaphoreHandle_t TransactionMutex;
-#endif
-
 	uint32_t TimeStamp;
 
 	uint16_t RxPacketHandlerIndex;
 
-} DeviceServiceAdapterInternalT;
+} VirtualTemperatureServiceAdapterInternalT;
 //------------------------------------------------------------------------------
 
 typedef struct
 {
-	DeviceServiceAdapterInternalT Internal;
-	xPortT* Port;
+	VirtualTemperatureServiceAdapterInternalT Internal;
 
-} DeviceServiceAdapterT;
+} VirtualTemperatureServiceAdapterT;
 //------------------------------------------------------------------------------
 typedef struct
 {
 	xServiceAdapterBaseInitT Base;
 
-	xPortT* Port;
-
-} DeviceServiceAdapterInitT;
+} VirtualTemperatureServiceAdapterInitT;
 //==============================================================================
 //functions:
 
-xResult DeviceServiceAdapterInit(DeviceServiceT* service,
-		DeviceServiceAdapterT* adapter,
-		DeviceServiceAdapterInitT* init);
+xResult VirtualTemperatureServiceAdapterInit(TemperatureServiceT* service,
+		VirtualTemperatureServiceAdapterT* adapter,
+		VirtualTemperatureServiceAdapterInitT* init);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_DEVICE_SERVICE_ADAPTER_H_
+#endif //_VIRTUAL_TEMPERATURE_SERVICE_ADAPTER_H_

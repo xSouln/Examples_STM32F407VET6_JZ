@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _SERVER_DEVICE_ADAPTER_H_
-#define _SERVER_DEVICE_ADAPTER_H_
+#ifndef _HOST_DEVICE_ADAPTER_H_
+#define _HOST_DEVICE_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -12,49 +12,40 @@ extern "C" {
 
 #include "Abstractions/xDevice/xDevice.h"
 #include "Abstractions/xPort/xPort.h"
+#include "Abstractions/xTransferLayer/xTransferLayer-Types.h"
 #include "Common/xCircleBuffer.h"
 //==============================================================================
 //types:
 
 typedef struct
 {
-#ifdef INC_FREERTOS_H
-	SemaphoreHandle_t CommandExecutionMutex;
-	SemaphoreHandle_t CommandAccomplishSemaphore;
-#endif
-
-	xDeviceCommandT* Command;
-	xResult CommandExecutionResult;
-
-	uint32_t OperationTimeStamp;
-	uint32_t OperationTimeOut;
-	uint16_t Operation;
-
-	uint16_t RxPacketHandlerIndex;
+	uint32_t RxPacketHandlerIndex;
 	xCircleBufferT* PortRxCircleBuffer;
 
-} ServerDeviceAdapterContentT;
+} HostDeviceAdapterContentT;
 //------------------------------------------------------------------------------
 typedef struct
 {
-	ServerDeviceAdapterContentT Content;
+	HostDeviceAdapterContentT Content;
 
 	xPortT* Port;
+	xTransferLayerT* TransferLayer;
 
-} ServerDeviceAdapterT;
+} HostDeviceAdapterT;
 //------------------------------------------------------------------------------
 typedef struct
 {
 	xPortT* Port;
+	xTransferLayerT* TransferLayer;
 
-} ServerDeviceAdapterInitT;
+} HostDeviceAdapterInitT;
 //==============================================================================
 //functions:
 
-xResult ServerDeviceAdapterInit(xDeviceT* device, ServerDeviceAdapterT* adapter, ServerDeviceAdapterInitT* init);
+xResult HostDeviceAdapterInit(xDeviceT* device, HostDeviceAdapterT* adapter, HostDeviceAdapterInitT* init);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_SERVER_DEVICE_ADAPTER_H_
+#endif //_HOST_DEVICE_ADAPTER_H_

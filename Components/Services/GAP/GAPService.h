@@ -1,6 +1,6 @@
 //==============================================================================
-#ifndef _DEVICE_SERVICE_H_
-#define _DEVICE_SERVICE_H_
+#ifndef _GAP_SERVICE_H_
+#define _GAP_SERVICE_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -9,46 +9,54 @@ extern "C" {
 //includes:
 
 #include "Abstractions/xDevice/xService.h"
-#include "DeviceService-AdapterBase.h"
+#include "GAPService-AdapterBase.h"
 //==============================================================================
 //includes:
 
-#define TEMPERATURE_SERVICE_UID 0x5C78700
+#define GAP_SERVICE_UID 0x5C78700
 //==============================================================================
 /// @defgroup xServices temperature service types
-/// @brief функции предостовляемые DeviceService.c
+/// @brief функции предостовляемые GAPService.c
 /// @{
 
 typedef enum
 {
-	DeviceServiceRequestIdle = xServiceBaseRequestOffset,
+	GAPServiceRequestIdle = xServiceBaseRequestOffset,
 
-	DeviceServiceRequestGetTemperature
+	GAPServiceRequestGetNumberOfServices,
+	GAPServiceRequestGetService
 
-} DeviceServiceRequests;
+} GAPServiceRequests;
+//------------------------------------------------------------------------------
+typedef struct
+{
+	uint32_t StartIndex;
+	uint32_t StopIndex;
+
+} GAPServiceRequestGetServisesT;
 //------------------------------------------------------------------------------
 
-typedef struct DeviceServiceT
+typedef struct
 {
 	xServiceT Base;
 
-	DeviceServiceAdapterBaseT Adapter;
+	GAPServiceAdapterBaseT Adapter;
 
-} DeviceServiceT;
+} GAPServiceT;
 //------------------------------------------------------------------------------
 
 typedef struct
 {
 	xServiceInitT Base;
 
-} DeviceServiceInitT;
+} GAPServiceInitT;
 /// @}
 //==============================================================================
 /// @defgroup xServices temperature service functions
-/// @brief функции предостовляемые слоем DeviceService.c
+/// @brief функции предостовляемые слоем GAPService.c
 /// @{
 
-xResult DeviceServiceInit(DeviceServiceT* service, DeviceServiceInitT* init);
+xResult GAPServiceInit(GAPServiceT* service, GAPServiceInitT* init);
 
 /// @}
 //==============================================================================
@@ -56,4 +64,4 @@ xResult DeviceServiceInit(DeviceServiceT* service, DeviceServiceInitT* init);
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_DEVICE_SERVICE_H_
+#endif //_GAP_SERVICE_H_

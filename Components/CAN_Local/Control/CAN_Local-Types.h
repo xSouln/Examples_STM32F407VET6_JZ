@@ -12,13 +12,19 @@ extern "C" {
 
 #include "Common/xTypes.h"
 #include "Abstractions/xTransferLayer/xTransferLayer-Types.h"
+#include "Abstractions/xRequestControl/xRequestControl-Types.h"
 //==============================================================================
 //defines:
+
+#define CAN_LOCAL_ID_SIZE 11
+#define CAN_LOCAL_EXTENSION_ID_SIZE 18
 
 #define CAN_LOCAL_MESSAGE_TYPE_SIZE 3
 #define CAN_LOCAL_SERVICE_TYPE_SIZE 8
 #define CAN_LOCAL_PACKET_TYPE_SIZE 5
 #define CAN_LOCAL_SERVICE_ID_SIZE 13
+
+#define CAN_LOCAL_DHCP_PACKET_TYPE_SIZE 2
 //==============================================================================
 //types:
 
@@ -33,6 +39,8 @@ typedef enum PACKED_PREFIX
 	CAN_LocalMessageTypeNotification,
 
 	CAN_LocalMessageTypeTransfer,
+
+	CAN_LocalMessageTypeCustom,
 
 	CAN_LocalMessageTypesCount
 
@@ -54,6 +62,7 @@ typedef enum PACKED_PREFIX
 //------------------------------------------------------------------------------
 typedef enum PACKED_PREFIX
 {
+	CAN_LocalRequestPacketTypeCommon,
 
 	CAN_LocalRequestPacketTypesCount
 
@@ -75,12 +84,18 @@ typedef enum PACKED_PREFIX
 
 } CAN_LocalPacketTypes;
 //------------------------------------------------------------------------------
+typedef enum PACKED_PREFIX
+{
+	CAN_LocalTemperatureNotificationUpdateTemperature
+
+} CAN_LocalTemperatureNotifications;
+//------------------------------------------------------------------------------
 typedef union PACKED_PREFIX
 {
 	struct
 	{
-		uint32_t Identifier : 11;
-		uint32_t Extension : 18;
+		uint32_t Identifier : CAN_LOCAL_ID_SIZE;
+		uint32_t Extension : CAN_LOCAL_EXTENSION_ID_SIZE;
 		uint32_t ExtensionIsEnabled : 1;
 
 		uint8_t DataLength;
@@ -93,6 +108,7 @@ typedef union PACKED_PREFIX
 			uint64_t DoubleWord;
 
 			uint64_t Value;
+			uint64_t Content;
 
 		} Data;
 	};
@@ -111,8 +127,21 @@ typedef union PACKED_PREFIX
 	struct
 	{
 		uint32_t MessageType : CAN_LOCAL_MESSAGE_TYPE_SIZE;
+		uint32_t ServiceType : CAN_LOCAL_SERVICE_TYPE_SIZE;
+		uint32_t PacketType : CAN_LOCAL_DHCP_PACKET_TYPE_SIZE;
+
+		uint32_t Characteristic : CAN_LOCAL_EXTENSION_ID_SIZE - CAN_LOCAL_DHCP_PACKET_TYPE_SIZE;
+
+		uint32_t IsEnabled : 1;
+
+	} DHCP_Header;
+
+	struct
+	{
+		uint32_t MessageType : CAN_LOCAL_MESSAGE_TYPE_SIZE;
 		uint32_t PacketType : CAN_LOCAL_PACKET_TYPE_SIZE;
 		uint32_t ServiceId : CAN_LOCAL_SERVICE_ID_SIZE;
+
 		uint32_t Characteristic : 8;
 
 		uint32_t IsEnabled : 1;
@@ -157,15 +186,15 @@ typedef union
 
 	uint32_t Value;
 
-} CAN_LocalTemperatureSensoreEventContentT;
+} CAN_LocalContentTemperatureSensoreEventT;
 //------------------------------------------------------------------------------
 
 typedef enum
 {
-	CAN_LocalPacketIdentifierNewDevice = 0x7FF,
-	CAN_LocalPacketIdentifierDeviceApplyId = 0x3FF,
+	CAN_LocalBroadcastPacketTypeDHCPRequestGetId,
+	CAN_LocalBroadcastPacketTypeDHCPResponseGetId,
 
-} CAN_LocalPacketIdentifier;
+} CAN_LocalBroadcastPacketTypes;
 //------------------------------------------------------------------------------
 
 typedef union
@@ -174,7 +203,7 @@ typedef union
 
 	uint64_t Value;
 
-} CAN_LocalPacketNewDeviceT;
+} CAN_LocalRequestContentDHCPGetIdT;
 //------------------------------------------------------------------------------
 
 typedef union
@@ -183,15 +212,90 @@ typedef union
 
 	uint64_t Value;
 
-} CAN_LocalPacketDeviceApplyIdT;
+} CAN_LocalResponseContentDHCPGetIdT;
 //------------------------------------------------------------------------------
 
-typedef enum PACKED_PREFIX
+typedef union
 {
-	CAN_LocalIdAffiliationDevice,
-	CAN_LocalIdAffiliationService
+	struct
+	{
+		uint8_t Type;
+		uint8_t Extansion;
+	};
 
-} CAN_LocalIdAffiliation;
+	uint16_t Value;
+
+} CAN_LocalCharacteristicDHCPGetIdT;
+//------------------------------------------------------------------------------
+
+typedef union
+{
+	uint16_t Id;
+
+	uint16_t Value;
+
+} CAN_LocalCharacteristicDHCPApplyIdT;
+//------------------------------------------------------------------------------
+
+typedef struct PACKED_PREFIX
+{
+	uint16_t Recipient : 13;
+	uint16_t Sequence : 3;
+	uint16_t Action;
+
+} CAN_LocalRequestDescriptionT;
+//------------------------------------------------------------------------------
+
+typedef struct PACKED_PREFIX
+{
+	uint16_t Sender : 13;
+	uint16_t Sequence : 3;
+	uint16_t Action;
+
+} CAN_LocalResponseDescriptionT;
+//------------------------------------------------------------------------------
+
+typedef union PACKED_PREFIX
+{
+	struct
+	{
+		CAN_LocalRequestDescriptionT Description;
+
+		union
+		{
+			uint8_t Bytes[4];
+			uint16_t HalfWords[2];
+			uint32_t Word;
+
+			uint32_t Content;
+
+		} Data;
+	};
+
+	uint64_t Value;
+
+} CAN_LocalRequestContentT;
+//------------------------------------------------------------------------------
+typedef union PACKED_PREFIX
+{
+	struct
+	{
+		CAN_LocalResponseDescriptionT Description;
+
+		union
+		{
+			uint8_t Bytes[4];
+			uint16_t HalfWords[2];
+			uint32_t Word;
+
+			uint32_t Content;
+
+		} Data;
+	};
+
+	uint64_t Value;
+
+} CAN_LocalResponseContentT;
 //------------------------------------------------------------------------------
 typedef union
 {
@@ -203,13 +307,11 @@ typedef union
 		uint16_t Id : 8;
 		uint16_t Type : 2;
 		uint16_t ValidationIsEnabled : 1;
-
-		uint8_t Token;
 	};
 
 	uint64_t Value;
 
-} CAN_LocalPacketOpenTransferRequestT;
+} CAN_LocalRequestContentOpenTransferT;
 //------------------------------------------------------------------------------
 
 typedef union
@@ -219,7 +321,7 @@ typedef union
 		uint16_t ServiceId;
 		uint16_t Action;
 
-		uint16_t Reserved;
+		uint16_t ContantSize;
 
 		uint8_t Token;
 		int8_t Result;
@@ -227,23 +329,35 @@ typedef union
 
 	uint64_t Value;
 
-} CAN_LocalPacketOpenTransferResponseT;
+} CAN_LocalResponseContentOpenTransferT;
 //------------------------------------------------------------------------------
 
 typedef union
 {
-	uint8_t Data[8];
+	struct
+	{
+		uint8_t Segment;
+
+		uint8_t Data[7];
+	};
+
 	uint64_t Value;
 
-} CAN_LocalPacketTransferRequestT;
+} CAN_LocalRequestContentTransferT;
 //------------------------------------------------------------------------------
 
 typedef union
 {
-	uint8_t Data[8];
+	struct
+	{
+		uint8_t Segment;
+
+		uint8_t Data[7];
+	};
+
 	uint64_t Value;
 
-} CAN_LocalPacketTransferResponseT;
+} CAN_LocalResponseContentTransferT;
 //------------------------------------------------------------------------------
 typedef union
 {
@@ -256,7 +370,7 @@ typedef union
 
 	uint32_t Value;
 
-} CAN_LocalPacketCloseTransferRequestT;
+} CAN_LocalRequestContentCloseTransferT;
 //------------------------------------------------------------------------------
 typedef union
 {
@@ -269,29 +383,7 @@ typedef union
 
 	uint32_t Value;
 
-} CAN_LocalPacketCloseTransferResponseT;
-//------------------------------------------------------------------------------
-
-typedef union
-{
-	struct
-	{
-		uint16_t Type;
-		uint16_t Extansion;
-	};
-
-	uint32_t Value;
-
-} CAN_LocalExtansionNewDeviceT;
-//------------------------------------------------------------------------------
-
-typedef union
-{
-	uint16_t Id;
-
-	uint32_t Value;
-
-} CAN_LocalExtansionDeviceApplyIdT;
+} CAN_LocalResponseContentCloseTransferT;
 //------------------------------------------------------------------------------
 
 typedef union
@@ -304,15 +396,74 @@ typedef union
 		uint8_t NumberOfDevices;
 	};
 
-} CAN_LocalPacketDeviceAwakeT;
+} CAN_LocalPacketAwakeT;
 //------------------------------------------------------------------------------
-struct xFieldT;
+
+//------------------------------------------------------------------------------
 
 typedef struct
 {
 	xTransferT Base;
 
+	uint16_t Action;
+
 } CAN_LocalTransferT;
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	xRequestT Base;
+
+	uint16_t Action;
+	struct xServiceT* Recipient;
+
+	union
+	{
+		uint8_t Bytes[4];
+		uint16_t HalfWords[2];
+		uint32_t Word;
+
+		uint32_t Value;
+
+	} Data;
+
+} CAN_LocalRequestT;
+//------------------------------------------------------------------------------
+typedef union
+{
+	struct
+	{
+		uint8_t Id;
+	};
+
+	uint8_t Value;
+
+} CAN_LocalRequestGATGetServiceT;
+//------------------------------------------------------------------------------
+typedef union
+{
+	struct
+	{
+		uint16_t Id;
+		uint8_t Type;
+		uint8_t Extension;
+	};
+
+	uint32_t Value;
+
+} CAN_LocalResponseGATGetServiceT;
+//------------------------------------------------------------------------------
+typedef union
+{
+	struct PACKED_PREFIX
+	{
+		uint16_t Temperature;
+		uint32_t TimeStamp;
+	};
+
+	uint8_t Data[6];
+
+} CAN_LocalTemperatureNotificationUpdateTemperatureT;
 //==============================================================================
 #ifdef __cplusplus
 }

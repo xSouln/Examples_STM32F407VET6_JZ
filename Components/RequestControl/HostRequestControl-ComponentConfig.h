@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _LOCAL_DEVICE_COMPONENT_CONFIG_H_
-#define _LOCAL_DEVICE_COMPONENT_CONFIG_H_
+#ifndef _HOST_REQUEST_CONTROL_COMPONENT_CONFIG_H_
+#define _HOST_REQUEST_CONTROL_COMPONENT_CONFIG_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -11,7 +11,6 @@ extern "C" {
 //includes:
 
 #include "Components-Types.h"
-#include "LocalDevice-ComponentConfig.h"
 //==============================================================================
 //macros:
 
@@ -29,4 +28,4 @@ extern "C" {
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_LOCAL_DEVICE_COMPONENT_CONFIG_H_
+#endif //_HOST_REQUEST_CONTROL_COMPONENT_CONFIG_H_

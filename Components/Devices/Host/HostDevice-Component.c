@@ -1,7 +1,7 @@
 //==============================================================================
 //includes:
 
-#include "LocalDevice-Component.h"
+#include "HostDevice-Component.h"
 #include "Components.h"
 
 #include "Abstractions/xDevice/Communication/xDevice-RxTransactions.h"
@@ -11,9 +11,9 @@
 
 #include "Services/Temperature/Adapters/TemperatureService-Adapter.h"
 #include "Services/Relay/Adapters/RelayService-Adapter.h"
-#include "Services/Device/Adapters/DeviceService-Adapter.h"
+#include "Services/GAP/Adapters/GAPService-Adapter.h"
 
-#include "Devices/Adapters/LocalDevice-Adapter.h"
+#include "Devices/Adapters/HostDevice-Adapter.h"
 //==============================================================================
 //defines:
 
@@ -35,14 +35,14 @@ static TaskHandle_t taskHandle;
 static StaticTask_t taskBuffer;
 static StackType_t taskStack[TASK_STACK_SIZE];
 
-static DeviceServiceT DeviceService;
+GAPServiceT HostGAP;
 
 static TemperatureServiceT TemperatureService1;
 static TemperatureServiceT TemperatureService2;
 
 RelayServiceT RelayService;
 
-xDeviceT LocalDevice;
+xDeviceT HostDevice;
 //==============================================================================
 //functions:
 
@@ -70,7 +70,7 @@ static void privateRelayServiceEventListener(xServiceT* service, xServiceAdapter
 	}
 }
 //------------------------------------------------------------------------------
-static void privateDeviceServiceEventListener(xServiceT* service, int selector, void* arg)
+static void privateGAPServiceEventListener(xServiceT* service, int selector, void* arg)
 {
 	switch ((int)selector)
 	{
@@ -84,55 +84,57 @@ static void privateTask(void* arg)
 
 	while (true)
 	{
-		xDeviceHandler(&LocalDevice);
+		HostRequestControlComponentHandler();
 
-		vTaskDelay(pdMS_TO_TICKS(1));
+		xDeviceHandler(&HostDevice);
+
+		//vTaskDelay(pdMS_TO_TICKS(1));
 	}
 }
 //------------------------------------------------------------------------------
-void LocalDeviceComponentHandler()
+void HostDeviceComponentHandler()
 {
 
 }
 //------------------------------------------------------------------------------
-void LocalDeviceComponentTimeSynchronization()
+void HostDeviceComponentTimeSynchronization()
 {
 
 }
 //==============================================================================
 //initializations:
 
-static LocalDeviceAdapterT privateLocalDeviceAdapter;
+static HostDeviceAdapterT privateHostDeviceAdapter;
 
 static TemperatureServiceAdapterT privateTemperatureServiceAdapter1;
 static TemperatureServiceAdapterT privateTemperatureServiceAdapter2;
 
-static DeviceServiceAdapterT privateDeviceServiceAdapter;
+static GAPServiceAdapterT privateGAPServiceAdapter;
 
 static RelayServiceAdapterT privateRelayServiceAdapter1;
 //------------------------------------------------------------------------------
 static xTerminalObjectT privateServiceTerminalObject =
 {
 	.Requests = xServiceRxRequests,
-	.Object = (void*)&LocalDevice
+	.Object = (void*)&HostDevice
 };
 //------------------------------------------------------------------------------
 static xTerminalObjectT privateDeviceTerminalObject =
 {
 	.Requests = xDeviceRxRequests,
-	.Object = (void*)&LocalDevice
+	.Object = (void*)&HostDevice
 };
 //------------------------------------------------------------------------------
 static xTerminalObjectT privateTemperatureServiceTerminalObject =
 {
 	.Requests = TemperatureServiceRxRequests,
-	.Object = (void*)&LocalDevice
+	.Object = (void*)&HostDevice
 };
 //------------------------------------------------------------------------------
 static xTerminalObjectT privateRelayServiceTerminalObject =
 {
 	.Requests = RelayServiceRxRequests,
-	.Object = (void*)&LocalDevice
+	.Object = (void*)&HostDevice
 };
 //------------------------------------------------------------------------------
 static xServiceSubscriberT privateRelayServiceSubscriber =
@@ -147,28 +149,31 @@ static xServiceSubscriberT privateTemperatureService1Subscriber =
 //==============================================================================
 //initialization:
 
-xResult LocalDeviceComponentInit(void* parent)
+xResult HostDeviceComponentInit(void* parent)
 {
-	LocalDeviceAdapterInitT deviceAdapterInit;
+	HostRequestControlComponentInit(parent);
+
+	HostDeviceAdapterInitT deviceAdapterInit;
 	deviceAdapterInit.Port = &CAN_Local1;
-	LocalDeviceAdapterInit(&LocalDevice, &privateLocalDeviceAdapter, &deviceAdapterInit);
+	deviceAdapterInit.TransferLayer = &LocalTransferLayer;
+	HostDeviceAdapterInit(&HostDevice, &privateHostDeviceAdapter, &deviceAdapterInit);
 
 	xDeviceInitT deviceInit = { 0 };
 	deviceInit.Parent = parent;
 	deviceInit.Id = LOCAL_DEVICE_ID;
 	deviceInit.EventListener = (void*)privateDeviceEventListener;
-	xDeviceInit(&LocalDevice, &deviceInit);
+	xDeviceInit(&HostDevice, &deviceInit);
 	//----------------------------------------------------------------------------
-	DeviceServiceAdapterInitT deviceServiceAdapterInit;
-	deviceServiceAdapterInit.Port = &CAN_Local1;
-	DeviceServiceAdapterInit(&DeviceService, &privateDeviceServiceAdapter, &deviceServiceAdapterInit);
+	GAPServiceAdapterInitT gapServiceAdapterInit;
+	gapServiceAdapterInit.Port = &CAN_Local1;
+	GAPServiceAdapterInit(&HostGAP, &privateGAPServiceAdapter, &gapServiceAdapterInit);
 
-	DeviceServiceInitT deviceServiceInit;
-	deviceServiceInit.Base.EventListener = (void*)privateDeviceServiceEventListener;
-	deviceServiceInit.Base.Id = LocalDevice.Id;
-	DeviceServiceInit(&DeviceService, &deviceServiceInit);
+	GAPServiceInitT gapServiceInit;
+	gapServiceInit.Base.EventListener = (void*)privateGAPServiceEventListener;
+	gapServiceInit.Base.Id = HostDevice.Id;
+	GAPServiceInit(&HostGAP, &gapServiceInit);
 
-	xDeviceAddService(&LocalDevice, (xServiceT*)&DeviceService);
+	xDeviceAddService(&HostDevice, (xServiceT*)&HostGAP);
 	//----------------------------------------------------------------------------
 	TemperatureServiceAdapterInitT temperatureServiceAdapterInit;
 	temperatureServiceAdapterInit.Port = &CAN_Local1;
@@ -184,8 +189,8 @@ xResult LocalDeviceComponentInit(void* parent)
 	temperatureServiceInit.Base.Id = TEMPERATURE_SERVICE2_ID;
 	TemperatureServiceInit(&TemperatureService2, &temperatureServiceInit);
 
-	xDeviceAddService(&LocalDevice, (xServiceT*)&TemperatureService1);
-	xDeviceAddService(&LocalDevice, (xServiceT*)&TemperatureService2);
+	xDeviceAddService(&HostDevice, (xServiceT*)&TemperatureService1);
+	xDeviceAddService(&HostDevice, (xServiceT*)&TemperatureService2);
 	//----------------------------------------------------------------------------
 	RelayServiceAdapterInitT relayServiceAdapterInit;
 	RelayServiceAdapterInit(&RelayService, &privateRelayServiceAdapter1, &relayServiceAdapterInit);
@@ -195,7 +200,7 @@ xResult LocalDeviceComponentInit(void* parent)
 	relayServiceInit.Base.Id = RELAY_SERVICE1_ID;
 	RelayServiceInit(&RelayService, &relayServiceInit);
 
-	xDeviceAddService(&LocalDevice, (xServiceT*)&RelayService);
+	xDeviceAddService(&HostDevice, (xServiceT*)&RelayService);
 	//----------------------------------------------------------------------------
 
 	xServiceSubscribe((void*)&TemperatureService1, &privateRelayServiceSubscriber);

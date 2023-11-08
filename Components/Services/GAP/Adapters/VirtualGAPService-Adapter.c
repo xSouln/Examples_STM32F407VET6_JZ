@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include "Common/xCircleBuffer.h"
-#include "DeviceService-Adapter.h"
+#include "VirtualGAPService-Adapter.h"
 #include "Abstractions/xSystem/xSystem.h"
 #include "CAN_Local/Control/CAN_Local-Types.h"
 #include "TransferLayer/TransferLayer-Component.h"
@@ -22,36 +22,8 @@
 //==============================================================================
 //functions:
 
-static void privateOpenTransferHandler(DeviceServiceT* service,
-		DeviceServiceAdapterT* adapter,
-		volatile CAN_LocalSegmentT* segment)
-{
-	CAN_LocalPacketOpenTransferRequestT request = { .Value = segment->Data.DoubleWord };
-
-	if (request.ServiceId == service->Base.Id)
-	{
-		CAN_LocalPacketOpenTransferResponseT response;
-		response.ServiceId = segment->ExtensionHeader.ServiceId;
-		response.Action = request.Action;
-		response.Token = request.Token;
-		response.Result = 0;
-
-		CAN_LocalSegmentT packet;
-		packet.ExtensionHeader.MessageType = CAN_LocalMessageTypeTransfer;
-		packet.ExtensionHeader.PacketType = CAN_LocalTransferPacketTypeApproveTransfer;
-		packet.ExtensionHeader.ServiceType = service->Base.Info.Type;
-		packet.ExtensionHeader.ServiceId = service->Base.Id;
-		packet.ExtensionIsEnabled = true;
-
-		packet.Data.DoubleWord = response.Value;
-		packet.DataLength = sizeof(response);
-
-		xPortExtendedTransmition(adapter->Port, &packet);
-	}
-}
-//------------------------------------------------------------------------------
-static void privateNotificationHandler(DeviceServiceT* service,
-		DeviceServiceAdapterT* adapter,
+static void privateNotificationHandler(GAPServiceT* service,
+		VirtualGAPServiceAdapterT* adapter,
 		CAN_LocalSegmentT* segment)
 {
 	CAN_LocalBaseEventPacketT content = { .Value = segment->Data.DoubleWord };
@@ -74,11 +46,12 @@ static void privateNotificationHandler(DeviceServiceT* service,
 	}
 }
 //------------------------------------------------------------------------------
-static void privateHandler(DeviceServiceT* service)
+static void privateHandler(GAPServiceT* service)
 {
-	DeviceServiceAdapterT* adapter = service->Adapter.Content;
+	VirtualGAPServiceAdapterT* adapter = service->Adapter.Content;
+	xPortT* port = xServiceGetPort((void*)service);
 
-	xCircleBufferT* circleBuffer = xPortGetRxCircleBuffer(adapter->Port);
+	xCircleBufferT* circleBuffer = xPortGetRxCircleBuffer(port);
 
 	while (adapter->Internal.RxPacketHandlerIndex != circleBuffer->TotalIndex)
 	{
@@ -92,9 +65,9 @@ static void privateHandler(DeviceServiceT* service)
 				{
 					switch((uint8_t)segment->ExtensionHeader.PacketType)
 					{
-						case CAN_LocalTransferPacketTypeOpenTransfer:
+						/*case CAN_LocalTransferPacketTypeOpenTransfer:
 							privateOpenTransferHandler(service, adapter, segment);
-							break;
+							break;*/
 					}
 					break;
 				}
@@ -117,7 +90,7 @@ static void privateHandler(DeviceServiceT* service)
 	}
 }
 //------------------------------------------------------------------------------
-static xResult privateRequestListener(DeviceServiceT* service, int selector, void* arg)
+static xResult privateRequestListener(GAPServiceT* service, int selector, void* arg)
 {
 	switch ((uint32_t)selector)
 	{
@@ -130,23 +103,21 @@ static xResult privateRequestListener(DeviceServiceT* service, int selector, voi
 //==============================================================================
 //initializations:
 
-static DeviceServiceAdapterInterfaceT privateInterface =
+static GAPServiceAdapterInterfaceT privateInterface =
 {
-	.Handler = (DeviceServiceAdapterHandlerT)privateHandler,
-	.RequestListener = (DeviceServiceAdapterRequestListenerT)privateRequestListener
+	.Handler = (GAPServiceAdapterHandlerT)privateHandler,
+	.RequestListener = (GAPServiceAdapterRequestListenerT)privateRequestListener
 };
 //------------------------------------------------------------------------------
-xResult DeviceServiceAdapterInit(DeviceServiceT* service,
-		DeviceServiceAdapterT* adapter,
-		DeviceServiceAdapterInitT* init)
+xResult VirtualGAPServiceAdapterInit(GAPServiceT* service,
+		VirtualGAPServiceAdapterT* adapter,
+		VirtualGAPServiceAdapterInitT* init)
 {
 	if (service && init)
 	{
 		service->Adapter.Content = adapter;
 		service->Adapter.Interface = &privateInterface;
-		service->Adapter.Description = nameof(DeviceServiceAdapterT);
-
-		adapter->Port = init->Port;
+		service->Adapter.Description = nameof(VirtualGAPServiceAdapterT);
 
 		return xResultAccept;
 	}

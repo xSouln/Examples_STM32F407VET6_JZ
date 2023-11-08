@@ -14,6 +14,8 @@
 //==============================================================================
 //defines:
 
+#define TASK_STACK_SIZE 0x100
+
 #define CAN_PORT_BUFFERS_INIT(name)\
 static CAN_LocalSegmentT name##_RX_CIRCLE_BUF[name##_RX_CIRCLE_BUF_SIZE_MASK + 1];\
 static CAN_LocalSegmentT name##_TX_CIRCLE_BUF[name##_TX_CIRCLE_BUF_SIZE_MASK + 1]
@@ -103,10 +105,6 @@ static const CAN_LocalPortAdapterInitT adapterInits[CAN_LOCAL_PORTS_COUNT] =
 
 xPortT CAN_LocalPorts[CAN_LOCAL_PORTS_COUNT];
 
-static uint32_t timeStamp;
-static uint32_t CAN_Local1_RxHandlerIndex;
-static uint32_t CAN_Local2_RxHandlerIndex;
-
 CAN_LocalSegmentT CAN_Local1_RequestTransmit =
 {
 	.Identifier = 23,
@@ -148,31 +146,6 @@ void CAN_LocalComponentHandler()
 	{
 		xPortHandler(&CAN_LocalPorts[i]);
 	}
-
-	/*uint32_t time = xSystemGetTime(NULL);
-	if (time - timeStamp > 1000)
-	{
-		timeStamp = time;
-
-		xPortExtendedTransmition(&CAN_Local1, &CAN_Local1_RequestTransmit);
-		xPortExtendedTransmition(&CAN_Local2, &CAN_Local2_RequestTransmit);
-	}
-
-	xCircleBufferT* rxBuffer = xPortGetRxCircleBuffer(&CAN_Local1);
-
-	if (rxBuffer != NULL && rxBuffer->TotalIndex != CAN_Local1_RxHandlerIndex)
-	{
-		memcpy(&CAN_Local1_Response, xCircleBufferGetElement(rxBuffer, CAN_Local1_RxHandlerIndex), sizeof(CAN_Local1_Response));
-		CAN_Local1_RxHandlerIndex = rxBuffer->TotalIndex;
-	}
-
-	rxBuffer = xPortGetRxCircleBuffer(&CAN_Local2);
-
-	if (rxBuffer != NULL && rxBuffer->TotalIndex != CAN_Local2_RxHandlerIndex)
-	{
-		memcpy(&CAN_Local2_Response, xCircleBufferGetElement(rxBuffer, CAN_Local2_RxHandlerIndex), sizeof(CAN_Local2_Response));
-		CAN_Local2_RxHandlerIndex = rxBuffer->TotalIndex;
-	}*/
 }
 //------------------------------------------------------------------------------
 /**
@@ -183,6 +156,14 @@ void CAN_LocalComponentTimeSynchronization()
 
 }
 
+//------------------------------------------------------------------------------
+static void privateTask(void* arg)
+{
+	while (true)
+	{
+		xPortHandler(arg);
+	}
+}
 //==============================================================================
 //initialization:
 
@@ -204,6 +185,13 @@ xResult CAN_LocalComponentInit(void* parent)
 		init.AdapterInit.Init = (void*)&adapterInits[i];
 		init.AdapterInit.Adapter = &privatePortAdapters[i];
 		xPortInit(&CAN_LocalPorts[i], &init);
+
+		xTaskCreate(privateTask, // Function that implements the task.
+					"CAN local task", // Text name for the task.
+					TASK_STACK_SIZE, // Number of indexes in the xStack array.
+					&CAN_LocalPorts[i], // Parameter passed into the task.
+					osPriorityHigh, // Priority at which the task is created.
+					NULL);
 	}
   
 	return 0;

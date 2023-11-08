@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _TRANSACTION_MANAGER_COMPONENT_CONFIG_H_
-#define _TRANSACTION_MANAGER_COMPONENT_CONFIG_H_
+#ifndef _TRANSFER_LAYER_COMPONENT_CONFIG_H_
+#define _TRANSFER_LAYER_COMPONENT_CONFIG_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -28,4 +28,4 @@ extern "C" {
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_TRANSACTION_MANAGER_COMPONENT_CONFIG_H_
+#endif //_TRANSFER_LAYER_COMPONENT_CONFIG_H_

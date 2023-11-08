@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _CLIENT_DEVICE_ADAPTER_H_
-#define _CLIENT_DEVICE_ADAPTER_H_
+#ifndef _GAP_SERVICE_ADAPTER_H_
+#define _GAP_SERVICE_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -11,45 +11,43 @@ extern "C" {
 //includes:
 
 #include "Abstractions/xDevice/xDevice.h"
+#include "Services/GAP/GAPService.h"
 #include "Abstractions/xPort/xPort.h"
-#include "Abstractions/xTransferLayer/xTransferLayer-Types.h"
-#include "Common/xCircleBuffer.h"
 //==============================================================================
 //types:
 
 typedef struct
 {
-	uint32_t OperationTimeStamp;
-	uint16_t OperationTimeOut;
-	uint16_t Operation;
+	uint32_t TimeStamp;
 
 	uint16_t RxPacketHandlerIndex;
-	xCircleBufferT* PortRxCircleBuffer;
 
-} ClientDeviceAdapterContentT;
+} GAPServiceAdapterInternalT;
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	GAPServiceAdapterInternalT Internal;
+	xPortT* Port;
+
+} GAPServiceAdapterT;
 //------------------------------------------------------------------------------
 typedef struct
 {
-	ClientDeviceAdapterContentT Content;
+	xServiceAdapterBaseInitT Base;
 
 	xPortT* Port;
-	xTransferLayerT* TransferLayer;
 
-} ClientDeviceAdapterT;
-//------------------------------------------------------------------------------
-typedef struct
-{
-	xPortT* Port;
-	xTransferLayerT* TransferLayer;
-
-} ClientDeviceAdapterInitT;
+} GAPServiceAdapterInitT;
 //==============================================================================
 //functions:
 
-xResult ClientDeviceAdapterInit(xDeviceT* device, ClientDeviceAdapterT* adapter, ClientDeviceAdapterInitT* init);
+xResult GAPServiceAdapterInit(GAPServiceT* service,
+		GAPServiceAdapterT* adapter,
+		GAPServiceAdapterInitT* init);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_CLIENT_DEVICE_ADAPTER_H_
+#endif //_GAP_SERVICE_ADAPTER_H_

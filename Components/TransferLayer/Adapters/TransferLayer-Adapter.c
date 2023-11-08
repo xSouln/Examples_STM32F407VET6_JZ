@@ -32,23 +32,31 @@ static void privateTransferResponseExchangeHandler(xTransferLayerT* layer,
 		TransferLayerAdapterT* adapter,
 		CAN_LocalSegmentT* segment)
 {
-	CAN_LocalPacketTransferResponseT content = { .Value = segment->Data.DoubleWord };
+	CAN_LocalResponseContentTransferT content = { .Value = segment->Data.Value };
 
 	xTransferListElementT* element = (void*)layer->ProcessedTransfers.Head;
 	while (element)
 	{
 		xTransferT* transfer = element->Value;
 
-		if (transfer->Id == segment->TransferHeader.ServiceId)
+		if (transfer->Id == segment->TransferHeader.ServiceId
+			&& transfer->Token == segment->TransferHeader.Characteristic)
 		{
 			transfer->Internal.OperationAttempts = transfer->TransmittingAttempts;
 			transfer->Internal.OperationTimeOut = 20;
 
-			uint16_t dataSended = segment->TransferHeader.Characteristic * sizeof(content.Data) + sizeof(content.Data);
+			if (transfer->Type == xTransferTypeReceive)
+			{
+				memcpy(transfer->Data + transfer->DataSended, content.Data, segment->DataLength - sizeof(content.Segment));
+			}
+
+			uint16_t dataSended = content.Segment * sizeof(content.Data) + sizeof(content.Data);
 			transfer->DataSended = dataSended > transfer->DataLength ? transfer->DataLength : dataSended;
 
 			transfer->Internal.RequestUpdate = true;
 			TL_RxVCount++;
+
+			break;
 		}
 
 		element = element->Next;
@@ -59,39 +67,58 @@ static void privateTransferRequestExchangeHandler(xTransferLayerT* manager,
 		TransferLayerAdapterT* adapter,
 		CAN_LocalSegmentT* segment)
 {
-	CAN_LocalPacketTransferRequestT request = { .Value = segment->Data.DoubleWord };
+	CAN_LocalRequestContentTransferT request = { .Value = segment->Data.Value };
 
 	xTransferListElementT* element = (void*)manager->ProcessedTransfers.Head;
 	while (element)
 	{
 		xTransferT* transfer = element->Value;
 
-		if (transfer->Id == segment->TransferHeader.ServiceId)
+		if (transfer->Id == segment->TransferHeader.ServiceId
+			&& transfer->Token == segment->TransferHeader.Characteristic)
 		{
 			xServiceT* holder = transfer->Holder;
 
-			CAN_LocalPacketTransferResponseT content;
+			if (transfer->Type == xTransferTypeReceive)
+			{
+				memcpy(transfer->Data + transfer->DataSended, request.Data, segment->DataLength - sizeof(request.Segment));
+			}
 
-			int size = transfer->DataLength - transfer->DataSended;
-			size = size > sizeof(content.Data) ? sizeof(content.Data) : size;
+			if (transfer->ValidationIsEnabled)
+			{
+				CAN_LocalResponseContentTransferT content;
+				content.Segment = request.Segment;
 
-			CAN_LocalSegmentT packet;
-			packet.TransferHeader.MessageType = CAN_LocalMessageTypeTransfer;
-			packet.TransferHeader.PacketType = CAN_LocalTransferPacketTypeResponseExchange;
-			packet.TransferHeader.ServiceId = holder->Id;
-			packet.TransferHeader.Characteristic = segment->TransferHeader.Characteristic;
-			packet.TransferHeader.IsEnabled = true;
-			packet.DataLength = 0;
+				CAN_LocalSegmentT packet;
+				packet.TransferHeader.MessageType = CAN_LocalMessageTypeTransfer;
+				packet.TransferHeader.PacketType = CAN_LocalTransferPacketTypeResponseExchange;
+				packet.TransferHeader.ServiceId = holder->Id;
+				packet.TransferHeader.Characteristic = segment->TransferHeader.Characteristic;
+				packet.TransferHeader.IsEnabled = true;
 
-			memcpy(transfer->Data + transfer->DataSended, request.Data, segment->DataLength);
+				uint16_t size = 0;
 
-			uint16_t dataSended = segment->TransferHeader.Characteristic * sizeof(content.Data) + sizeof(content.Data);
+				if (transfer->Type == xTransferTypeTransmite)
+				{
+					size = transfer->DataLength - transfer->DataSended;
+					size = size > sizeof(content.Data) ? sizeof(content.Data) : size;
+
+					memcpy(content.Data, transfer->Data + transfer->DataSended, size);
+				}
+
+				packet.DataLength = sizeof(content) - sizeof(content.Data) + size;
+				packet.Data.Value = content.Value;
+
+				privateTransmite(adapter->Port, &packet);
+			}
+
+			uint16_t dataSended = request.Segment * sizeof(request.Data) + sizeof(request.Data);
 			transfer->DataSended = dataSended > transfer->DataLength ? transfer->DataLength : dataSended;
-
-			privateTransmite(adapter->Port, &packet);
 
 			transfer->Internal.TimeStamp = xSystemGetTime(NULL);
 			transfer->Internal.RequestUpdate = true;
+
+			break;
 		}
 
 		element = element->Next;
@@ -102,24 +129,34 @@ static void privateApproveTransferHandler(xTransferLayerT* layer,
 		TransferLayerAdapterT* adapter,
 		CAN_LocalSegmentT* segment)
 {
-	volatile CAN_LocalPacketOpenTransferResponseT response = { .Value = segment->Data.Value };
+	CAN_LocalResponseContentOpenTransferT response = { .Value = segment->Data.Value };
 
 	xTransferListElementT* element = (void*)layer->ProcessedTransfers.Head;
 
 	while (element)
 	{
 		xTransferT* transfer = element->Value;
+		xServiceT* holder = transfer->Holder;
 
 		if (transfer->Id == segment->TransferHeader.ServiceId
-			&& response.Result == xResultAccept
-			&& transfer->Token == response.Token)
+			&& response.ServiceId == holder->Id
+			&& response.Result == xResultAccept)
 		{
 			transfer->Internal.TimeStamp = xSystemGetTime(NULL);
-			transfer->State = transfer->Type == xTransferTypeReceive ? xTransferStateReceiving : xTransferStateTransmitting;
 
 			transfer->Internal.OperationAttempts = 3;
 			transfer->Internal.OperationTimeOut = 20;
 			transfer->Internal.RequestUpdate = true;
+			transfer->Token = response.Token;
+
+			if (transfer->Type == xTransferTypeReceive)
+			{
+				transfer->State = transfer->ValidationIsEnabled ? xTransferStateTransmitting : xTransferStateReceiving;
+			}
+			else if (transfer->Type == xTransferTypeTransmite || transfer->Type == xTransferTypeTransmiteReceive)
+			{
+				transfer->State = xTransferStateTransmitting;
+			}
 
 			TL_RxCount = 0;
 			TL_TxCount = 0;
@@ -168,9 +205,9 @@ static void privateTranferHandler(xTransferLayerT* layer,
 				transfer->Result = xTransferResultTimeOut;
 				transfer->IsRunning = false;
 
-				if (transfer->EventAccomplish)
+				if (transfer->EventListener)
 				{
-					transfer->EventAccomplish(layer, transfer);
+					transfer->EventListener(layer, transfer, xTransferEventError, NULL);
 				}
 			}
 		}
@@ -187,10 +224,18 @@ static void privateTranferHandler(xTransferLayerT* layer,
 			{
 				if (transfer->DataSended == transfer->DataLength)
 				{
+					transfer->Internal.OperationTimeOut = 0;
 					transfer->State = xTransferStateCompleted;
 				}
-				else
+				else if (transfer->MasterModeIsEnabled || !transfer->ValidationIsEnabled)
 				{
+					uint32_t freeBufferSize = xPortGetTxBufferFreeSize(adapter->Port);
+
+					if (!freeBufferSize)
+					{
+						break;
+					}
+
 					xServiceT* holder = transfer->Holder;
 
 					CAN_LocalSegmentT packet = { 0 };
@@ -198,26 +243,70 @@ static void privateTranferHandler(xTransferLayerT* layer,
 					packet.TransferHeader.MessageType = CAN_LocalMessageTypeTransfer;
 					packet.TransferHeader.PacketType = CAN_LocalTransferPacketTypeRequestExchange;
 					packet.TransferHeader.ServiceId = holder->Id;
+					packet.TransferHeader.Characteristic = transfer->Token;
 
-					CAN_LocalPacketTransferRequestT content;
-					packet.TransferHeader.Characteristic = transfer->DataSended / sizeof(content.Data);
+					if (transfer->ValidationIsEnabled)
+					{
+						packet.TransferHeader.PacketType = CAN_LocalTransferPacketTypeRequestExchange;
 
-					int size = transfer->DataLength - transfer->DataSended;
-					size = size > sizeof(content.Data) ? sizeof(content.Data) : size;
+						CAN_LocalRequestContentTransferT content;
+						content.Segment = transfer->DataSended / sizeof(content.Data);
 
-					memcpy(content.Data, transfer->Data + transfer->DataSended, size);
+						int size = 0;
 
-					packet.DataLength = sizeof(content) - sizeof(content.Data) + size;
-					packet.Data.Value = content.Value;
+						if (transfer->Type != xTransferTypeReceive)
+						{
+							size = transfer->DataLength - transfer->DataSended;
+							size = size > sizeof(content.Data) ? sizeof(content.Data) : size;
 
-					//xPortExtendedTransmition(adapter->Port, &packet);
-					privateTransmite(adapter->Port, &packet);
+							memcpy(content.Data, transfer->Data + transfer->DataSended, size);
+						}
 
-					transfer->Internal.TimeStamp = time;
-					transfer->Internal.OperationTimeOut = 20;
+						packet.DataLength = sizeof(content) - sizeof(content.Data) + size;
+						packet.Data.Value = content.Value;
 
-					break;
+						//xPortExtendedTransmition(adapter->Port, &packet);
+						privateTransmite(adapter->Port, &packet);
+
+						transfer->Internal.TimeStamp = time;
+						transfer->Internal.OperationTimeOut = 20;
+
+						break;
+					}
+
+					while (freeBufferSize > 10 && transfer->DataSended != transfer->DataLength)
+					{
+						CAN_LocalRequestContentTransferT content;
+						content.Segment = transfer->DataSended / sizeof(content.Data);
+
+						uint16_t size = 0;
+
+						if (transfer->Type != xTransferTypeReceive)
+						{
+							size = transfer->DataLength - transfer->DataSended;
+							size = size > sizeof(content.Data) ? sizeof(content.Data) : size;
+
+							memcpy(content.Data, transfer->Data + transfer->DataSended, size);
+						}
+
+						packet.DataLength = sizeof(content) - sizeof(content.Data) + size;
+						packet.Data.Value = content.Value;
+
+						//xPortExtendedTransmition(adapter->Port, &packet);
+						privateTransmite(adapter->Port, &packet);
+
+						transfer->DataSended += size;
+
+						freeBufferSize--;
+
+						transfer->Internal.TimeStamp = time;
+						transfer->Internal.OperationTimeOut = 1;
+
+						break;
+					}
 				}
+
+				break;
 			}
 
 			case xTransferStateReceiving:
@@ -233,10 +322,14 @@ static void privateTranferHandler(xTransferLayerT* layer,
 			case xTransferStateCompleted:
 			{
 				deletedElement = transfer;
+
 				transfer->Result = xTransferResultNoError;
 				transfer->State = xTransferStateIdle;
 				transfer->Completed = true;
-				transfer->EventAccomplish(layer, transfer);
+				transfer->IsRunning = false;
+				transfer->TransmissionTime = xSystemGetTime(NULL) - transfer->Internal.StartTransmissionTimeStamp;
+
+				transfer->EventListener(layer, transfer, xTransferEventComplite, NULL);
 				break;
 			}
 
@@ -310,42 +403,47 @@ static xResult privateRequestAdd(xTransferLayerT* manager, TransferLayerAdapterT
 		transfer->IsRunning = true;
 		transfer->Completed = false;
 		transfer->DataSended = 0;
+		transfer->TransmissionTime = 0;
+		transfer->Internal.StartTransmissionTimeStamp = xSystemGetTime(NULL);
 
-		if (transfer->Type == xTransferTypeTransmite)
+		if (transfer->MasterModeIsEnabled)
 		{
 			transfer->Internal.OperationTimeOut = 100;
 			transfer->Internal.OperationAttempts = 1;
 
 			xServiceT* holder = transfer->Holder;
+			CAN_LocalTransferT* extansion = (void*)transfer;
 
-			CAN_LocalPacketOpenTransferRequestT content;
+			CAN_LocalRequestContentOpenTransferT content;
 			content.ServiceId = transfer->Id;
-			content.Id = 0;
-			content.Token = transfer->Token;
+			content.Action = extansion->Action;
 			content.Type = transfer->Type;
 			content.ValidationIsEnabled = transfer->ValidationIsEnabled;
 
 			CAN_LocalSegmentT packet;
-			packet.ExtensionHeader.MessageType = CAN_LocalMessageTypeTransfer;
-			packet.ExtensionHeader.PacketType = CAN_LocalTransferPacketTypeOpenTransfer;
-			packet.ExtensionHeader.ServiceType = holder->Info.Type;
-			packet.ExtensionHeader.ServiceId = holder->Id;
-			packet.ExtensionIsEnabled = true;
+			packet.TransferHeader.MessageType = CAN_LocalMessageTypeTransfer;
+			packet.TransferHeader.PacketType = CAN_LocalTransferPacketTypeOpenTransfer;
+			packet.TransferHeader.Characteristic = holder->Info.Type;
+			packet.TransferHeader.ServiceId = holder->Id;
+			packet.TransferHeader.IsEnabled = true;
 
-			packet.Data.DoubleWord = content.Value;
-			packet.DataLength = sizeof(CAN_LocalPacketOpenTransferRequestT);
+			packet.Data.Value = content.Value;
+			packet.DataLength = sizeof(CAN_LocalRequestContentOpenTransferT);
 
 			privateTransmite(adapter->Port, &packet);
 
 			transfer->State = xTransferStateOpening;
-			transfer->Internal.TimeStamp = xSystemGetTime(NULL);
 		}
-		else if (transfer->Type == xTransferTypeReceive && transfer->ValidationIsEnabled)
+		else if (transfer->Type == xTransferTypeReceive)
 		{
 			transfer->State = xTransferStateReceiving;
-			transfer->Internal.TimeStamp = xSystemGetTime(NULL);
+		}
+		else if (transfer->Type == xTransferTypeTransmite)
+		{
+			transfer->State = xTransferStateTransmitting;
 		}
 
+		transfer->Internal.TimeStamp = xSystemGetTime(NULL);
 		xListAdd((void*)&manager->ProcessedTransfers, transfer);
 	}
 
@@ -372,19 +470,6 @@ static xResult privateRequestListener(xTransferLayerT* manager, xTransferLayerAd
 			privateRequestAdd(manager, adapter, arg);
 			break;
 
-		/*case xTransferLayerAdapterRequestExecuteCommand:
-			xSemaphoreTake(adapter->Content.CoreMutex, portMAX_DELAY);
-
-			adapter->Content.Command = arg;
-			adapter->Content.CommandArgs = (&arg + 1);
-
-			adapter->Content.CommandResult = adapter->Content.Command(manager, adapter->Content.CommandArgs);
-			adapter->Content.Command = NULL;
-
-			//xSemaphoreTake(adapter->Content.CommandAccomplishSemaphore, portMAX_DELAY);
-			xSemaphoreGive(adapter->Content.CoreMutex);
-
-			return adapter->Content.CommandResult;*/
 
 		default : return xResultRequestIsNotFound;
 	}
@@ -409,7 +494,7 @@ xResult TransferLayerAdapterInit(xTransferLayerT* manager,
 	manager->Adapter.Interface = &privateAdapterInterface;
 
 	adapter->Content.CoreMutex = xSemaphoreCreateMutex();
-	adapter->Content.CommandAccomplishSemaphore = xSemaphoreCreateBinary();
+
 	adapter->Port = init->Port;
 
 	adapter->Content.PortRxCircleBuffer = xPortGetRxCircleBuffer(adapter->Port);

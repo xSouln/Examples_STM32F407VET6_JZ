@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _CLIENT_DEVICE_ADAPTER_H_
-#define _CLIENT_DEVICE_ADAPTER_H_
+#ifndef _CAN_LOCAL_REQUEST_CONTROL_ADAPTER_H_
+#define _CAN_LOCAL_REQUEST_CONTROL_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -10,46 +10,52 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Abstractions/xDevice/xDevice.h"
+#include "Abstractions/xRequestControl/xRequestControl.h"
 #include "Abstractions/xPort/xPort.h"
-#include "Abstractions/xTransferLayer/xTransferLayer-Types.h"
-#include "Common/xCircleBuffer.h"
+#include "CAN_Local/Control/CAN_Local-Types.h"
 //==============================================================================
 //types:
 
 typedef struct
 {
-	uint32_t OperationTimeStamp;
-	uint16_t OperationTimeOut;
-	uint16_t Operation;
+#ifdef INC_FREERTOS_H
+	SemaphoreHandle_t CoreMutex;
+#endif
 
-	uint16_t RxPacketHandlerIndex;
-	xCircleBufferT* PortRxCircleBuffer;
+	uint32_t RxPacketHandlerIndex;
 
-} ClientDeviceAdapterContentT;
+} CAN_LocalRequestControlAdapterContentT;
 //------------------------------------------------------------------------------
+
 typedef struct
 {
-	ClientDeviceAdapterContentT Content;
+	CAN_LocalRequestControlAdapterContentT Content;
+
+	xRequestT* RequestBuffer;
+	uint8_t RequestBufferSize;
 
 	xPortT* Port;
-	xTransferLayerT* TransferLayer;
 
-} ClientDeviceAdapterT;
+} CAN_LocalRequestControlAdapterT;
 //------------------------------------------------------------------------------
+
 typedef struct
 {
 	xPortT* Port;
-	xTransferLayerT* TransferLayer;
 
-} ClientDeviceAdapterInitT;
+	xRequestT* RequestBuffer;
+	uint8_t RequestBufferSize;
+
+} CAN_LocalRequestControlAdapterInitT;
 //==============================================================================
 //functions:
 
-xResult ClientDeviceAdapterInit(xDeviceT* device, ClientDeviceAdapterT* adapter, ClientDeviceAdapterInitT* init);
+xResult CAN_LocalRequestControlAdapterInit(xRequestControlT* control,
+		CAN_LocalRequestControlAdapterT* adapter,
+		CAN_LocalRequestControlAdapterInitT* init);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_CLIENT_DEVICE_ADAPTER_H_
+#endif //_CAN_LOCAL_REQUEST_CONTROL_ADAPTER_H_

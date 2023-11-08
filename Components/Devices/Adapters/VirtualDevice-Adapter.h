@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _CLIENT_DEVICE_ADAPTER_H_
-#define _CLIENT_DEVICE_ADAPTER_H_
+#ifndef _SERVER_DEVICE_ADAPTER_H_
+#define _SERVER_DEVICE_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -13,7 +13,10 @@ extern "C" {
 #include "Abstractions/xDevice/xDevice.h"
 #include "Abstractions/xPort/xPort.h"
 #include "Abstractions/xTransferLayer/xTransferLayer-Types.h"
+#include "CAN_Local/Control/CAN_Local-Types.h"
 #include "Common/xCircleBuffer.h"
+#include "Services/GAP/Adapters/GAPService-Adapter.h"
+#include "Services/GAP/Adapters/VirtualGAPService-Adapter.h"
 //==============================================================================
 //types:
 
@@ -24,32 +27,44 @@ typedef struct
 	uint16_t Operation;
 
 	uint16_t RxPacketHandlerIndex;
-	xCircleBufferT* PortRxCircleBuffer;
 
-} ClientDeviceAdapterContentT;
+	int ServicesInitState;
+
+	VirtualGAPServiceAdapterT GAPAdapter;
+	GAPServiceT GAP;
+
+	CAN_LocalTransferT* Transfer;
+	CAN_LocalRequestT* Request;
+
+	uint8_t ServicesCount;
+	uint8_t TotalServiceNumber;
+
+	void* OperationHandle;
+
+} VirtualDeviceAdapterContentT;
 //------------------------------------------------------------------------------
 typedef struct
 {
-	ClientDeviceAdapterContentT Content;
+	VirtualDeviceAdapterContentT Content;
 
 	xPortT* Port;
 	xTransferLayerT* TransferLayer;
 
-} ClientDeviceAdapterT;
+} VirtualDeviceAdapterT;
 //------------------------------------------------------------------------------
 typedef struct
 {
 	xPortT* Port;
 	xTransferLayerT* TransferLayer;
 
-} ClientDeviceAdapterInitT;
+} VirtualDeviceAdapterInitT;
 //==============================================================================
 //functions:
 
-xResult ClientDeviceAdapterInit(xDeviceT* device, ClientDeviceAdapterT* adapter, ClientDeviceAdapterInitT* init);
+xResult VirtualDeviceAdapterInit(xDeviceT* device, VirtualDeviceAdapterT* adapter, VirtualDeviceAdapterInitT* init);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_CLIENT_DEVICE_ADAPTER_H_
+#endif //_SERVER_DEVICE_ADAPTER_H_

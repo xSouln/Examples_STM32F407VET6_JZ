@@ -22,8 +22,6 @@ static void PrivateHandler(xPortT* port)
 {
 	CAN_LocalPortAdapterT* adapter = (CAN_LocalPortAdapterT*)port->Adapter.Content;
 
-	xSemaphoreTake(adapter->TxSemaphore, 5);
-
 	if (adapter->CAN_Register->TxStatus.Mailbox0_TransmissionError)
 	{
 		adapter->CAN_Register->TxStatus.Mailbox0_AbortRequest = true;
@@ -38,6 +36,8 @@ static void PrivateHandler(xPortT* port)
 	{
 		adapter->CAN_Register->TxStatus.Mailbox2_AbortRequest = true;
 	}
+
+	xSemaphoreTake(adapter->TxSemaphore, 1);
 
 	if (!adapter->AwaitTxValidation)
 	{
@@ -164,9 +164,6 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 				*(uint32_t*)arg = xCircleBufferGetFreeSize(&adapter->TxCircleBuffer);
 				break;
 
-			case xPortAdapterRequestClearTxBuffer:
-				adapter->TxCircleBuffer.HandlerIndex = adapter->TxCircleBuffer.TotalIndex;
-				break;
 
 			case xPortAdapterRequestGetRxCircleBuffer:
 			{
@@ -175,18 +172,6 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 
 				break;
 			}
-
-			case xPortAdapterRequestGetTxCircleBuffer:
-			{
-				xCircleBufferT** out = arg;
-				*out = &adapter->TxCircleBuffer;
-
-				break;
-			}
-
-			case xPortAdapterRequestSetBinding:
-				port->Binding = arg;
-				break;
 
 			case xPortAdapterRequesExtendedTransmission:
 			{

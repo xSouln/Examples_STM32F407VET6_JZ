@@ -23,27 +23,19 @@ static void PrivateHandler(xDeviceT* device)
 {
 	ClientDeviceAdapterT* adapter = (ClientDeviceAdapterT*)device->Adapter.Content;
 
-	if (adapter->Content.Command)
-	{
-		adapter->Content.CommandExecutionResult = adapter->Content.Command->Action(device, adapter->Content.Command->Arg);
-		adapter->Content.Command = 0;
-
-		xSemaphoreGive(adapter->Content.CommandAccomplishSemaphore);
-	}
-
 	while (adapter->Content.RxPacketHandlerIndex != adapter->Content.PortRxCircleBuffer->TotalIndex)
 	{
 		CAN_LocalSegmentT* segment = xCircleBufferGetElement(adapter->Content.PortRxCircleBuffer, adapter->Content.RxPacketHandlerIndex);
 
-		if (segment->Identifier == CAN_LocalPacketIdentifierDeviceApplyId)
+		if (segment->DHCP_Header.IsEnabled && segment->DHCP_Header.PacketType == CAN_LocalBroadcastPacketTypeDHCPResponseGetId)
 		{
-			CAN_LocalPacketDeviceApplyIdT content = { .Value = segment->Data.DoubleWord };
-			CAN_LocalExtansionDeviceApplyIdT extansion = { .Value = segment->Extension };
+			CAN_LocalResponseContentDHCPGetIdT content = { .Value = segment->Data.Content };
+			CAN_LocalCharacteristicDHCPApplyIdT characteristic = { .Value = segment->DHCP_Header.Characteristic };
 
 			if (content.MAC == device->MAC)
 			{
-				device->Id = extansion.Id;
-				device->ConnectionState = xDeviceConnectionStateRegistration;
+				device->NetworkState = xDeviceNetworkStateRegistered;
+				xDeviceSetId(device, characteristic.Id);
 			}
 		}
 
@@ -52,29 +44,32 @@ static void PrivateHandler(xDeviceT* device)
 	}
 
 	uint32_t time = xSystemGetTime(NULL);
-	if (device->ConnectionState == xDeviceConnectionStateDisconnected
+	if (device->NetworkState == xDeviceNetworkStateUnregistered
 		&& (time - adapter->Content.OperationTimeStamp) > 3000)
 	{
 		adapter->Content.OperationTimeStamp = time;
 
-		CAN_LocalExtansionNewDeviceT extansion;
-		extansion.Type = device->Info.Type;
-		extansion.Extansion = device->Info.Extansion;
+		CAN_LocalRequestContentDHCPGetIdT content;
+		content.MAC = device->MAC;
 
-		CAN_LocalPacketNewDeviceT data;
-		data.MAC = device->MAC;
+		CAN_LocalCharacteristicDHCPGetIdT characteristic;
+		characteristic.Type = device->Info.Type;
+		characteristic.Extansion = device->Info.Extansion;
 
 		CAN_LocalSegmentT segment;
-		segment.Identifier = CAN_LocalPacketIdentifierNewDevice;
-		segment.Extension = extansion.Value;
-		segment.ExtensionIsEnabled = true;
-		segment.Data.DoubleWord = data.Value;
-		segment.DataLength = sizeof(CAN_LocalPacketNewDeviceT);
+		segment.DHCP_Header.MessageType = CAN_LocalMessageTypeBroadcast;
+		segment.DHCP_Header.PacketType = CAN_LocalBroadcastPacketTypeDHCPRequestGetId;
+		segment.DHCP_Header.ServiceType = xServiceTypeDHCP;
+		segment.DHCP_Header.IsEnabled = true;
+		segment.DHCP_Header.Characteristic = characteristic.Value;
+
+		segment.Data.Value = content.Value;
+		segment.DataLength = sizeof(CAN_LocalRequestContentDHCPGetIdT);
 
 		xPortExtendedTransmition(adapter->Port, &segment);
 	}
 
-	if (device->ConnectionState == xDeviceConnectionStateRegistration
+	if (device->NetworkState == xDeviceNetworkStateRegistered
 		&& (time - adapter->Content.OperationTimeStamp) > 1000)
 	{
 		adapter->Content.OperationTimeStamp = time;
@@ -89,7 +84,7 @@ static xResult PrivateRequestListener(xDeviceT* device, xDeviceAdapterRequestSel
 
 	switch ((uint32_t)selector)
 	{
-		case xDeviceAdapterRequestExecuteCommand:
+		/*case xDeviceAdapterRequestExecuteCommand:
 		{
 			xSemaphoreTake(adapter->Content.CommandExecutionMutex, portMAX_DELAY);
 
@@ -102,6 +97,10 @@ static xResult PrivateRequestListener(xDeviceT* device, xDeviceAdapterRequestSel
 			xSemaphoreGive(adapter->Content.CommandExecutionMutex);
 
 			return commandResult;
+		}*/
+		case xDeviceAdapterRequestDispose:
+		{
+			break;
 		}
 
 		default : return xResultRequestIsNotFound;
@@ -138,12 +137,11 @@ xResult ClientDeviceAdapterInit(xDeviceT* device, ClientDeviceAdapterT* adapter,
 		device->Adapter.Interface = &privateAdapterInterface;
 		device->Adapter.Description = nameof(ClientDeviceAdapterT);
 
-#ifdef INC_FREERTOS_H
-		adapter->Content.CommandExecutionMutex = xSemaphoreCreateMutex();
-		adapter->Content.CommandAccomplishSemaphore = xSemaphoreCreateBinary();
-#endif
+		memset(&adapter->Content, 0, sizeof(adapter->Content));
 
 		adapter->Port = init->Port;
+		adapter->TransferLayer = init->TransferLayer;
+
 		adapter->Content.PortRxCircleBuffer = xPortGetRxCircleBuffer(adapter->Port);
 
 		return xResultAccept;
