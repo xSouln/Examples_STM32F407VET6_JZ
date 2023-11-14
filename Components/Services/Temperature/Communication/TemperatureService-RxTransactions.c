@@ -4,9 +4,18 @@
 #include "TemperatureService-RxTransactions.h"
 #include "Abstractions/xDevice/xDevice.h"
 #include "Abstractions/xSystem/xSystem.h"
+#include "Common/xMemory.h"
 #include "../TemperatureService.h"
 //==============================================================================
 //types:
+
+typedef struct
+{
+	xPortT* Port;
+	PacketInfoT PacketInfo;
+
+} AsyncRequestT;
+//------------------------------------------------------------------------------
 
 typedef struct
 {
@@ -14,6 +23,15 @@ typedef struct
 	uint32_t ServiceId;
 
 } RequestGetTemperatureT;
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	xRxTransactionContentT Content;
+
+	xPortT* Port;
+
+} xAsyncRequestContentT;
 //==============================================================================
 //variables:
 
@@ -28,39 +46,48 @@ typedef struct
 /// @brief функции приема запросов на получение параметров компонента xDeviceControlT
 /// @{
 
+static void privateCallbackGetTemperature(xServiceAsyncRequestManagerT* manager)
+{
+	xAsyncRequestContentT* content = manager->Content;
+
+	float result = *(float*)manager->Result;
+
+	xRxTransactionAsyncResponse(content->Port, &content->Content, &result, sizeof(result));
+
+	xMemoryFree(content);
+}
+//------------------------------------------------------------------------------
+
 static xResult TemperatureServiceGetTemperature(xRxRequestManagerT* manager, RequestGetTemperatureT* request)
 {
-	xDeviceT* device = manager->Object;
-
-	if (device->Id != request->DeviceId)
-	{
-		return xResultError;
-	}
-
-	xServiceListElementT* element = xListStartEnumeration((xListT*)&device->Services);
 	xResult result = xResultError;
+	xDeviceT* device = xDeviceGetDeviceById(manager->Object, request->DeviceId);
 
-	while (element)
+	if (device)
 	{
-		xServiceT* service = element->Value;
+		xServiceT* service = xDeviceGetServiceById(device, request->ServiceId);
 
-		if (service->Id == request->ServiceId)
+		if (service)
 		{
-			float temperature;
-			result = xServiceRequestListener(service, TemperatureServiceRequestGetTemperature, &temperature);
+			/*float temperature;
+			result = xServiceRequestListener(service, TemperatureServiceRequestGetTemperature, &temperature);*/
 
-			if (result == xResultAccept)
+			xAsyncRequestContentT* content = xMemoryAllocate(1, sizeof(xAsyncRequestContentT));
+			memcpy(&content->Content, manager->Content, sizeof(xRxTransactionContentT));
+			content->Port = manager->Port;
+
+			xServiceAsyncRequestT asyncRequest = { 0 };
+			asyncRequest.Callback = privateCallbackGetTemperature;
+			asyncRequest.Content = content;
+
+			xServiceRequestListener(service, TemperatureServiceRequestGetTemperature, &asyncRequest);
+
+			/*if (result == xResultAccept)
 			{
 				xDataBufferAdd(manager->ResponseBuffer, &temperature, sizeof(temperature));
-			}
-
-			break;
+			}*/
 		}
-
-		element = element->Next;
 	}
-
-	xListStopEnumeration((xListT*)&device->Services);
 
 	return result;
 }

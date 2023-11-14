@@ -13,7 +13,7 @@
 
 #define DEVICE_CONTROL_ENABLE 1
 
-#define TASK_STACK_SIZE 0x180
+#define TASK_STACK_SIZE 0x100
 
 #define HTTP_HOST "device-api.sintez.by"
 #define HTTP_HOST_AUTHORIZATION "X-Sintez-Auth: 6b9f7b57e10f498e634204e77009e472"

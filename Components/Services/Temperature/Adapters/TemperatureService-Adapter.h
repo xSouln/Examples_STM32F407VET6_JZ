@@ -19,10 +19,6 @@ extern "C" {
 
 typedef struct
 {
-#ifdef INC_FREERTOS_H
-	SemaphoreHandle_t TransactionMutex;
-#endif
-
 	uint32_t TimeStamp;
 
 	uint16_t RxPacketHandlerIndex;
@@ -40,7 +36,6 @@ typedef struct
 typedef struct
 {
 	xServiceAdapterBaseInitT Base;
-
 	xPortT* Port;
 
 } TemperatureServiceAdapterInitT;

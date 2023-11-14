@@ -25,6 +25,14 @@ static void privateHandler(TemperatureServiceT* service)
 //------------------------------------------------------------------------------
 static xResult privateRequestListener(TemperatureServiceT* service, xServiceAdapterRequestSelector selector, void* arg)
 {
+	/*xServiceRequestBaseT* request = arg;
+
+	xServiceRequestManagerT requestManager;
+	requestManager.Service = service;
+	requestManager.Operation = selector;
+	requestManager.OperationResult = xResultAccept;
+	requestManager.Content = request->Content;
+
 	if ((int)selector > xServiceBaseRequestOffset && service->Base.Info.Type != xServiceTypeTemperatureControl)
 	{
 		return xResultInvalidRequest;
@@ -34,12 +42,21 @@ static xResult privateRequestListener(TemperatureServiceT* service, xServiceAdap
 	{
 		case TemperatureServiceRequestGetTemperature:
 		{
-			*(float*)arg = service->Temperature;
+			//*(float*)arg = service->Temperature;
+			//requestManager.Result = &service->Temperature;
+			service->Adapter.Interface->RequestListener(service, TemperatureServiceRequestGetTemperature, &requestManager);
 			break;
 		}
 
 		default : return xResultRequestIsNotFound;
 	}
+
+	if(request->Callback)
+	{
+		request->Callback(&requestManager);
+	}*/
+
+	service->Adapter.Interface->RequestListener(service, TemperatureServiceRequestGetTemperature, arg);
 
 	return xResultAccept;
 }
@@ -61,7 +78,7 @@ xResult TemperatureServiceInit(TemperatureServiceT* service, TemperatureServiceI
 	service->Base.Info.Type = xServiceTypeTemperatureControl;
 
 	service->Base.Adapter.Interface = &privateInterface;
-	service->Base.Adapter.Description = nameof(TemperatureServiceT);
+	//service->Base.Adapter.Description = nameof(TemperatureServiceT);
 
 	return xResultAccept;
 }

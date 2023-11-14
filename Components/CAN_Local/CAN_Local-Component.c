@@ -121,6 +121,8 @@ CAN_LocalSegmentT CAN_Local2_RequestTransmit =
 
 CAN_LocalSegmentT CAN_Local1_Response;
 CAN_LocalSegmentT CAN_Local2_Response;
+
+int RTOS_CAN_LocalComponentTaskStackWaterMark;
 //==============================================================================
 //import:
 
@@ -162,6 +164,8 @@ static void privateTask(void* arg)
 	while (true)
 	{
 		xPortHandler(arg);
+
+		RTOS_CAN_LocalComponentTaskStackWaterMark = uxTaskGetStackHighWaterMark(NULL);
 	}
 }
 //==============================================================================

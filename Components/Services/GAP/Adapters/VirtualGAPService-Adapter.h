@@ -16,7 +16,7 @@ extern "C" {
 //==============================================================================
 //types:
 
-typedef struct
+typedef struct PACKED_PREFIX
 {
 	uint32_t TimeStamp;
 

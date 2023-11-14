@@ -2,11 +2,13 @@
 //includes:
 
 #include <stdlib.h>
+#include "Common/xMemory.h"
 #include "Common/xCircleBuffer.h"
 #include "VirtualTemperatureService-Adapter.h"
 #include "Abstractions/xSystem/xSystem.h"
 #include "CAN_Local/Control/CAN_Local-Types.h"
 #include "TransferLayer/TransferLayer-Component.h"
+#include "Components.h"
 //==============================================================================
 //defines:
 
@@ -82,7 +84,7 @@ static void privateExtensionNotificationHandler(TemperatureServiceT* service,
 //------------------------------------------------------------------------------
 static void privateHandler(TemperatureServiceT* service)
 {
-	VirtualTemperatureServiceAdapterT* adapter = service->Adapter.Content;
+	VirtualTemperatureServiceAdapterT* adapter = service->Base.Adapter.Content;
 	xPortT* port = xServiceGetPort((void*)service);
 
 	xCircleBufferT* circleBuffer = xPortGetRxCircleBuffer(port);
@@ -130,10 +132,50 @@ static void privateHandler(TemperatureServiceT* service)
 	}
 }
 //------------------------------------------------------------------------------
-static xResult privateRequestListener(TemperatureServiceT* service, int selector, void* arg)
+static void privateRequestEventListener(xRequestControlT* control, int selector, xRequestT* request, ...)
 {
+	CAN_LocalRequestT* extansion = (void*)request;
+	xServiceAsyncRequestT* requestContent = extansion->Content;
+
+	xServiceAsyncRequestManagerT requestManager = { 0 };
+	requestManager.Service = (void*)extansion->Recipient;
+	requestManager.Operation = selector;
+	requestManager.OperationResult = xResultAccept;
+	requestManager.Content = requestContent->Content;
+
+	if (request->Result == xRequestResultNoError)
+	{
+		float value = *(float*)GetParameter(request, 1);
+
+		requestManager.Result = &value;
+	}
+
+	if(requestContent->Callback)
+	{
+		requestContent->Callback(&requestManager);
+	}
+
+	xMemoryFree(requestContent);
+}
+//------------------------------------------------------------------------------
+static xResult privateRequestListener(TemperatureServiceT* service, int selector, xServiceAsyncRequestT* arg, ...)
+{
+
 	switch ((uint32_t)selector)
 	{
+		case TemperatureServiceRequestGetTemperature:
+		{
+			CAN_LocalRequestT* request = xRequestNew(&HostRequestControl);
+			request->Base.EventListener = privateRequestEventListener;
+			request->Base.Sender = (void*)&HostGAP;
+			request->Action = TemperatureServiceRequestGetTemperature;
+			request->Recipient = (void*)service;
+
+			request->Content = arg != NULL ? xMemoryClone(arg, sizeof(xServiceAsyncRequestT)) : NULL;
+
+			xRequestControlAdd(&HostRequestControl, (void*)request);
+			break;
+		}
 
 		default : return xResultRequestIsNotFound;
 	}
@@ -153,9 +195,9 @@ xResult VirtualTemperatureServiceAdapterInit(TemperatureServiceT* service,
 		VirtualTemperatureServiceAdapterT* adapter,
 		VirtualTemperatureServiceAdapterInitT* init)
 {
-	service->Adapter.Content = adapter;
+	service->Base.Adapter.Content = adapter;
 	service->Adapter.Interface = &privateInterface;
-	service->Adapter.Description = nameof(VirtualTemperatureServiceAdapterT);
+	//service->Adapter.Description = nameof(VirtualTemperatureServiceAdapterT);
 
 	service->Base.IsEnable = true;
 	service->Base.IsAvailable = false;

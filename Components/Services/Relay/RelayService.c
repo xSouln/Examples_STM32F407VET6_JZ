@@ -60,7 +60,7 @@ xResult RelayServiceInit(RelayServiceT* service, RelayServiceInitT* init)
 	service->Base.Info.Type = xServiceTypeGPIO_Control;
 
 	service->Base.Adapter.Interface = &privateInterface;
-	service->Base.Adapter.Description = nameof(RelayServiceT);
+	//service->Base.Adapter.Description = nameof(RelayServiceT);
 
 	return xResultAccept;
 }

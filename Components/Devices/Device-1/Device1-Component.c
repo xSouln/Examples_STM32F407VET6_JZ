@@ -84,7 +84,6 @@ xResult Device1ComponentInit(void* parent)
 	ClientDeviceAdapterInitT deviceAdapterInit;
 	deviceAdapterInit.Port = &CAN_Local2;
 	deviceAdapterInit.TransferLayer = &ExternalTransferLayer;
-	Device1.MAC = 0x1122334466880001;
 	ClientDeviceAdapterInit(&Device1, &privateDeviceAdapter, &deviceAdapterInit);
 
 	xDeviceInitT deviceInit = { 0 };
@@ -92,6 +91,8 @@ xResult Device1ComponentInit(void* parent)
 	deviceInit.Id = DEVICE_ID;
 	deviceInit.EventListener = (void*)privateDeviceEventListener;
 	xDeviceInit(&Device1, &deviceInit);
+
+	Device1.MAC = UniqueDeviceID->MAC;
 	//----------------------------------------------------------------------------
 	GAPServiceAdapterInitT gapServiceAdapterInit;
 	gapServiceAdapterInit.Port = &CAN_Local2;

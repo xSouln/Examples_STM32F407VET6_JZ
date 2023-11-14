@@ -50,15 +50,20 @@ static void privatePacketHandler(xRequestControlT* control, CAN_LocalRequestCont
 
 					if (content.Description.Sender == sender->Id)
 					{
+						request->Base.RxData = content.Data.Bytes;
+						request->Base.RxDataSize = segment->DataLength - sizeof(CAN_LocalResponseDescriptionT);
+
 						request->Base.Complited = true;
 						request->Base.State = xRequestStateIdle;
-						request->Base.IsRunning = false;
 
 						if (request->Base.EventListener)
 						{
+							request->TransmitionTime = xSystemGetTime(NULL) - request->StartTime;
 							request->Base.EventListener(control, xRequestEventComlite, (void*)request, content.Data.Bytes);
 							request->Base.EventListener = NULL;
 						}
+
+						request->Base.IsRunning = false;
 
 						xListRemove((void*)&control->ProcessedRequests, request);
 						break;
@@ -86,34 +91,35 @@ static void privateHandler(xRequestControlT* control)
 	while (element)
 	{
 		void* deletedElement = NULL;
-		xRequestT* request = element->Value;
+		CAN_LocalRequestT* request = element->Value;
 
-		switch ((uint8_t)request->State)
+		switch ((uint8_t)request->Base.State)
 		{
 			case xRequestStateInProgress:
 			{
-				if (time - request->TimeStamp < request->TimeOut)
+				if (time - request->Base.TimeStamp < request->Base.TimeOut)
 				{
 					break;
 				}
 
-				if (request->AttemptNumber < request->AttemptsCount)
+				if (request->Base.AttemptNumber < request->Base.AttemptsCount)
 				{
-					request->AttemptNumber++;
-					request->TimeStamp = xSystemGetTime(NULL);
+					request->Base.AttemptNumber++;
+					request->Base.TimeStamp = xSystemGetTime(NULL);
 					break;
 				}
 
-				request->Result = xRequestResultTimeOut;
-				request->State = xRequestStateIdle;
-				request->IsRunning = false;
+				request->Base.Result = xRequestResultTimeOut;
+				request->Base.State = xRequestStateIdle;
 
-				if (request->EventListener)
+				if (request->Base.EventListener)
 				{
-					request->EventListener(control, xRequestEventError, (void*)request);
-					request->EventListener = NULL;
+					request->TransmitionTime = xSystemGetTime(NULL) - request->StartTime;
+					request->Base.EventListener(control, xRequestEventError, (void*)request);
+					request->Base.EventListener = NULL;
 				}
 
+				request->Base.IsRunning = false;
 				deletedElement = request;
 
 				break;
@@ -156,12 +162,16 @@ static xResult privateRequestAdd(xRequestControlT* control, CAN_LocalRequestCont
 	segment.ExtensionHeader.ServiceType = sender->Info.Type;
 
 	segment.Data.Content = content.Value;
-	segment.DataLength = sizeof(content) - sizeof(content.Data) + request->DataSize;
+	segment.DataLength = sizeof(content) - sizeof(content.Data) + request->TxDataSize;
 
-	request->Data = extansion->Data.Bytes;
+	request->TxData = extansion->Data.Bytes;
+	request->RxData = 0;
+	request->RxDataSize = 0;
 
-	xPortExtendedTransmition(adapter->Port, &segment);
+	extansion->StartTime = xSystemGetTime(NULL);
+
 	xListAdd((void*)&control->ProcessedRequests, request);
+	xPortExtendedTransmition(adapter->Port, &segment);
 
 	return xResultBusy;
 }
@@ -187,16 +197,18 @@ static xResult privateRequestListener(xRequestControlT* control, xRequestControl
 		case xRequestControlAdapterRequestNew:
 		{
 			CAN_LocalRequestT* result = NULL;
+			CAN_LocalRequestT* buffer = (void*)adapter->RequestBuffer;
 
 			for(uint16_t i = 0; i < adapter->RequestBufferSize; i++)
 			{
-				if (!adapter->RequestBuffer[i].IsRunning)
+				if (!buffer[i].Base.IsRunning)
 				{
-					result = (void*)&adapter->RequestBuffer[i];
+					result = &buffer[i];
 					memset(result, 0, sizeof(CAN_LocalRequestT));
 
 					result->Base.AttemptsCount = REQUEST_DEFAULT_ATTEMPTS_COUNT;
 					result->Base.TimeOut = REQUEST_DEFAULT_TIMEOUT;
+					result->Base.IsRunning = true;
 					break;
 				}
 			}

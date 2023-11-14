@@ -9,9 +9,9 @@
 //==============================================================================
 //functions:
 
-void* xMemoryAllocate(int count, int type_size)
+void* xMemoryAllocate(int count, int typeSize)
 {
-	uint32_t size = count * type_size;
+	uint32_t size = count * typeSize;
 
 	void* result = pvPortMalloc(size);
 
@@ -27,7 +27,13 @@ void* xMemoryAllocate(int count, int type_size)
 //------------------------------------------------------------------------------
 void xMemoryFree(void* memory)
 {
-	vPortFree(memory);
+	extern uint8_t ucHeap[configTOTAL_HEAP_SIZE];
+
+	if ((uint32_t)memory >= (uint32_t)ucHeap
+		&& (uint32_t)memory <= (uint32_t)(ucHeap + configTOTAL_HEAP_SIZE))
+	{
+		vPortFree(memory);
+	}
 }
 //------------------------------------------------------------------------------
 /*void xMemoryLock()

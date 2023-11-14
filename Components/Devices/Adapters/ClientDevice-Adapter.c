@@ -135,7 +135,7 @@ xResult ClientDeviceAdapterInit(xDeviceT* device, ClientDeviceAdapterT* adapter,
 	{
 		device->Adapter.Content = adapter;
 		device->Adapter.Interface = &privateAdapterInterface;
-		device->Adapter.Description = nameof(ClientDeviceAdapterT);
+		//device->Adapter.Description = nameof(ClientDeviceAdapterT);
 
 		memset(&adapter->Content, 0, sizeof(adapter->Content));
 

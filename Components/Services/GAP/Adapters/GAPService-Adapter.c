@@ -106,12 +106,15 @@ static void privateRequestHandler(GAPServiceT* service,
 		segment.ExtensionHeader.ServiceId = service->Base.Id;
 		segment.ExtensionHeader.ServiceType = service->Base.Info.Type;
 
+		uint8_t size = 0;
+
 		switch (content.Description.Action)
 		{
 			case GAPServiceRequestGetNumberOfServices:
 			{
 				response.Data.Bytes[0] = device->Services.Count;
-				segment.DataLength = sizeof(CAN_LocalResponseContentT) - sizeof(response.Data) + 1;
+				//segment.DataLength = sizeof(CAN_LocalResponseContentT) - sizeof(response.Data) + 1;
+				size = sizeof(response.Data.Bytes[0]);
 
 				break;
 			}
@@ -128,8 +131,21 @@ static void privateRequestHandler(GAPServiceT* service,
 				responseContent.Extension = service->Info.Extension;
 
 				response.Data.Content = responseContent.Value;
-				segment.DataLength = sizeof(CAN_LocalResponseContentT) - sizeof(response.Data) + sizeof(CAN_LocalResponseGATGetServiceT);
+				//segment.DataLength = sizeof(CAN_LocalResponseContentT) - sizeof(response.Data) + sizeof(CAN_LocalResponseGATGetServiceT);
+				size = sizeof(CAN_LocalResponseGATGetServiceT);
 
+				break;
+			}
+
+			case xServiceRequestSetId:
+			{
+				volatile CAN_LocalRequestContentServiceSetIdT requestContent = { .Value = content.Data.Content };
+				xServiceT* targetService = xDeviceGetServiceById(service->Base.Base.Parent, requestContent.ServiceId);
+
+				if (targetService != NULL)
+				{
+					targetService->Id = requestContent.NewServiceId;
+				}
 				break;
 			}
 
@@ -137,6 +153,8 @@ static void privateRequestHandler(GAPServiceT* service,
 		}
 
 		segment.Data.Content = response.Value;
+		segment.DataLength = sizeof(response.Description) + size;
+
 		xPortExtendedTransmition(adapter->Port, &segment);
 	}
 }
@@ -167,7 +185,7 @@ static void privateNotificationHandler(GAPServiceT* service,
 //------------------------------------------------------------------------------
 static void privateHandler(GAPServiceT* service)
 {
-	GAPServiceAdapterT* adapter = service->Adapter.Content;
+	GAPServiceAdapterT* adapter = service->Base.Adapter.Content;
 
 	xCircleBufferT* circleBuffer = xPortGetRxCircleBuffer(adapter->Port);
 
@@ -253,10 +271,9 @@ xResult GAPServiceAdapterInit(GAPServiceT* service,
 {
 	if (service && init)
 	{
-		service->Adapter.Content = adapter;
-		service->Adapter.Interface = &privateInterface;
-		service->Adapter.Description = nameof(GAPServiceAdapter
-				T);
+		service->Base.Adapter.Content = adapter;
+		service->Base.Adapter.Interface = (void*)&privateInterface;
+		//service->Adapter.Description = nameof(GAPServiceAdapterT);
 
 		adapter->Port = init->Port;
 

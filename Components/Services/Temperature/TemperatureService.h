@@ -23,7 +23,9 @@ typedef enum
 {
 	TemperatureServiceRequestIdle = xServiceBaseRequestOffset,
 
-	TemperatureServiceRequestGetTemperature
+	TemperatureServiceRequestGetTemperature,
+
+	TemperatureServiceRequestSetNotification
 
 } TemperatureServiceRequests;
 //------------------------------------------------------------------------------

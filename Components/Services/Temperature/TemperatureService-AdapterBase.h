@@ -49,8 +49,8 @@ typedef struct
 
 typedef struct
 {
-	char* Description;
-	void* Content;
+	//char* Description;
+	//void* Content;
 
 	TemperatureServiceAdapterInterfaceT* Interface;
 

@@ -302,6 +302,24 @@ typedef union
 	struct
 	{
 		uint16_t ServiceId;
+		uint16_t NewServiceId;
+	};
+
+	uint32_t Value;
+
+} CAN_LocalRequestContentServiceSetIdT;
+//------------------------------------------------------------------------------
+typedef union
+{
+	uint8_t Value;
+
+} CAN_LocalResponseContentServiceSetIdT;
+//------------------------------------------------------------------------------
+typedef union
+{
+	struct
+	{
+		uint16_t ServiceId;
 		uint16_t Action;
 
 		uint16_t Id : 8;
@@ -414,6 +432,9 @@ typedef struct
 {
 	xRequestT Base;
 
+	uint32_t StartTime;
+	uint16_t TransmitionTime;
+
 	uint16_t Action;
 	struct xServiceT* Recipient;
 
@@ -426,6 +447,8 @@ typedef struct
 		uint32_t Value;
 
 	} Data;
+
+	void* Content;
 
 } CAN_LocalRequestT;
 //------------------------------------------------------------------------------

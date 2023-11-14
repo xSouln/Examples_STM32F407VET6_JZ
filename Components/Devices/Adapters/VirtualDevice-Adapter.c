@@ -7,6 +7,7 @@
 #include "RequestControl/HostRequestControl-Component.h"
 #include "Devices/Host/HostDevice-Component.h"
 #include "Services/Temperature/Adapters/VirtualTemperatureService-Adapter.h"
+#include "Components.h"
 //==============================================================================
 //defines:
 
@@ -33,7 +34,7 @@ typedef enum
 //==============================================================================
 //variables:
 
-
+static uint16_t id = 100;
 //==============================================================================
 //functions:
 
@@ -45,7 +46,6 @@ static void privateServicesEventListener(xServiceT* service, int selector, void*
 static void privateRequestEventListener(xRequestControlT* control, int selector, xRequestT* request, ...)
 {
 	CAN_LocalRequestT* extansion = (void*)request;
-
 	xDeviceT* device = xServiceGetDevice(extansion->Recipient);
 	VirtualDeviceAdapterT* adapter = (VirtualDeviceAdapterT*)device->Adapter.Content;
 
@@ -69,21 +69,7 @@ static void privateRequestEventListener(xRequestControlT* control, int selector,
 			adapter->Content.TotalServiceNumber++;
 			(void)responseContent;
 
-			xServiceListElementT* element = xListStartEnumeration((void*)&device->Services);
-
-			while (element)
-			{
-				if (element->Value->Id == responseContent.Id)
-				{
-					goto end;
-				}
-
-				element = element->Next;
-			}
-
-			xListStopEnumeration((void*)&device->Devices);
-
-			if(element)
+			if(xDeviceGetServiceById(device, responseContent.Id))
 			{
 				break;
 			}
@@ -95,8 +81,8 @@ static void privateRequestEventListener(xRequestControlT* control, int selector,
 					TemperatureServiceT* service = xMemoryAllocate(1, sizeof(TemperatureServiceT));
 					service->Base.DynamicallyAllocated = true;
 
-					VirtualTemperatureServiceAdapterT* adapter = xMemoryAllocate(1, sizeof(TemperatureServiceT));
-					VirtualTemperatureServiceAdapterInit(service, adapter, NULL);
+					VirtualTemperatureServiceAdapterT* serviceAdapter = xMemoryAllocate(1, sizeof(VirtualTemperatureServiceAdapterT));
+					VirtualTemperatureServiceAdapterInit(service, serviceAdapter, NULL);
 
 					TemperatureServiceInitT temperatureServiceInit;
 					temperatureServiceInit.Base.Id = responseContent.Id;
@@ -105,6 +91,19 @@ static void privateRequestEventListener(xRequestControlT* control, int selector,
 					TemperatureServiceInit(service, &temperatureServiceInit);
 
 					xDeviceAddService(device, (void*)service);
+
+					GAPServiceRequestSetIdT parameter;
+					parameter.ServiceId =  responseContent.Id;
+					parameter.NewServiceId = id;
+
+					/*xServiceAsyncRequestT asyncRequest = { 0 };
+					asyncRequest.Callback = privateCallbackGetTemperature;
+					asyncRequest.Content = content;*/
+
+					//xServiceRequestListener((void*)&adapter->Content.GAP, xServiceRequestSetId, NULL, &parameter);
+
+					id++;
+
 					break;
 				}
 			}
@@ -113,7 +112,6 @@ static void privateRequestEventListener(xRequestControlT* control, int selector,
 		default: return;
 	}
 
-	end:;
 	adapter->Content.OperationTimeOut = 0;
 }
 //------------------------------------------------------------------------------
@@ -127,11 +125,6 @@ static void privateHandler(xDeviceT* device)
 		return;
 	}
 
-	if (adapter->Content.Transfer)
-	{
-		return;
-	}
-
 	switch (adapter->Content.ServicesInitState)
 	{
 		case InitStateGetNumberOfServices:
@@ -139,13 +132,13 @@ static void privateHandler(xDeviceT* device)
 			adapter->Content.OperationTimeStamp = time;
 			adapter->Content.OperationTimeOut = 1000;
 
-			adapter->Content.Request = xRequestNew(&HostRequestControl);
-			adapter->Content.Request->Base.EventListener = privateRequestEventListener;
-			adapter->Content.Request->Base.Sender = (void*)&HostGAP;
-			adapter->Content.Request->Action = GAPServiceRequestGetNumberOfServices;
-			adapter->Content.Request->Recipient = (void*)&adapter->Content.GAP;
+			CAN_LocalRequestT* request = xRequestNew(&HostRequestControl);
+			request->Base.EventListener = privateRequestEventListener;
+			request->Base.Sender = (void*)&HostGAP;
+			request->Action = GAPServiceRequestGetNumberOfServices;
+			request->Recipient = (void*)&adapter->Content.GAP;
 
-			xRequestControlAdd(&HostRequestControl, (void*)adapter->Content.Request);
+			xRequestControlAdd(&HostRequestControl, (void*)request);
 			break;
 		}
 
@@ -156,16 +149,16 @@ static void privateHandler(xDeviceT* device)
 				adapter->Content.OperationTimeStamp = time;
 				adapter->Content.OperationTimeOut = 1000;
 
-				adapter->Content.Request = xRequestNew(&HostRequestControl);
-				adapter->Content.Request->Base.EventListener = privateRequestEventListener;
-				adapter->Content.Request->Base.Sender = (void*)&HostGAP;
-				adapter->Content.Request->Action = GAPServiceRequestGetService;
-				adapter->Content.Request->Recipient = (void*)&adapter->Content.GAP;
+				CAN_LocalRequestT* request = xRequestNew(&HostRequestControl);
+				request->Base.EventListener = privateRequestEventListener;
+				request->Base.Sender = (void*)&HostGAP;
+				request->Action = GAPServiceRequestGetService;
+				request->Recipient = (void*)&adapter->Content.GAP;
 
-				adapter->Content.Request->Data.Bytes[0] = adapter->Content.TotalServiceNumber;
-				adapter->Content.Request->Base.DataSize = 1;
+				request->Data.Bytes[0] = adapter->Content.TotalServiceNumber;
+				request->Base.TxDataSize = 1;
 
-				xRequestControlAdd(&HostRequestControl, (void*)adapter->Content.Request);
+				xRequestControlAdd(&HostRequestControl, (void*)request);
 
 				break;
 			}
@@ -178,7 +171,7 @@ static void privateHandler(xDeviceT* device)
 //------------------------------------------------------------------------------
 static xResult PrivateRequestListener(xDeviceT* device, xDeviceAdapterRequestSelector selector, void* arg)
 {
-	VirtualDeviceAdapterT* adapter = (VirtualDeviceAdapterT*)device->Adapter.Content;
+	//VirtualDeviceAdapterT* adapter = (VirtualDeviceAdapterT*)device->Adapter.Content;
 
 	switch ((uint32_t)selector)
 	{
@@ -189,13 +182,15 @@ static xResult PrivateRequestListener(xDeviceT* device, xDeviceAdapterRequestSel
 
 		case xDeviceAdapterRequestGetPort:
 		{
-			*(void**)arg = adapter->Port;
+			//*(void**)arg = adapter->Port;
+			*(void**)arg = &CAN_LocalPort;
 			break;
 		}
 
 		case xDeviceAdapterRequestGetTransferLayer:
 		{
-			*(void**)arg = adapter->TransferLayer;
+			//*(void**)arg = adapter->TransferLayer;
+			*(void**)arg = &LocalTransferLayer;
 			break;
 		}
 
@@ -236,12 +231,12 @@ xResult VirtualDeviceAdapterInit(xDeviceT* device, VirtualDeviceAdapterT* adapte
 	{
 		device->Adapter.Content = adapter;
 		device->Adapter.Interface = &privateAdapterInterface;
-		device->Adapter.Description = nameof(VirtualDeviceAdapterT);
+		//device->Adapter.Description = nameof(VirtualDeviceAdapterT);
 
 		memset(&adapter->Content, 0, sizeof(adapter->Content));
 
-		adapter->Port = init->Port;
-		adapter->TransferLayer = init->TransferLayer;
+		//adapter->Port = init->Port;
+		//adapter->TransferLayer = init->TransferLayer;
 
 		VirtualGAPServiceAdapterInitT gapServiceAdapterInit;
 		VirtualGAPServiceAdapterInit(&adapter->Content.GAP, &adapter->Content.GAPAdapter, &gapServiceAdapterInit);

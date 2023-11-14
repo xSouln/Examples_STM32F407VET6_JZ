@@ -30,17 +30,17 @@ typedef enum
 //------------------------------------------------------------------------------
 typedef struct
 {
-	uint32_t StartIndex;
-	uint32_t StopIndex;
+	uint32_t ServiceId;
+	uint32_t NewServiceId;
 
-} GAPServiceRequestGetServisesT;
+} GAPServiceRequestSetIdT;
 //------------------------------------------------------------------------------
 
 typedef struct
 {
 	xServiceT Base;
 
-	GAPServiceAdapterBaseT Adapter;
+	//GAPServiceAdapterBaseT Adapter;
 
 } GAPServiceT;
 //------------------------------------------------------------------------------

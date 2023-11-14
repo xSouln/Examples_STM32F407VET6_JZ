@@ -7,6 +7,7 @@
 #include "Abstractions/xSystem/xSystem.h"
 #include "CAN_Local/Control/CAN_Local-Types.h"
 #include "TransferLayer/TransferLayer-Component.h"
+#include "Components.h"
 //==============================================================================
 //defines:
 
@@ -48,7 +49,7 @@ static void privateNotificationHandler(GAPServiceT* service,
 //------------------------------------------------------------------------------
 static void privateHandler(GAPServiceT* service)
 {
-	VirtualGAPServiceAdapterT* adapter = service->Adapter.Content;
+	VirtualGAPServiceAdapterT* adapter = service->Base.Adapter.Content;
 	xPortT* port = xServiceGetPort((void*)service);
 
 	xCircleBufferT* circleBuffer = xPortGetRxCircleBuffer(port);
@@ -90,10 +91,29 @@ static void privateHandler(GAPServiceT* service)
 	}
 }
 //------------------------------------------------------------------------------
-static xResult privateRequestListener(GAPServiceT* service, int selector, void* arg)
+static xResult privateRequestListener(GAPServiceT* service, int selector, void* arg, ...)
 {
 	switch ((uint32_t)selector)
 	{
+		case xServiceRequestSetId:
+		{
+			GAPServiceRequestSetIdT* parameters = GetParameter(arg, 1);
+
+			CAN_LocalRequestContentServiceSetIdT requestContent;
+			requestContent.ServiceId = parameters->ServiceId;
+			requestContent.NewServiceId = parameters->NewServiceId;
+
+			CAN_LocalRequestT* request = xRequestNew(&HostRequestControl);
+			request->Base.Sender = (void*)&HostGAP;
+			request->Action = xServiceRequestSetId;
+			request->Recipient = (void*)service;
+
+			request->Data.Value = requestContent.Value;
+			request->Base.TxDataSize = sizeof(CAN_LocalRequestContentServiceSetIdT);
+
+			xRequestControlAdd(&HostRequestControl, (void*)request);
+			break;
+		}
 
 		default : return xResultRequestIsNotFound;
 	}
@@ -115,9 +135,9 @@ xResult VirtualGAPServiceAdapterInit(GAPServiceT* service,
 {
 	if (service && init)
 	{
-		service->Adapter.Content = adapter;
-		service->Adapter.Interface = &privateInterface;
-		service->Adapter.Description = nameof(VirtualGAPServiceAdapterT);
+		service->Base.Adapter.Content = adapter;
+		service->Base.Adapter.Interface = (void*)&privateInterface;
+		//service->Adapter.Description = nameof(VirtualGAPServiceAdapterT);
 
 		return xResultAccept;
 	}

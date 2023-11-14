@@ -51,7 +51,7 @@ uint8_t ucHeap[configTOTAL_HEAP_SIZE] FREERTOS_HEAP_SECTION;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
-uint32_t defaultTaskBuffer[ 0x180 ];
+uint32_t defaultTaskBuffer[ 0x100 ];
 osStaticThreadDef_t defaultTaskControlBlock;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",

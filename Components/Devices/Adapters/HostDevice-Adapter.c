@@ -74,6 +74,8 @@ static void privateDHCPHandler(xDeviceT* device, HostDeviceAdapterT* adapter, CA
 				newDevice->MAC = reuqest.MAC;
 				newDevice->Info.Type = characteristic.Type;
 				newDevice->Info.Extansion = characteristic.Extansion;
+				newDevice->DynamicallyAllocated = true;
+				newDevice->IsEnable = true;
 
 				xDeviceInit(newDevice, &deviceInit);
 
@@ -107,13 +109,6 @@ static void PrivateHandler(xDeviceT* device)
 {
 	HostDeviceAdapterT* adapter = (HostDeviceAdapterT*)device->Adapter.Content;
 
-	/*if (adapter->Content.Command)
-	{
-		adapter->Content.CommandExecutionResult = adapter->Content.Command->Action(device, adapter->Content.Command->Arg);
-		adapter->Content.Command = 0;
-		xSemaphoreGive(adapter->Content.CommandAccomplishSemaphore);
-	}*/
-
 	while (adapter->Content.RxPacketHandlerIndex != adapter->Content.PortRxCircleBuffer->TotalIndex)
 	{
 		CAN_LocalSegmentT* segment = xCircleBufferGetElement(adapter->Content.PortRxCircleBuffer, adapter->Content.RxPacketHandlerIndex);
@@ -137,21 +132,6 @@ static xResult PrivateRequestListener(xDeviceT* device, xDeviceAdapterRequestSel
 
 	switch ((uint32_t)selector)
 	{
-		/*case xDeviceAdapterRequestExecuteCommand:
-		{
-			xSemaphoreTake(adapter->Content.CommandExecutionMutex, portMAX_DELAY);
-
-			adapter->Content.Command = arg;
-
-#ifdef INC_FREERTOS_H
-			xSemaphoreTake(adapter->Content.CommandAccomplishSemaphore, portMAX_DELAY);
-#endif
-			xResult commandResult = adapter->Content.CommandExecutionResult;
-			xSemaphoreGive(adapter->Content.CommandExecutionMutex);
-
-			return commandResult;
-		}*/
-
 		default : return xResultRequestIsNotFound;
 	}
 
@@ -184,7 +164,7 @@ xResult HostDeviceAdapterInit(xDeviceT* device, HostDeviceAdapterT* adapter, Hos
 	{
 		device->Adapter.Content = adapter;
 		device->Adapter.Interface = &privateAdapterInterface;
-		device->Adapter.Description = nameof(HostDeviceAdapterT);
+		//device->Adapter.Description = nameof(HostDeviceAdapterT);
 
 		memset(&adapter->Content, 0, sizeof(adapter->Content));
 

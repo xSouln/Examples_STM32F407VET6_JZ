@@ -48,19 +48,9 @@ typedef struct
 
 typedef struct
 {
-	char* Description;
-	void* Content;
-
 	GAPServiceAdapterInterfaceT* Interface;
 
 } GAPServiceAdapterBaseT;
-//------------------------------------------------------------------------------
-
-typedef struct
-{
-	void* Content;
-
-} GAPServiceAdapterBaseInitT;
 
 /// @}
 //==============================================================================

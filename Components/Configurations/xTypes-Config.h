@@ -66,6 +66,28 @@ REG_GPIO_PORT_TYPEDEF(E,
 
 #define PortA ((REG_GPIO_PORT_A_T*)GPIOA)
 #define PortE ((REG_GPIO_PORT_E_T*)GPIOE)
+//------------------------------------------------------------------------------
+typedef struct PACKED_PREFIX
+{
+	uint16_t Id_1;
+	uint16_t Id_2;
+
+	union
+	{
+		struct
+		{
+			uint32_t Id_3;
+			uint32_t Id_4;
+		};
+
+		uint64_t MAC;
+	};
+
+} UniqueDeviceID_T;
+//==============================================================================
+//values:
+
+static volatile UniqueDeviceID_T* UniqueDeviceID = 0x1FFF7A10;
 //==============================================================================
 #ifdef __cplusplus
 }

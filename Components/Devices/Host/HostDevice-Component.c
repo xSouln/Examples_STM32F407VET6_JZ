@@ -17,7 +17,7 @@
 //==============================================================================
 //defines:
 
-#define TASK_STACK_SIZE 0x180
+#define TASK_STACK_SIZE 0x100
 
 #define LOCAL_DEVICE_ID 2000
 #define TEMPERATURE_SERVICE1_ID 22
@@ -34,6 +34,8 @@
 static TaskHandle_t taskHandle;
 static StaticTask_t taskBuffer;
 static StackType_t taskStack[TASK_STACK_SIZE];
+
+int RTOS_HostDeviceComponentTaskStackWaterMark;
 
 GAPServiceT HostGAP;
 
@@ -87,6 +89,8 @@ static void privateTask(void* arg)
 		HostRequestControlComponentHandler();
 
 		xDeviceHandler(&HostDevice);
+
+		RTOS_HostDeviceComponentTaskStackWaterMark = uxTaskGetStackHighWaterMark(NULL);
 
 		//vTaskDelay(pdMS_TO_TICKS(1));
 	}
@@ -163,6 +167,8 @@ xResult HostDeviceComponentInit(void* parent)
 	deviceInit.Id = LOCAL_DEVICE_ID;
 	deviceInit.EventListener = (void*)privateDeviceEventListener;
 	xDeviceInit(&HostDevice, &deviceInit);
+
+	HostDevice.MAC = UniqueDeviceID->MAC;
 	//----------------------------------------------------------------------------
 	GAPServiceAdapterInitT gapServiceAdapterInit;
 	gapServiceAdapterInit.Port = &CAN_Local1;
@@ -201,6 +207,8 @@ xResult HostDeviceComponentInit(void* parent)
 	RelayServiceInit(&RelayService, &relayServiceInit);
 
 	xDeviceAddService(&HostDevice, (xServiceT*)&RelayService);
+	HostDevice.IsEnable = true;
+	HostDevice.IsAvailable = true;
 	//----------------------------------------------------------------------------
 
 	xServiceSubscribe((void*)&TemperatureService1, &privateRelayServiceSubscriber);

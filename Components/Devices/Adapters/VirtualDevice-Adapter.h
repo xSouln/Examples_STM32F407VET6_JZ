@@ -24,22 +24,20 @@ typedef struct
 {
 	uint32_t OperationTimeStamp;
 	uint16_t OperationTimeOut;
-	uint16_t Operation;
 
 	uint16_t RxPacketHandlerIndex;
 
-	int ServicesInitState;
-
-	VirtualGAPServiceAdapterT GAPAdapter;
-	GAPServiceT GAP;
-
-	CAN_LocalTransferT* Transfer;
-	CAN_LocalRequestT* Request;
+	uint16_t ServicesInitState;
 
 	uint8_t ServicesCount;
 	uint8_t TotalServiceNumber;
 
-	void* OperationHandle;
+	VirtualGAPServiceAdapterT GAPAdapter;
+	GAPServiceT GAP;
+
+	//CAN_LocalRequestT* Request;
+
+	//void* OperationHandle;
 
 } VirtualDeviceAdapterContentT;
 //------------------------------------------------------------------------------
@@ -47,8 +45,8 @@ typedef struct
 {
 	VirtualDeviceAdapterContentT Content;
 
-	xPortT* Port;
-	xTransferLayerT* TransferLayer;
+	//xPortT* Port;
+	//xTransferLayerT* TransferLayer;
 
 } VirtualDeviceAdapterT;
 //------------------------------------------------------------------------------

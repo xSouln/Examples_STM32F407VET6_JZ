@@ -107,7 +107,7 @@ static void privateNotificationHandler(TemperatureServiceT* service,
 		TemperatureServiceAdapterT* adapter,
 		CAN_LocalSegmentT* segment)
 {
-	CAN_LocalBaseEventPacketT content = { .Value = segment->Data.DoubleWord };
+	CAN_LocalBaseEventPacketT content = { .Value = segment->Data.Value };
 
 	if (segment->Header.ServiceType == service->Base.Info.Type && content.Id == service->Base.Id)
 	{
@@ -124,6 +124,48 @@ static void privateNotificationHandler(TemperatureServiceT* service,
 
 			element = element->Next;
 		}
+	}
+}
+//------------------------------------------------------------------------------
+static void privateRequestHandler(TemperatureServiceT* service,
+		TemperatureServiceAdapterT* adapter,
+		CAN_LocalSegmentT* segment)
+{
+	CAN_LocalRequestContentT request = { .Value = segment->Data.Value };
+
+	if (service->Base.Id == request.Description.Recipient)
+	{
+		CAN_LocalResponseContentT response;
+		response.Description.Sender = segment->ExtensionHeader.ServiceId;
+		response.Description.Action = request.Description.Action;
+		response.Description.Sequence = request.Description.Sequence;
+
+		uint8_t size = 0;
+
+		switch(request.Description.Action)
+		{
+			case TemperatureServiceRequestGetTemperature:
+			{
+				float value = 10.0f + (float)(rand() & 0x3fff) / 1000;
+				memcpy(response.Data.Bytes, &value, sizeof(value));
+				size = sizeof(float);
+				break;
+			}
+
+			default: return;
+		}
+
+		CAN_LocalSegmentT segment;
+		segment.ExtensionHeader.IsEnabled = true;
+		segment.ExtensionHeader.MessageType = CAN_LocalMessageTypeResponse;
+		segment.ExtensionHeader.PacketType = 0;
+		segment.ExtensionHeader.ServiceId = service->Base.Id;
+		segment.ExtensionHeader.ServiceType = service->Base.Info.Type;
+
+		segment.Data.Value = response.Value;
+		segment.DataLength = sizeof(response.Description) + size;
+
+		xPortExtendedTransmition(adapter->Port, &segment);
 	}
 }
 //------------------------------------------------------------------------------
@@ -149,6 +191,11 @@ static void privateReceiver(TemperatureServiceT* service, TemperatureServiceAdap
 					}
 					break;
 				}
+				case CAN_LocalMessageTypeRequest:
+				{
+					privateRequestHandler(service, adapter, segment);
+					break;
+				}
 			}
 		}
 		else
@@ -170,13 +217,13 @@ static void privateReceiver(TemperatureServiceT* service, TemperatureServiceAdap
 //------------------------------------------------------------------------------
 static void privateHandler(TemperatureServiceT* service)
 {
-	TemperatureServiceAdapterT* adapter = service->Adapter.Content;
+	TemperatureServiceAdapterT* adapter = service->Base.Adapter.Content;
 
 	uint32_t totalTime = xSystemGetTime(NULL);
 
 	if (totalTime - adapter->Internal.TimeStamp > 500)
 	{
-		adapter->Internal.TimeStamp = totalTime;
+		/*adapter->Internal.TimeStamp = totalTime;
 
 		service->Temperature = 10.0f + (float)(rand() & 0x3fff) / 1000;
 
@@ -194,18 +241,43 @@ static void privateHandler(TemperatureServiceT* service)
 		memcpy(segment.Data.Bytes, content.Data, sizeof(CAN_LocalTemperatureNotificationUpdateTemperatureT));
 		segment.DataLength = sizeof(CAN_LocalTemperatureNotificationUpdateTemperatureT);
 
-		xPortExtendedTransmition(adapter->Port, &segment);
+		xPortExtendedTransmition(adapter->Port, &segment);*/
 	}
 
 	privateReceiver(service, adapter);
 }
 //------------------------------------------------------------------------------
-static xResult privateRequestListener(TemperatureServiceT* service, int selector, void* arg)
+static xResult privateRequestListener(TemperatureServiceT* service, int selector, void* arg, ...)
 {
+	xServiceAsyncRequestT* request = arg;
+
+	xServiceAsyncRequestManagerT requestManager;
+	requestManager.Service = (void*)service;
+	requestManager.Operation = selector;
+	requestManager.OperationResult = xResultAccept;
+	requestManager.Content = request->Content;
+
 	switch ((uint32_t)selector)
 	{
+		case TemperatureServiceRequestGetTemperature:
+		{
+			float result = 333;
+			requestManager.Result = &result;
+			break;
+		}
+		case xServiceRequestSetId:
+		{
+			//xServiceRequestSetIdT* parameters = request->Parameters;
+			//service->Base.Id = parameters->NewId;
+			break;
+		}
 
 		default : return xResultRequestIsNotFound;
+	}
+
+	if(request->Callback)
+	{
+		request->Callback(&requestManager);
 	}
 
 	return xResultAccept;
@@ -225,9 +297,9 @@ xResult TemperatureServiceAdapterInit(TemperatureServiceT* service,
 {
 	if (service && init)
 	{
-		service->Adapter.Content = adapter;
+		service->Base.Adapter.Content = adapter;
 		service->Adapter.Interface = &privateInterface;
-		service->Adapter.Description = nameof(TemperatureServiceAdapterT);
+		//service->Adapter.Description = nameof(TemperatureServiceAdapterT);
 
 		adapter->Port = init->Port;
 

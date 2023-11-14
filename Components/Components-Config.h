@@ -16,7 +16,8 @@ extern "C" {
 //==============================================================================
 //macros:
 
-
+extern int RTOS_FreeHeapSize;
+extern int RTOS_ComponentsTaskStackWaterMark;
 //==============================================================================
 #ifdef __cplusplus
 }

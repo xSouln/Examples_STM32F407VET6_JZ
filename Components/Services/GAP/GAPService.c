@@ -18,40 +18,9 @@
 //==============================================================================
 //functions:
 
-static void privateHandler(GAPServiceT* service)
-{
-	service->Adapter.Interface->Handler((void*)service);
-}
-//------------------------------------------------------------------------------
-static xResult privateRequestListener(GAPServiceT* service, xServiceAdapterRequestSelector selector, void* arg)
-{
-	if ((int)selector > xServiceBaseRequestOffset && service->Base.Info.Type != xServiceTypeTemperatureControl)
-	{
-		return xResultInvalidRequest;
-	}
 
-	switch ((int)selector)
-	{
-		case xServiceAdapterRequestDispose:
-		{
-			service->Base.Adapter.Interface->RequestListener(service, GAPServiceAdapterRequestDispose, NULL);
-			break;
-		}
-
-		default : return xResultRequestIsNotFound;
-	}
-
-	return xResultAccept;
-}
 //==============================================================================
 //initialization:
-
-static xServiceAdapterInterfaceT privateInterface =
-{
-	.Handler = (xServiceAdapterHandlerT)privateHandler,
-	.RequestListener = (xServiceAdapterRequestListenerT)privateRequestListener
-};
-//------------------------------------------------------------------------------
 
 xResult GAPServiceInit(GAPServiceT* service, GAPServiceInitT* init)
 {
@@ -59,8 +28,8 @@ xResult GAPServiceInit(GAPServiceT* service, GAPServiceInitT* init)
 
 	service->Base.Info.Type = xServiceTypeGAP;
 
-	service->Base.Adapter.Interface = &privateInterface;
-	service->Base.Adapter.Description = nameof(GAPServiceT);
+	//service->Base.Adapter.Interface = &privateInterface;
+	//service->Base.Adapter.Description = nameof(GAPServiceT);
 
 	return xResultAccept;
 }
