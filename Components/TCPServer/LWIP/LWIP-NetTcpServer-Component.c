@@ -9,7 +9,7 @@
 //==============================================================================
 //defines:
 
-#define TASK_STACK_SIZE 0x180
+#define TASK_STACK_SIZE 0x200
 #define RX_OPERATION_BUFFER_SIZE 0x200
 #define RX_BUFFER_SIZE 0x200
 #define TX_BUFFER_SIZE 0x400
@@ -76,28 +76,24 @@ static void PrivateEventListener(ObjectBaseT* object, int selector, void* arg)
 
 		switch(selector)
 		{
-			case xNetEventPhy_ConnectionChanged:
+			case xNetEventPhyConnected:
 			{
-				if (net->PhyIsConnecnted)
-				{
-					xNetDHCP_Start(net, 5000);
-				}
-				else
-				{
-					xNetClose(&ListenSocket);
-					xNetClose(&Socket);
-				}
+				xNetDHCP_Start(net, 5000);
+				break;
 			}
-			break;
 
-			case xNetEventDHCP_StateChanged:
+			case xNetEventPhyDisconnected:
 			{
-				if (net->DHCP.State == xNetDHCP_StateIdle && net->DHCP_Complite)
-				{
-					xNetSNTP_Start(net);
-				}
+				xNetClose(&ListenSocket);
+				xNetClose(&Socket);
+				break;
 			}
-			break;
+
+			case xNetEventDHCP_Complite:
+			{
+				xNetSNTP_Start(net);
+				break;
+			}
 		}
 	}
 }
@@ -108,7 +104,7 @@ static void Task(void* arg)
 
 	while (true)
 	{
-		vTaskDelay(pdMS_TO_TICKS(10));
+		//vTaskDelay(pdMS_TO_TICKS(10));
 
 		if (ListenSocket.State == xNetSocketListen && Socket.State == xNetSocketIdle)
 		{
@@ -171,6 +167,8 @@ void LWIP_NetTcpServerComponentHandler()
 
 		}
 	}
+
+	//xPortHandler(&ServerPort);
 }
 //==============================================================================
 //initializations:
@@ -179,6 +177,12 @@ LWIP_NetAdapterT LWIP_NetAdapter = { 0 };
 LWIP_NetPortAdapterT LWIP_NetPortAdapter = { 0 };
 //==============================================================================
 //initialization:
+
+static xNetEventSubscriberT privateNetEventSubscriber =
+{
+	.EventListener = PrivateEventListener
+};
+//------------------------------------------------------------------------------
 
 xResult LWIP_NetTcpServerComponentInit(void* parent)
 {
@@ -199,7 +203,7 @@ xResult LWIP_NetTcpServerComponentInit(void* parent)
 		}
 	};
 	xNetInit(&LWIP_Net, &init);
-	xNetAddEventListener(&LWIP_Net, PrivateEventListener);
+	xNetAddEventListener(&LWIP_Net, &privateNetEventSubscriber);
 
 	LWIP_NetPortAdapterInitT netPortInit =
 	{

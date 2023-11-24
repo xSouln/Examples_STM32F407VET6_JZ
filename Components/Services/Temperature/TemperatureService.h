@@ -43,6 +43,16 @@ typedef struct TemperatureServiceT
 
 typedef struct
 {
+	xIAsyncRequestT* Async;
+
+} xServiceRequestGetTemperatureT;
+//------------------------------------------------------------------------------
+
+typedef xServiceRequestSetIdT TemperatureServiceRequestSetIdT;
+//------------------------------------------------------------------------------
+
+typedef struct
+{
 	xServiceInitT Base;
 
 } TemperatureServiceInitT;

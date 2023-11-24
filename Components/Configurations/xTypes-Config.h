@@ -22,7 +22,9 @@ extern "C" {
 #define xTIMER_USER_CONFIG 1
 #define xCAN_USER_CONFIG 1
 
+#ifdef FREERTOS_CONFIG_H
 #define FREERTOS_USED 1
+#endif
 
 #define PACKED_PREFIX __packed
 //==============================================================================
@@ -87,7 +89,7 @@ typedef struct PACKED_PREFIX
 //==============================================================================
 //values:
 
-static volatile UniqueDeviceID_T* UniqueDeviceID = 0x1FFF7A10;
+extern UniqueDeviceID_T* UniqueDeviceID;
 //==============================================================================
 #ifdef __cplusplus
 }

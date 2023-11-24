@@ -20,15 +20,16 @@ extern "C" {
 #include "Components/USART-Ports/USART-Ports-Component.h"
 #include "CAN/CAN_Example-Component.h"
 #include "TcpServer/LWIP/LWIP-NetTcpServer-Component.h"
-#include "Devices/Host/HostDevice-Component.h"
+#include "MqttClient/MqttClient-Component.h"
 
-#include "CAN_Local/CAN_Local-Component.h"
-#include "TransferLayer/TransferLayer-Component.h"
-#include "RequestControl/HostRequestControl-Component.h"
+#include "CAN-Ports/CAN_Ports-Component.h"
 
-#include "Devices/Device-1/Device1-Component.h"
-#include "Devices/Device-2/Device2-Component.h"
-#include "Devices/Device-3/Device3-Component.h"
+#include "Components/TransferLayer/TransferLayer-Component.h"
+#include "Components/RequestControl/Host/HostRequestControl-Component.h"
+#include "Components/RequestControl/Local/RequestControl-Component.h"
+
+#include "Components/Devices/Host/HostDevice-Component.h"
+#include "Components/Devices/Device-1/Device1-Component.h"
 
 /// @}
 //==============================================================================

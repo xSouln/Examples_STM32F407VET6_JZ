@@ -28,13 +28,6 @@ typedef enum
 
 } GAPServiceRequests;
 //------------------------------------------------------------------------------
-typedef struct
-{
-	uint32_t ServiceId;
-	uint32_t NewServiceId;
-
-} GAPServiceRequestSetIdT;
-//------------------------------------------------------------------------------
 
 typedef struct
 {

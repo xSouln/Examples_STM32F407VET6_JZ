@@ -73,6 +73,11 @@
 									<listOptionValue builtIn="false" value="&quot;${xLIB_PATH}/Components&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/Configurations&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PAHO_MQTT}/MQTTPacket/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PAHO_MQTT}/MQTTClient-C/src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${PAHO_MQTT}/MQTTClient-C/src/LWIP&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SINTEZ_ELECTRO_SOURCES_PATH}/CAN_Local&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${SINTEZ_ELECTRO_SOURCES_PATH}&quot;"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.601474247" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.value.gnu18" valueType="enumerated"/>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.386140325" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
@@ -100,8 +105,9 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Components|xLib|xLib/Templates/Adapters/Terminal-TransferLayer" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
-						<entry excluding="Devices/Device-3|Devices/Device-2|Services/DeviceControl" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
+						<entry excluding="SintezElectro|Paho-MQTT|Components|xLib|xLib/Templates/Adapters/Terminal-TransferLayer" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="CAN|Devices/Device-3|Devices/Device-2|Services/DeviceControl" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
+						<entry excluding="Components/Devices/Device-3|Components/Devices/Device-2|Components/DeviceControl/Device-3|Components/DeviceControl/Device-2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SintezElectro"/>
 						<entry excluding="Components/USART-Ports/Adapters/STM32H7xx|Components/USART-Ports/Adapters/STM32F1xx|Peripherals/xUSART/Adapters|Peripherals/xUSART/Adapters/STM32F4xx|Components/USART-SerialPorts/Adapters/STM32H7xx|Components/USART-SerialPorts/Adapters/STM32F1xx|Drivers|Templates|Drivers/OV2640|Registers/registers_stm32h7xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xLib"/>
 					</sourceEntries>
 				</configuration>
@@ -197,7 +203,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Components/Devices/Device-3|Components/Devices/Device-2|Components/Services/DeviceControl|xLib/Templates/Adapters/Terminal-TransferLayer|xLib/Components/USART-Ports/Adapters/STM32H7xx|xLib/Components/USART-Ports/Adapters/STM32F1xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="SintezElectro/Components/Devices/Device-3|SintezElectro/Components/Devices/Device-2|SintezElectro/Components/DeviceControl/Device-3|SintezElectro/Components/DeviceControl/Device-2|Components/CAN|Paho-MQTT|Components/Devices/Device-3|Components/Devices/Device-2|Components/Services/DeviceControl|xLib/Templates/Adapters/Terminal-TransferLayer|xLib/Components/USART-Ports/Adapters/STM32H7xx|xLib/Components/USART-Ports/Adapters/STM32F1xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

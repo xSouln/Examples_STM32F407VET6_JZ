@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _HOST_DEVICE_COMPONENT_CONFIG_H_
-#define _HOST_DEVICE_COMPONENT_CONFIG_H_
+#ifndef _MQTT_CLIENT_COMPONENT_CONFIG_H_
+#define _MQTT_CLIENT_COMPONENT_CONFIG_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -11,7 +11,6 @@ extern "C" {
 //includes:
 
 #include "Components-Types.h"
-#include "HostDevice-ComponentConfig.h"
 //==============================================================================
 //macros:
 
@@ -29,4 +28,4 @@ extern "C" {
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_HOST_DEVICE_COMPONENT_CONFIG_H_
+#endif //_MQTT_CLIENT_COMPONENT_CONFIG_H_

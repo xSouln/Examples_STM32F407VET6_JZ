@@ -31,17 +31,20 @@ static xNetAddressT ServerIpAddres;
 //==============================================================================
 //functions:
 
-static void PrivateSendEvent(xNetT* net, xNetEventSelector selector, void* arg)
+static void privateSendEvent(xNetT* net, xNetEventSelector selector, void* arg)
 {
-	xNetEventListenerListElementT* element = xListStartEnumeration((xListT*)&net->EventListeners);
+	xNetEventSubscribersListElementT* element = xListStartEnumeration((xListT*)&net->Subscribers);
 
 	while (element)
 	{
-		element->Value((void*)net, selector, arg);
+		xNetEventSubscriberT* subscriber = element->Value;
+
+		subscriber->EventListener(net, selector, subscriber, arg);
+
 		element = element->Next;
 	}
 
-	xListStopEnumeration((xListT*)&net->EventListeners);
+	xListStopEnumeration((xListT*)&net->Subscribers);
 }
 //------------------------------------------------------------------------------
 static void PrivateDHCP_Handler(xNetT* net)
@@ -76,7 +79,7 @@ static void PrivateDHCP_Handler(xNetT* net)
 
 			net->DHCP.Result = xResultError;
 			net->DHCP.State = xNetDHCP_StateIdle;
-			PrivateSendEvent(net, xNetEventDHCP_StateChanged, 0);
+			privateSendEvent(net, xNetEventDHCP_Error, 0);
 			break;
 		}
 		case xNetDHCP_Started:
@@ -86,7 +89,7 @@ static void PrivateDHCP_Handler(xNetT* net)
 				dhcp_stop(adapter->netif);
 				net->DHCP.Result = xResultTimeOut;
 				net->DHCP.State = xNetDHCP_StateIdle;
-				PrivateSendEvent(net, xNetEventDHCP_StateChanged, 0);
+				privateSendEvent(net, xNetEventDHCP_Error, 0);
 				break;
 			}
 
@@ -97,7 +100,7 @@ static void PrivateDHCP_Handler(xNetT* net)
 				net->DHCP.Result = xResultAccept;
 				net->DHCP.State = xNetDHCP_StateIdle;
 				net->DHCP_Complite = true;
-				PrivateSendEvent(net, xNetEventDHCP_StateChanged, 0);
+				privateSendEvent(net, xNetEventDHCP_Complite, 0);
 			}
 
 			break;
@@ -196,6 +199,7 @@ static void PrivateSNTP_Handler(xNetT* net)
 			net->SNTP.Result = xResultAccept;
 			net->SNTP.State = xNetSNTP_StateIdle;
 			net->SNTP_Complite = true;
+			privateSendEvent(net, xNetEventSNTP_Complite, 0);
 
 			break;
 		}
@@ -213,6 +217,7 @@ static void PrivateSNTP_Handler(xNetT* net)
 	close(sntpSocket);
 	net->SNTP.Result = xResultError;
 	net->SNTP.State = xNetSNTP_StateIdle;
+	privateSendEvent(net, xNetEventSNTP_Error, 0);
 }
 //------------------------------------------------------------------------------
 static void PrivateHandler(xNetT* net)
@@ -240,18 +245,17 @@ static void PrivateHandler(xNetT* net)
 					(const ip4_addr_t*)&startAddress.addr,
 					(const ip4_addr_t*)&startAddress.addr,
 					(const ip4_addr_t*)&startAddress.addr);
+
+			net->DHCP_Complite = false;
+			net->SNTP_Complite = false;
 		}
 
-		PrivateSendEvent(net, xNetEventPhy_ConnectionChanged, 0);
+		int eventSelector = net->PhyIsConnecnted ? xNetEventPhyConnected : xNetEventPhyDisconnected;
+		privateSendEvent(net, eventSelector, 0);
 	}
 
 	PrivateDHCP_Handler(net);
 	PrivateSNTP_Handler(net);
-}
-//------------------------------------------------------------------------------
-static void PrivateIRQ(xNetT* net, void* arg)
-{
-	
 }
 //------------------------------------------------------------------------------
 static void PrivateCloseSocket(xNetSocketT* socket)
@@ -539,7 +543,6 @@ static int PrivateReceive(xNetSocketT* socket, void* data, int size)
 static xNetAdapterInterfaceT PrivateInterface =
 {
 	.Handler = (xNetAdapterHandlerT)PrivateHandler,
-	.IRQ = (xNetAdapterIRQT)PrivateIRQ,
 	.SocketHandler = (xNetAdapterSocketHandlerT)PrivateSocketHandler,
 
 	.RequestListener = (xNetAdapterRequestListenerT)PrivateRequestListener,

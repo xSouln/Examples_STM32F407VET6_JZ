@@ -1,53 +1,42 @@
 //==============================================================================
 //header:
 
-#ifndef _CAN_LOCAL_COMPONENT_H_
-#define _CAN_LOCAL_COMPONENT_H_
-//==============================================================================
+#ifndef _MQTT_CLIENT_COMPONENT_H_
+#define _MQTT_CLIENT_COMPONENT_H_
+//------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif 
 //==============================================================================
 //includes:
 
-#include "Peripherals/CAN/xCAN.h"
-#include "CAN_Local-ComponentConfig.h"
+#include "Abstractions/xNet/xNet.h"
 //==============================================================================
 //defines:
 
 
 //==============================================================================
-//macros:
-
-
-//==============================================================================
 //functions:
 
-xResult CAN_LocalComponentInit(void* parent);
-
-void CAN_LocalComponentHandler();
-void CAN_LocalComponentTimeSynchronization();
+xResult MqttClientComponentInit(void* parent);
+void MqttClientComponentHandler();
 //==============================================================================
 //import:
 
 
 //==============================================================================
+//override:
+
+//#define MqttClientComponentHandler() //TCPServerHandler(&TCPServerWIZspi)
+
+#define MqttClientComponentTimeSynchronization() //TCPServerTimeSynchronization(&TCPServerWIZspi)
+//==============================================================================
 //export:
 
-extern xPortT CAN_LocalPorts[CAN_LOCAL_PORTS_COUNT];
 
-#ifdef CAN_LOCAL1_ENABLE
-#define CAN_Local1 CAN_LocalPorts[CAN_LOCAL1]
-#endif
-
-#ifdef CAN_LOCAL2_ENABLE
-#define CAN_Local2 CAN_LocalPorts[CAN_LOCAL2]
-#endif
-
-#define CAN_LocalPort CAN_Local1
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_CAN_LOCAL_COMPONENT_H_
+#endif //_MQTT_CLIENT_COMPONENT_H_

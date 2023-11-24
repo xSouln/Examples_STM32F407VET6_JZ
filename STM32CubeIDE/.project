@@ -42,9 +42,24 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Examples_JZ-STM32F407VET6-V1.0.ioc</locationURI>
 		</link>
 		<link>
+			<name>SintezElectro</name>
+			<type>2</type>
+			<locationURI>SintezElectro</locationURI>
+		</link>
+		<link>
 			<name>xLib</name>
 			<type>2</type>
 			<locationURI>xLib</locationURI>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTClient.c</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTClient-C/src/MQTTClient.c</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTClient.h</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTClient-C/src/MQTTClient.h</location>
 		</link>
 		<link>
 			<name>Components/Configurations/FreeRTOSConfig.h</name>
@@ -642,6 +657,101 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/Third_Party/LwIP/src/netif/zepif.c</locationURI>
 		</link>
 		<link>
+			<name>Paho-MQTT/LWIP/MQTT-Interface.c</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTClient-C/src/LWIP/MQTT-Interface.c</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/LWIP/MQTT-Interface.h</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTClient-C/src/LWIP/MQTT-Interface.h</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTConnect.h</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTConnect.h</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTConnectClient.c</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTConnectClient.c</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTConnectServer.c</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTConnectServer.c</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTDeserializePublish.c</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTDeserializePublish.c</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTFormat.c</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTFormat.c</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTFormat.h</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTFormat.h</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTPacket.c</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTPacket.c</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTPacket.h</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTPacket.h</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTPublish.h</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTPublish.h</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTSerializePublish.c</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTSerializePublish.c</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTSubscribe.h</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTSubscribe.h</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTSubscribeClient.c</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTSubscribeClient.c</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTSubscribeServer.c</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTSubscribeServer.c</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTUnsubscribe.h</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTUnsubscribe.h</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTUnsubscribeClient.c</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTUnsubscribeClient.c</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/MQTTUnsubscribeServer.c</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTUnsubscribeServer.c</location>
+		</link>
+		<link>
+			<name>Paho-MQTT/MQTTPacket/StackTrace.h</name>
+			<type>1</type>
+			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/StackTrace.h</location>
+		</link>
+		<link>
 			<name>Application/User/Core/can.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/can.c</locationURI>
@@ -736,6 +846,10 @@
 		<variable>
 			<name>Components</name>
 			<value>file:/C:/Users/Afhib/Desktop/Projects/Examples_JZ-STM32F407VET6-V1.0/Components</value>
+		</variable>
+		<variable>
+			<name>SintezElectro</name>
+			<value>file:/C:/Users/Afhib/Desktop/Projects/Repositories-SintezElectro/Sources</value>
 		</variable>
 		<variable>
 			<name>xLib</name>

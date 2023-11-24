@@ -46,15 +46,30 @@ typedef struct
 /// @brief функции приема запросов на получение параметров компонента xDeviceControlT
 /// @{
 
-static void privateCallbackGetTemperature(xServiceAsyncRequestManagerT* manager)
+static void privateAsyncCallback(xIAsyncResultT* result, ...)
 {
-	xAsyncRequestContentT* content = manager->Content;
+	xAsyncRequestContentT* content = result->Content;
 
-	float result = *(float*)manager->Result;
-
-	xRxTransactionAsyncResponse(content->Port, &content->Content, &result, sizeof(result));
+	if (result->OperationResult == xResultAccept)
+	{
+		xRxTransactionAsyncResponse(content->Port, &content->Content, result->Result, result->ResultSize);
+	}
 
 	xMemoryFree(content);
+}
+//------------------------------------------------------------------------------
+static xResult privatePrepareAsyncRequest(xRxRequestManagerT* manager, xIAsyncRequestT* asyncRequest, void* holder)
+{
+	xAsyncRequestContentT* content = xMemoryAllocate(1, sizeof(xAsyncRequestContentT));
+	memcpy(&content->Content, manager->Content, sizeof(xRxTransactionContentT));
+	content->Port = manager->Port;
+
+	memset(asyncRequest, 0, sizeof(xIAsyncRequestT));
+	asyncRequest->Holder = holder;
+	asyncRequest->Callback = privateAsyncCallback;
+	asyncRequest->Content = content;
+
+	return xResultAccept;
 }
 //------------------------------------------------------------------------------
 
@@ -69,23 +84,10 @@ static xResult TemperatureServiceGetTemperature(xRxRequestManagerT* manager, Req
 
 		if (service)
 		{
-			/*float temperature;
-			result = xServiceRequestListener(service, TemperatureServiceRequestGetTemperature, &temperature);*/
-
-			xAsyncRequestContentT* content = xMemoryAllocate(1, sizeof(xAsyncRequestContentT));
-			memcpy(&content->Content, manager->Content, sizeof(xRxTransactionContentT));
-			content->Port = manager->Port;
-
-			xServiceAsyncRequestT asyncRequest = { 0 };
-			asyncRequest.Callback = privateCallbackGetTemperature;
-			asyncRequest.Content = content;
+			xIAsyncRequestT asyncRequest;
+			privatePrepareAsyncRequest(manager, &asyncRequest, NULL);
 
 			xServiceRequestListener(service, TemperatureServiceRequestGetTemperature, &asyncRequest);
-
-			/*if (result == xResultAccept)
-			{
-				xDataBufferAdd(manager->ResponseBuffer, &temperature, sizeof(temperature));
-			}*/
 		}
 	}
 

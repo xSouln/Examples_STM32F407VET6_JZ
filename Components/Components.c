@@ -7,13 +7,13 @@
 #include "main.h"
 #include "Peripherals/xTimer/xTimer.h"
 #include "Common/xList.h"
-#include "CAN_Local/Control/CAN_Local-Types.h"
+#include "CAN_Local-Types.h"
 //==============================================================================
 //defines:
 
 #define DEVICE_CONTROL_ENABLE 1
 
-#define TASK_STACK_SIZE 0x100
+#define TASK_STACK_SIZE 0x200
 
 #define HTTP_HOST "device-api.sintez.by"
 #define HTTP_HOST_AUTHORIZATION "X-Sintez-Auth: 6b9f7b57e10f498e634204e77009e472"
@@ -21,6 +21,8 @@
 #define HTTP_GET_HEADER "GET /v0.4/devices/" HTTP_REPORT_DEVICE_ID " HTTP/1.1\r\n" HTTP_HOST_AUTHORIZATION "\r\n" "Host: " HTTP_HOST "\r\n\r\n"
 //==============================================================================
 //variables:
+
+UniqueDeviceID_T* UniqueDeviceID = (void*)0x1FFF7A10;
 
 struct mallinfo HeapInfo;
 
@@ -77,11 +79,14 @@ void ComponentsHandler()
 {
 	UsartPortsComponentHandler();
 	TerminalComponentHandler();
+#if LWIP_ENABLE == 1
 	LWIP_NetTcpServerComponentHandler();
+#endif
 
 #ifdef DEVICE_CONTROL_ENABLE
 
 	TransferLayerComponentHandler();
+	RequestControlComponentHandler();
 
 	Device1ComponentHandler();
 	//Device2ComponentHandler();
@@ -182,14 +187,24 @@ xResult ComponentsInit(void* parent)
 	xSystemInit(parent);
 
 	UsartPortsComponentInit(parent);
+
+#if LWIP_ENABLE == 1
 	LWIP_NetTcpServerComponentInit(parent);
+
+#if MQTT_ENABLE == 1
+	MqttClientComponentInit(parent);
+#endif
+
+#endif
 
 #ifdef DEVICE_CONTROL_ENABLE
 
-	CAN_LocalComponentInit(parent);
+	CAN_PortsComponentInit(parent);
 	TransferLayerComponentInit(parent);
+
 	HostDeviceComponentInit(parent);
 
+	RequestControlComponentInit(parent);
 	Device1ComponentInit(parent);
 	//Device2ComponentInit(parent);
 	//Device3ComponentInit(parent);

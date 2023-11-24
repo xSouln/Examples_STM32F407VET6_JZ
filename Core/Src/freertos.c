@@ -51,7 +51,7 @@ uint8_t ucHeap[configTOTAL_HEAP_SIZE] FREERTOS_HEAP_SECTION;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
-uint32_t defaultTaskBuffer[ 0x100 ];
+uint32_t defaultTaskBuffer[ 0x150 ];
 osStaticThreadDef_t defaultTaskControlBlock;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
@@ -134,7 +134,9 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* init code for LWIP */
+#if LWIP_ENABLE == 1
   MX_LWIP_Init();
+#endif
   /* USER CODE BEGIN StartDefaultTask */
   ComponentsInit(defaultTaskHandle);
   /* Infinite loop */
