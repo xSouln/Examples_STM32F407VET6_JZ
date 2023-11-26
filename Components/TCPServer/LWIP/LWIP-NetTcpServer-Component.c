@@ -180,7 +180,7 @@ LWIP_NetPortAdapterT LWIP_NetPortAdapter = { 0 };
 
 static xNetEventSubscriberT privateNetEventSubscriber =
 {
-	.EventListener = PrivateEventListener
+	.EventListener = (void*)PrivateEventListener
 };
 //------------------------------------------------------------------------------
 

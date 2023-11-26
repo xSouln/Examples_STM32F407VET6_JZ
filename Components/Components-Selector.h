@@ -24,7 +24,8 @@ extern "C" {
 
 #include "CAN-Ports/CAN_Ports-Component.h"
 
-#include "Components/TransferLayer/TransferLayer-Component.h"
+#include "Components/TransferLayer/Host/HostTransferLayer-Component.h"
+#include "Components/TransferLayer/Local/LocalTransferLayer-Component.h"
 #include "Components/RequestControl/Host/HostRequestControl-Component.h"
 #include "Components/RequestControl/Local/RequestControl-Component.h"
 

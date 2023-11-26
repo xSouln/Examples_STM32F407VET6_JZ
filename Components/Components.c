@@ -85,7 +85,9 @@ void ComponentsHandler()
 
 #ifdef DEVICE_CONTROL_ENABLE
 
-	TransferLayerComponentHandler();
+	LocalTransferLayerComponentHandler();
+	HostTransferLayerComponentHandler();
+
 	RequestControlComponentHandler();
 
 	Device1ComponentHandler();
@@ -200,7 +202,9 @@ xResult ComponentsInit(void* parent)
 #ifdef DEVICE_CONTROL_ENABLE
 
 	CAN_PortsComponentInit(parent);
-	TransferLayerComponentInit(parent);
+
+	LocalTransferLayerComponentInit(parent);
+	HostTransferLayerComponentInit(parent);
 
 	HostDeviceComponentInit(parent);
 
