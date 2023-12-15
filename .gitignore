@@ -11,6 +11,8 @@ EWARM/**/Obj
 EWARM/**/List
 EWARM/*/settings
 
+build/
+
 .pio
 .vscode
 .git

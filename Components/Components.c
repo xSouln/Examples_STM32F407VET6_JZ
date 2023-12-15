@@ -11,7 +11,7 @@
 //==============================================================================
 //defines:
 
-#define DEVICE_CONTROL_ENABLE 1
+#define DEVICE_CONTROL_ENABLE 0
 
 #define TASK_STACK_SIZE 0x200
 
@@ -83,7 +83,7 @@ void ComponentsHandler()
 	LWIP_NetTcpServerComponentHandler();
 #endif
 
-#ifdef DEVICE_CONTROL_ENABLE
+#if DEVICE_CONTROL_ENABLE == 1
 
 	LocalTransferLayerComponentHandler();
 	HostTransferLayerComponentHandler();
@@ -140,7 +140,7 @@ inline void ComponentsTimeSynchronization()
 	TerminalComponentTimeSynchronization();
 	UsartPortsComponentTimeSynchronization();
 
-#ifdef DEVICE_CONTROL_ENABLE
+#if DEVICE_CONTROL_ENABLE == 1
 
 	Device1ComponentTimeSynchronization();
 	//Device2ComponentTimeSynchronization();
@@ -199,7 +199,7 @@ xResult ComponentsInit(void* parent)
 
 #endif
 
-#ifdef DEVICE_CONTROL_ENABLE
+#if DEVICE_CONTROL_ENABLE == 1
 
 	CAN_PortsComponentInit(parent);
 

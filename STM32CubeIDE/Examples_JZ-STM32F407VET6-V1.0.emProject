@@ -1,0 +1,760 @@
+<!DOCTYPE CrossStudio_Project_File>
+<solution Name="Examples_JZ-STM32F407VET6-V1.0" target="8" version="2">
+  <configuration
+    Name="Debug"
+    c_preprocessor_definitions="DEBUG"
+    gcc_debugging_level="Level 3"
+    gcc_omit_frame_pointer="Yes"
+    gcc_optimization_level="None"
+    hidden="Yes" />
+  <configuration
+    Name="Debug External"
+    inherited_configurations="External GNU;Debug" />
+  <configuration
+    Name="Debug Internal"
+    inherited_configurations="Internal;Debug" />
+  <configuration
+    Name="External GNU"
+    Platform="ARM"
+    build_toolchain_directory="/bin"
+    hidden="Yes" />
+  <configuration Name="Internal" Platform="ARM" hidden="Yes" />
+  <configuration
+    Name="Release"
+    c_preprocessor_definitions="NDEBUG"
+    gcc_debugging_level="Level 2"
+    gcc_omit_frame_pointer="Yes"
+    gcc_optimization_level="Level 2 balanced"
+    hidden="Yes" />
+  <configuration
+    Name="Release External"
+    inherited_configurations="External GNU;Release" />
+  <configuration
+    Name="Release Internal"
+    inherited_configurations="Internal;Release" />
+  <project Name="Examples_JZ-STM32F407VET6-V1.0">
+    <configuration
+      Name="Common"
+      arm_architecture="v7EM"
+      arm_core_type="Cortex-M4"
+      arm_endian="Little"
+      arm_fpu_type="FPv4-SP-D16"
+      arm_target_device_name="STM32F407VE"
+      arm_target_interface_type="SWD"
+      debug_start_from_entry_point_symbol="No"
+      debug_target_connection="J-Link"
+      linker_section_placements_segments="FLASH1 RX 0x08000000 0x00080000;RAM1 RWX 0x20000000 0x00020000;"
+      project_directory=""
+      project_type="Executable" />
+    <configuration
+      Name="Debug"
+      arm_architecture="v7EM"
+      arm_core_type="Cortex-M4"
+      arm_endian="Little"
+      arm_fp_abi="Hard"
+      arm_fpu_type="FPv4-SP-D16"
+      arm_target_device_name="STM32F407VE"
+      c_preprocessor_definitions="DEBUG;USE_HAL_DRIVER;STM32F407xx;configAPPLICATION_ALLOCATED_HEAP=1;HOST_TRANSFER_LAYER_COMPONENT_ENABLE;HOST_REQUEST_CONTROL_COMPONENT_ENABLE;HOST_DEVICE_COMPONENT_ENABLE"
+      c_user_include_directories="$(ProjectDir)/../Core/Inc;$(ProjectDir)/../LWIP/App;$(ProjectDir)/../LWIP/Target;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include;$(ProjectDir)/../Middlewares/Third_Party/LwIP/system;$(ProjectDir)/../Drivers/STM32F4xx_HAL_Driver/Inc;$(ProjectDir)/../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;$(ProjectDir)/../Middlewares/Third_Party/FreeRTOS/Source/include;$(ProjectDir)/../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;$(ProjectDir)/../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F;$(ProjectDir)/../Drivers/BSP/Components/dp83848;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/netif/ppp;$(ProjectDir)/../Drivers/CMSIS/Device/ST/STM32F4xx/Include;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/lwip;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/lwip/apps;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/lwip/priv;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/lwip/prot;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/netif;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/compat/posix;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/compat/posix/arpa;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/compat/posix/net;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/compat/posix/sys;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/compat/stdc;$(ProjectDir)/../Middlewares/Third_Party/LwIP/system/arch;$(ProjectDir)/../Drivers/CMSIS/Include;$(xLIB_PATH);$(xLIB_PATH)/Components;$(COMPONENTS_PATH);$(COMPONENTS_PATH)/Configurations;$(PAHO_MQTT)/MQTTPacket/src;$(PAHO_MQTT)/MQTTClient-C/src;$(PAHO_MQTT)/MQTTClient-C/src/LWIP;$(SINTEZ_ELECTRO_SOURCES_PATH)/CAN_Local;$(SINTEZ_ELECTRO_SOURCES_PATH)"
+      gcc_debugging_level="Level 3"
+      gcc_optimization_level="Debug"
+      linker_additional_files=""
+      linker_section_placements_segments="FLASH1 RX 0x08000000 0x00080000;RAM1 RWX 0x20000000 0x00020000;" />
+    <configuration
+      Name="Debug External"
+      armgnu_cl_cpu="cortex-m4"
+      armgnu_cl_fpabi="hard"
+      armgnu_cl_fpu="fpv4-sp-d16"
+      asm_additional_options_backup=";-mcpu=cortex-m4;-mfloat-abi=hard;-mfpu=fpv4-sp-d16"
+      build_intermediate_directory="Debug"
+      build_output_directory="Debug"
+      build_output_file_name="Debug/Examples_JZ-STM32F407VET6-V1.0.elf"
+      c_additional_options_backup=";-g3;-Og;-mcpu=cortex-m4;-mfloat-abi=hard;-mfpu=fpv4-sp-d16"
+      gcc_cl_enable_debug_info="Level 3"
+      gcc_cl_optimization_level="Debug"
+      link_additional_options_backup=";-Wl,--gc-sections;-lm;--specs=nosys.specs;--specs=nano.specs;-mcpu=cortex-m4;-mfloat-abi=hard;-mfpu=fpv4-sp-d16"
+      link_linker_script_file="$(ProjectDir)//STM32F407VETX_FLASH.ld"
+      link_use_linker_script_file="Yes"
+      linker_additional_options="-Wl,--gc-sections;-lm;--specs=nosys.specs;--specs=nano.specs" />
+    <configuration
+      Name="Debug Internal"
+      build_intermediate_directory="$(Configuration)"
+      build_output_directory="$(Configuration)" />
+    <configuration
+      BUILD_OPTIONS="ARM GNU"
+      Name="External GNU"
+      armgnu_cl_cpu="cortex-m4"
+      armgnu_cl_endian="little"
+      armgnu_cl_fpu="fpv4-sp-d16"
+      build_generic_options_file_name="$(StudioDir)/targets/ARMGNU_build_options.xml"
+      gcc_prefix="arm-none-eabi-"
+      project_type="Externally Built Executable" />
+    <configuration
+      LIBRARY_IO_TYPE="SEMIHOST (host-formatted)"
+      Name="Internal"
+      arm_compiler_variant="SEGGER"
+      arm_linker_variant="SEGGER"
+      build_intermediate_directory="Output/$(ProjectName) $(Configuration)/Obj"
+      build_output_directory="Output/$(Configuration)/Exe"
+      build_output_file_name="$(OutDir)/$(ProjectName)$(EXE)"
+      link_linker_script_file="$(StudioDir)/samples/SEGGER_Flash.icf" />
+    <configuration
+      Name="Release"
+      arm_architecture="v7EM"
+      arm_core_type="Cortex-M4"
+      arm_endian="Little"
+      arm_fp_abi="Hard"
+      arm_fpu_type="FPv4-SP-D16"
+      arm_target_device_name="STM32F407VE"
+      c_preprocessor_definitions="USE_HAL_DRIVER;STM32F407xx"
+      c_user_include_directories="$(ProjectDir)/../Core/Inc;$(ProjectDir)/../LWIP/App;$(ProjectDir)/../LWIP/Target;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include;$(ProjectDir)/../Middlewares/Third_Party/LwIP/system;$(ProjectDir)/../Drivers/STM32F4xx_HAL_Driver/Inc;$(ProjectDir)/../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;$(ProjectDir)/../Middlewares/Third_Party/FreeRTOS/Source/include;$(ProjectDir)/../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;$(ProjectDir)/../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F;$(ProjectDir)/../Drivers/BSP/Components/dp83848;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/netif/ppp;$(ProjectDir)/../Drivers/CMSIS/Device/ST/STM32F4xx/Include;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/lwip;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/lwip/apps;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/lwip/priv;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/lwip/prot;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/netif;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/compat/posix;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/compat/posix/arpa;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/compat/posix/net;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/compat/posix/sys;$(ProjectDir)/../Middlewares/Third_Party/LwIP/src/include/compat/stdc;$(ProjectDir)/../Middlewares/Third_Party/LwIP/system/arch;$(ProjectDir)/../Drivers/CMSIS/Include"
+      gcc_debugging_level="None"
+      gcc_optimization_level="Optimize For Size"
+      linker_additional_files=""
+      linker_section_placements_segments="FLASH1 RX 0x08000000 0x00080000;RAM1 RWX 0x20000000 0x00020000;" />
+    <configuration
+      Name="Release External"
+      asm_additional_options=";-mcpu=cortex-m4;-mfloat-abi=hard;-mfpu=fpv4-sp-d16"
+      build_intermediate_directory="Release"
+      build_output_directory="Release"
+      build_output_file_name="Release/Examples_JZ-STM32F407VET6-V1.0.elf"
+      c_additional_options=";-g0;-Os;-mcpu=cortex-m4;-mfloat-abi=hard;-mfpu=fpv4-sp-d16"
+      link_linker_script_file="$(ProjectDir)//STM32F407VETX_FLASH.ld"
+      link_use_linker_script_file="Yes"
+      linker_additional_options=";-Wl,--gc-sections;-lm;--specs=nosys.specs;--specs=nano.specs;-mcpu=cortex-m4;-mfloat-abi=hard;-mfpu=fpv4-sp-d16" />
+    <configuration
+      Name="Release Internal"
+      build_intermediate_directory="$(Configuration)"
+      build_output_directory="$(Configuration)" />
+    <folder
+      Name="."
+      exclude="./SintezElectro;./Paho-MQTT;./Components;./xLib;./xLib/Templates/Adapters/Terminal-TransferLayer;*_PP.s;*_PP.c"
+      filter="*.c;*.h;*.cpp;*.hpp;*.s;*.S"
+      path="."
+      recurse="Yes" />
+    <folder
+      Name="Components"
+      exclude="Components/CAN;Components/Devices/Device-3;Components/Devices/Device-2;Components/Services/DeviceControl;*_PP.s;*_PP.c"
+      filter="*.c;*.h;*.cpp;*.hpp;*.s;*.S"
+      path="Components"
+      recurse="Yes" />
+    <folder Name="Internal Files">
+      <configuration Name="Common" build_exclude_from_build="Yes" />
+      <configuration Name="Internal" build_exclude_from_build="No" />
+      <file file_name="$(StudioDir)/samples/Cortex_M_Startup.s" />
+      <file file_name="$(StudioDir)/samples/SEGGER_THUMB_Startup.s" />
+    </folder>
+    <folder
+      Name="SintezElectro"
+      exclude="SintezElectro/Components/Devices/Device-3;SintezElectro/Components/Devices/Device-2;SintezElectro/Components/DeviceControl/Device-3;SintezElectro/Components/DeviceControl/Device-2;*_PP.s;*_PP.c"
+      filter="*.c;*.h;*.cpp;*.hpp;*.s;*.S"
+      path="SintezElectro"
+      recurse="Yes" />
+    <folder Name="Source Files">
+      <file
+        Name="Application/User/Core/can.c"
+        file_name="../Core/Src/can.c" />
+      <file
+        Name="Application/User/Core/crc.c"
+        file_name="../Core/Src/crc.c" />
+      <file
+        Name="Application/User/Core/dma.c"
+        file_name="../Core/Src/dma.c" />
+      <file
+        Name="Application/User/Core/freertos.c"
+        file_name="../Core/Src/freertos.c" />
+      <file
+        Name="Application/User/Core/gpio.c"
+        file_name="../Core/Src/gpio.c" />
+      <file
+        Name="Application/User/Core/i2c.c"
+        file_name="../Core/Src/i2c.c" />
+      <file
+        Name="Application/User/Core/main.c"
+        file_name="../Core/Src/main.c" />
+      <file
+        Name="Application/User/Core/rng.c"
+        file_name="../Core/Src/rng.c" />
+      <file
+        Name="Application/User/Core/rtc.c"
+        file_name="../Core/Src/rtc.c" />
+      <file
+        Name="Application/User/Core/spi.c"
+        file_name="../Core/Src/spi.c" />
+      <file
+        Name="Application/User/Core/stm32f4xx_hal_msp.c"
+        file_name="../Core/Src/stm32f4xx_hal_msp.c" />
+      <file
+        Name="Application/User/Core/stm32f4xx_hal_timebase_tim.c"
+        file_name="../Core/Src/stm32f4xx_hal_timebase_tim.c" />
+      <file
+        Name="Application/User/Core/stm32f4xx_it.c"
+        file_name="../Core/Src/stm32f4xx_it.c" />
+      <file
+        Name="Application/User/Core/tim.c"
+        file_name="../Core/Src/tim.c" />
+      <file
+        Name="Application/User/Core/usart.c"
+        file_name="../Core/Src/usart.c" />
+      <file
+        Name="Application/User/LWIP/App/lwip.c"
+        file_name="../LWIP/App/lwip.c" />
+      <file
+        Name="Application/User/LWIP/Target/ethernetif.c"
+        file_name="../LWIP/Target/ethernetif.c" />
+      <file
+        Name="Components/Configurations/FreeRTOSConfig.h"
+        file_name="../Core/Inc/FreeRTOSConfig.h">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Components/Configurations/lwipopts.h"
+        file_name="../LWIP/Target/lwipopts.h">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/BSP/Components/dp83848.c"
+        file_name="../Drivers/BSP/Components/dp83848/dp83848.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/CMSIS/system_stm32f4xx.c"
+        file_name="../Core/Src/system_stm32f4xx.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_can.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_cortex.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_crc.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_crc.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_dma.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_dma_ex.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_eth.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_eth.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_exti.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_flash.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_flash_ex.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_flash_ramfunc.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_gpio.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_i2c.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_i2c_ex.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c_ex.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_pwr.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_pwr_ex.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_rcc.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_rcc_ex.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_rng.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rng.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_rtc.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_rtc_ex.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rtc_ex.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_spi.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_tim.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_tim_ex.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_uart.c"
+        file_name="../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Examples_JZ-STM32F407VET6-V1.0.ioc"
+        file_name="../Examples_JZ-STM32F407VET6-V1.0.ioc" />
+      <file
+        Name="Middlewares/FreeRTOS/cmsis_os2.c"
+        file_name="../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c" />
+      <file
+        Name="Middlewares/FreeRTOS/croutine.c"
+        file_name="../Middlewares/Third_Party/FreeRTOS/Source/croutine.c" />
+      <file
+        Name="Middlewares/FreeRTOS/event_groups.c"
+        file_name="../Middlewares/Third_Party/FreeRTOS/Source/event_groups.c" />
+      <file
+        Name="Middlewares/FreeRTOS/heap_4.c"
+        file_name="../Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c" />
+      <file
+        Name="Middlewares/FreeRTOS/list.c"
+        file_name="../Middlewares/Third_Party/FreeRTOS/Source/list.c" />
+      <file
+        Name="Middlewares/FreeRTOS/port.c"
+        file_name="../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c" />
+      <file
+        Name="Middlewares/FreeRTOS/queue.c"
+        file_name="../Middlewares/Third_Party/FreeRTOS/Source/queue.c" />
+      <file
+        Name="Middlewares/FreeRTOS/stream_buffer.c"
+        file_name="../Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c" />
+      <file
+        Name="Middlewares/FreeRTOS/tasks.c"
+        file_name="../Middlewares/Third_Party/FreeRTOS/Source/tasks.c" />
+      <file
+        Name="Middlewares/FreeRTOS/timers.c"
+        file_name="../Middlewares/Third_Party/FreeRTOS/Source/timers.c" />
+      <file
+        Name="Middlewares/LwIP/altcp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/altcp.c" />
+      <file
+        Name="Middlewares/LwIP/altcp_alloc.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/altcp_alloc.c" />
+      <file
+        Name="Middlewares/LwIP/altcp_tcp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/altcp_tcp.c" />
+      <file
+        Name="Middlewares/LwIP/api_lib.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/api/api_lib.c" />
+      <file
+        Name="Middlewares/LwIP/api_msg.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/api/api_msg.c" />
+      <file
+        Name="Middlewares/LwIP/auth.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/auth.c" />
+      <file
+        Name="Middlewares/LwIP/autoip.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv4/autoip.c" />
+      <file
+        Name="Middlewares/LwIP/bridgeif.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/bridgeif.c" />
+      <file
+        Name="Middlewares/LwIP/bridgeif_fdb.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/bridgeif_fdb.c" />
+      <file
+        Name="Middlewares/LwIP/ccp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/ccp.c" />
+      <file
+        Name="Middlewares/LwIP/chap-md5.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/chap-md5.c" />
+      <file
+        Name="Middlewares/LwIP/chap-new.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/chap-new.c" />
+      <file
+        Name="Middlewares/LwIP/chap_ms.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/chap_ms.c" />
+      <file
+        Name="Middlewares/LwIP/def.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/def.c" />
+      <file
+        Name="Middlewares/LwIP/demand.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/demand.c" />
+      <file
+        Name="Middlewares/LwIP/dhcp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv4/dhcp.c" />
+      <file
+        Name="Middlewares/LwIP/dhcp6.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv6/dhcp6.c" />
+      <file
+        Name="Middlewares/LwIP/dns.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/dns.c" />
+      <file
+        Name="Middlewares/LwIP/eap.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/eap.c" />
+      <file
+        Name="Middlewares/LwIP/ecp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/ecp.c" />
+      <file
+        Name="Middlewares/LwIP/err.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/api/err.c" />
+      <file
+        Name="Middlewares/LwIP/etharp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv4/etharp.c" />
+      <file
+        Name="Middlewares/LwIP/ethernet.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ethernet.c" />
+      <file
+        Name="Middlewares/LwIP/ethip6.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv6/ethip6.c" />
+      <file
+        Name="Middlewares/LwIP/eui64.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/eui64.c" />
+      <file
+        Name="Middlewares/LwIP/fsm.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/fsm.c" />
+      <file
+        Name="Middlewares/LwIP/icmp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv4/icmp.c" />
+      <file
+        Name="Middlewares/LwIP/icmp6.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv6/icmp6.c" />
+      <file
+        Name="Middlewares/LwIP/if_api.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/api/if_api.c" />
+      <file
+        Name="Middlewares/LwIP/igmp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv4/igmp.c" />
+      <file
+        Name="Middlewares/LwIP/inet6.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv6/inet6.c" />
+      <file
+        Name="Middlewares/LwIP/inet_chksum.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/inet_chksum.c" />
+      <file
+        Name="Middlewares/LwIP/init.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/init.c" />
+      <file
+        Name="Middlewares/LwIP/ip.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ip.c" />
+      <file
+        Name="Middlewares/LwIP/ip4.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv4/ip4.c" />
+      <file
+        Name="Middlewares/LwIP/ip4_addr.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv4/ip4_addr.c" />
+      <file
+        Name="Middlewares/LwIP/ip4_frag.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv4/ip4_frag.c" />
+      <file
+        Name="Middlewares/LwIP/ip6.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv6/ip6.c" />
+      <file
+        Name="Middlewares/LwIP/ip6_addr.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv6/ip6_addr.c" />
+      <file
+        Name="Middlewares/LwIP/ip6_frag.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv6/ip6_frag.c" />
+      <file
+        Name="Middlewares/LwIP/ipcp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/ipcp.c" />
+      <file
+        Name="Middlewares/LwIP/ipv6cp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/ipv6cp.c" />
+      <file
+        Name="Middlewares/LwIP/lcp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/lcp.c" />
+      <file
+        Name="Middlewares/LwIP/lowpan6.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/lowpan6.c" />
+      <file
+        Name="Middlewares/LwIP/lowpan6_ble.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/lowpan6_ble.c" />
+      <file
+        Name="Middlewares/LwIP/lowpan6_common.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/lowpan6_common.c" />
+      <file
+        Name="Middlewares/LwIP/magic.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/magic.c" />
+      <file
+        Name="Middlewares/LwIP/mem.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/mem.c" />
+      <file
+        Name="Middlewares/LwIP/memp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/memp.c" />
+      <file
+        Name="Middlewares/LwIP/mld6.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv6/mld6.c" />
+      <file
+        Name="Middlewares/LwIP/mppe.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/mppe.c" />
+      <file
+        Name="Middlewares/LwIP/mqtt.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/apps/mqtt/mqtt.c" />
+      <file
+        Name="Middlewares/LwIP/multilink.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/multilink.c" />
+      <file
+        Name="Middlewares/LwIP/nd6.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/ipv6/nd6.c" />
+      <file
+        Name="Middlewares/LwIP/netbuf.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/api/netbuf.c" />
+      <file
+        Name="Middlewares/LwIP/netdb.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/api/netdb.c" />
+      <file
+        Name="Middlewares/LwIP/netif.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/netif.c" />
+      <file
+        Name="Middlewares/LwIP/netifapi.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/api/netifapi.c" />
+      <file
+        Name="Middlewares/LwIP/pbuf.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/pbuf.c" />
+      <file
+        Name="Middlewares/LwIP/ppp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/ppp.c" />
+      <file
+        Name="Middlewares/LwIP/pppapi.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/pppapi.c" />
+      <file
+        Name="Middlewares/LwIP/pppcrypt.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/pppcrypt.c" />
+      <file
+        Name="Middlewares/LwIP/pppoe.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/pppoe.c" />
+      <file
+        Name="Middlewares/LwIP/pppol2tp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/pppol2tp.c" />
+      <file
+        Name="Middlewares/LwIP/pppos.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/pppos.c" />
+      <file
+        Name="Middlewares/LwIP/raw.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/raw.c" />
+      <file
+        Name="Middlewares/LwIP/slipif.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/slipif.c" />
+      <file
+        Name="Middlewares/LwIP/sockets.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/api/sockets.c" />
+      <file
+        Name="Middlewares/LwIP/stats.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/stats.c" />
+      <file
+        Name="Middlewares/LwIP/sys.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/sys.c" />
+      <file
+        Name="Middlewares/LwIP/sys_arch.c"
+        file_name="../Middlewares/Third_Party/LwIP/system/OS/sys_arch.c" />
+      <file
+        Name="Middlewares/LwIP/tcp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/tcp.c" />
+      <file
+        Name="Middlewares/LwIP/tcp_in.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/tcp_in.c" />
+      <file
+        Name="Middlewares/LwIP/tcp_out.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/tcp_out.c" />
+      <file
+        Name="Middlewares/LwIP/tcpip.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/api/tcpip.c" />
+      <file
+        Name="Middlewares/LwIP/timeouts.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/timeouts.c" />
+      <file
+        Name="Middlewares/LwIP/udp.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/core/udp.c" />
+      <file
+        Name="Middlewares/LwIP/upap.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/upap.c" />
+      <file
+        Name="Middlewares/LwIP/utils.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/utils.c" />
+      <file
+        Name="Middlewares/LwIP/vj.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/ppp/vj.c" />
+      <file
+        Name="Middlewares/LwIP/zepif.c"
+        file_name="../Middlewares/Third_Party/LwIP/src/netif/zepif.c" />
+      <file
+        Name="Paho-MQTT/LWIP/MQTT-Interface.c"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTClient-C/src/LWIP/MQTT-Interface.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/LWIP/MQTT-Interface.h"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTClient-C/src/LWIP/MQTT-Interface.h">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTClient.c"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTClient-C/src/MQTTClient.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTClient.h"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTClient-C/src/MQTTClient.h">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTConnect.h"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTConnect.h">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTConnectClient.c"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTConnectClient.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTConnectServer.c"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTConnectServer.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTDeserializePublish.c"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTDeserializePublish.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTFormat.c"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTFormat.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTFormat.h"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTFormat.h">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTPacket.c"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTPacket.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTPacket.h"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTPacket.h">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTPublish.h"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTPublish.h">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTSerializePublish.c"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTSerializePublish.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTSubscribe.h"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTSubscribe.h">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTSubscribeClient.c"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTSubscribeClient.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTSubscribeServer.c"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTSubscribeServer.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTUnsubscribe.h"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTUnsubscribe.h">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTUnsubscribeClient.c"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTUnsubscribeClient.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/MQTTUnsubscribeServer.c"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/MQTTUnsubscribeServer.c">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+      <file
+        Name="Paho-MQTT/MQTTPacket/StackTrace.h"
+        file_name="D:/Repositories/paho.mqtt.embedded-c/MQTTPacket/src/StackTrace.h">
+        <configuration Name="Debug" build_exclude_from_build="Yes" />
+        <configuration Name="Release" build_exclude_from_build="Yes" />
+      </file>
+    </folder>
+    <folder
+      Name="xLib"
+      exclude="xLib/Components/CAN-Ports/Adapters/STM32F1xx;xLib/Registers/registers_stm32f1xx;xLib/Components/USART-Ports/Adapters/STM32H7xx;xLib/Components/USART-Ports/Adapters/STM32F1xx;xLib/Peripherals/xUSART/Adapters;xLib/Peripherals/xUSART/Adapters/STM32F4xx;xLib/Components/USART-SerialPorts/Adapters/STM32H7xx;xLib/Components/USART-SerialPorts/Adapters/STM32F1xx;xLib/Drivers;xLib/Templates;xLib/Drivers/OV2640;xLib/Registers/registers_stm32h7xx;*_PP.s;*_PP.c"
+      filter="*.c;*.h;*.cpp;*.hpp;*.s;*.S"
+      path="xLib"
+      recurse="Yes" />
+  </project>
+</solution>

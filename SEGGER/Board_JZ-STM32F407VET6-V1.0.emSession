@@ -1,0 +1,47 @@
+<!DOCTYPE CrossStudio_Session_File>
+<session>
+ <Bookmarks/>
+ <Breakpoints groups="Breakpoints" active_group="Breakpoints"/>
+ <ExecutionProfileWindow/>
+ <FrameBuffer/>
+ <Memory1/>
+ <Memory2/>
+ <Memory3/>
+ <Memory4/>
+ <Project>
+  <ProjectSessionItem path="Board_JZ-STM32F407VET6-V1.0"/>
+  <ProjectSessionItem path="Board_JZ-STM32F407VET6-V1.0;Board_JZ-STM32F407VET6-V1.0"/>
+  <ProjectSessionItem path="Board_JZ-STM32F407VET6-V1.0;Board_JZ-STM32F407VET6-V1.0;Setup"/>
+  <ProjectSessionItem path="Board_JZ-STM32F407VET6-V1.0;Board_JZ-STM32F407VET6-V1.0;Source"/>
+  <ProjectSessionItem path="Board_JZ-STM32F407VET6-V1.0;Board_JZ-STM32F407VET6-V1.0;System"/>
+ </Project>
+ <Register1/>
+ <Register2/>
+ <Register3/>
+ <Register4/>
+ <Threads>
+  <ThreadsWindow showLists=""/>
+ </Threads>
+ <TraceWindow>
+  <Trace enabled="Yes"/>
+ </TraceWindow>
+ <Watch1>
+  <Watches active="1" update="Never"/>
+ </Watch1>
+ <Watch2>
+  <Watches active="0" update="Never"/>
+ </Watch2>
+ <Watch3>
+  <Watches active="0" update="Never"/>
+ </Watch3>
+ <Watch4>
+  <Watches active="0" update="Never"/>
+ </Watch4>
+ <Files>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="Source/main.c" left="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="Setup/SEGGER_Flash.icf" left="0" selected="1" top="84" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="System/Cortex_M_Startup.s" left="0" top="42" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" path="System/SEGGER_THUMB_Startup.s" left="0" top="258" codecName="Default"/>
+ </Files>
+ <EMStudioWindow activeProject="Board_JZ-STM32F407VET6-V1.0" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Debug" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="" debugSearchPath="" autoConnectCapabilities="3199"/>
+</session>
