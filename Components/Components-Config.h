@@ -14,8 +14,10 @@ extern "C" {
 
 #define FREERTOS_HEAP_SECTION __attribute__((section(".ccmram")))
 
-#define LWIP_ENABLE 0
-#define MQTT_ENABLE 0
+#define LWIP_ENABLE 1
+#define MQTT_ENABLE 1
+#define FREERTOS_ENABLE 1
+#define DEVICE_CONTROL_ENABLE 1
 //==============================================================================
 //macros:
 

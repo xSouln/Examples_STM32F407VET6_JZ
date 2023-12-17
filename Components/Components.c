@@ -11,8 +11,6 @@
 //==============================================================================
 //defines:
 
-#define DEVICE_CONTROL_ENABLE 0
-
 #define TASK_STACK_SIZE 0x200
 
 #define HTTP_HOST "device-api.sintez.by"
@@ -127,8 +125,11 @@ void ComponentsHandler()
 		xPortExtendedTransmition(&CAN_Local1, &packet);*/
 	}
 
+#if FREERTOS_ENABLE == 1
 	RTOS_FreeHeapSize = xPortGetFreeHeapSize();
 	RTOS_ComponentsTaskStackWaterMark = uxTaskGetStackHighWaterMark(NULL);
+#endif
+
 	HeapInfo = mallinfo();
 }
 //------------------------------------------------------------------------------

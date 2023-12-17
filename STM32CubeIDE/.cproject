@@ -110,7 +110,7 @@
 					<sourceEntries>
 						<entry excluding="SintezElectro|Paho-MQTT|Components|xLib|xLib/Templates/Adapters/Terminal-TransferLayer" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 						<entry excluding="CAN|Devices/Device-3|Devices/Device-2|Services/DeviceControl" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
-						<entry excluding="Components/Devices/Device-3|Components/Devices/Device-2|Components/DeviceControl/Device-3|Components/DeviceControl/Device-2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SintezElectro"/>
+						<entry excluding="build|Components/Devices/Device-3|Components/Devices/Device-2|Components/DeviceControl/Device-3|Components/DeviceControl/Device-2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SintezElectro"/>
 						<entry excluding="Components/CAN-Ports/Adapters/STM32F1xx|Registers/registers_stm32f1xx|Components/USART-Ports/Adapters/STM32H7xx|Components/USART-Ports/Adapters/STM32F1xx|Peripherals/xUSART/Adapters|Peripherals/xUSART/Adapters/STM32F4xx|Components/USART-SerialPorts/Adapters/STM32H7xx|Components/USART-SerialPorts/Adapters/STM32F1xx|Drivers|Templates|Drivers/OV2640|Registers/registers_stm32h7xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xLib"/>
 					</sourceEntries>
 				</configuration>
@@ -206,7 +206,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="xLib/Components/CAN-Ports/Adapters/STM32F1xx|xLib/Registers/registers_stm32f1xx|SintezElectro/Components/Devices/Device-3|SintezElectro/Components/Devices/Device-2|SintezElectro/Components/DeviceControl/Device-3|SintezElectro/Components/DeviceControl/Device-2|Components/CAN|Paho-MQTT|Components/Devices/Device-3|Components/Devices/Device-2|Components/Services/DeviceControl|xLib/Templates/Adapters/Terminal-TransferLayer|xLib/Components/USART-Ports/Adapters/STM32H7xx|xLib/Components/USART-Ports/Adapters/STM32F1xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="SintezElectro/build|xLib/Components/CAN-Ports/Adapters/STM32F1xx|xLib/Registers/registers_stm32f1xx|SintezElectro/Components/Devices/Device-3|SintezElectro/Components/Devices/Device-2|SintezElectro/Components/DeviceControl/Device-3|SintezElectro/Components/DeviceControl/Device-2|Components/CAN|Paho-MQTT|Components/Devices/Device-3|Components/Devices/Device-2|Components/Services/DeviceControl|xLib/Templates/Adapters/Terminal-TransferLayer|xLib/Components/USART-Ports/Adapters/STM32H7xx|xLib/Components/USART-Ports/Adapters/STM32F1xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

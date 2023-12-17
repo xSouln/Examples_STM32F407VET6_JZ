@@ -23,7 +23,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # Путь к директории с вашими исходниками
 set(SOURCE_DIR C:/Users/Afhib/Desktop/Projects/Examples_JZ-STM32F407VET6-V1.0)
-set(ARM_NONE_EABI_DIR C:/Users/Afhib/.vscode/extensions/metalcode-eu.windows-arm-none-eabi-0.1.6/bin)
+set(ARM_NONE_EABI_DIR C:/assembly_tools/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-arm-none-eabi/bin)
 
 # Настройка кросс-компиляции
 set(CMAKE_C_COMPILER ${ARM_NONE_EABI_DIR}/arm-none-eabi-gcc.exe)
@@ -31,7 +31,7 @@ set(CMAKE_CXX_COMPILER ${ARM_NONE_EABI_DIR}/arm-none-eabi-g++.exe)
 set(CMAKE_ASM_COMPILER ${ARM_NONE_EABI_DIR}/arm-none-eabi-gcc.exe)
 
 # Флаги компиляции
-set(CMAKE_C_FLAGS "-mcpu=cortex-m4 -mthumb -Og -ffunction-sections -fdata-sections -Wall -fstack-usage --specs=nano.specs -mfloat-abi=hard -mfpu=fpv4-sp-d16 -std=gnu18"
+set(CMAKE_C_FLAGS "-mcpu=cortex-m4 -mthumb -Og -ffunction-sections -fdata-sections -Wall -fstack-usage --specs=nano.specs -mfloat-abi=hard -mfpu=fpv4-sp-d16 -std=gnu18 -g3"
     "-DDEBUG"    
     "-DUSE_HAL_DRIVER"
     "-DSTM32F407xx"
@@ -90,6 +90,7 @@ include_directories(
     ${COMPONENTS_PATH}/Configurations
     ${SINTEZ_ELECTRO_SOURCES_PATH}
     ${SINTEZ_ELECTRO_SOURCES_PATH}/CAN_Local
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Components
 )
 
 # Добавление исходников
@@ -116,45 +117,89 @@ file(GLOB SOURCES
     ${SOURCE_DIR}/LWIP/App/*.c
     ${SOURCE_DIR}/Components/*.c
     ${SOURCE_DIR}/Components/Interfaces/*.c
+    ${SOURCE_DIR}/Components/MqttClient/*.c
+    ${SOURCE_DIR}/Components/TCPServer/LWIP/*.c
+    ${SOURCE_DIR}/Components/TCPServer/LWIP/Adapters/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Components/Devices/Adapters/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Components/Devices/Device-1/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Components/Devices/Host/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Components/RequestControl/Adapters/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Components/RequestControl/Host/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Components/RequestControl/Local/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Components/TransferLayer/Adapters/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Components/TransferLayer/Host/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Components/TransferLayer/Local/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Services/Common/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Services/GAP/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Services/GAP/Adapters/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Services/Temperature/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Services/Temperature/Adapters/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Services/Temperature/Communication/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Services/Relay/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Services/Relay/Adapters/*.c
+    ${SINTEZ_ELECTRO_SOURCES_PATH}/Services/Relay/Communication/*.c
     ${xLIB_PATH}/Common/*.c
     ${xLIB_PATH}/Peripherals/xUSART/*.c
     ${xLIB_PATH}/Peripherals/xTimer/*.c
     ${xLIB_PATH}/Peripherals/CAN/*.c
     ${xLIB_PATH}/Abstractions/xTransferLayer/*.c
+    ${xLIB_PATH}/Abstractions/xRequestControl/*.c
     ${xLIB_PATH}/Abstractions/xTerminal/*.c
     ${xLIB_PATH}/Abstractions/xSystem/*.c
     ${xLIB_PATH}/Abstractions/xPort/*.c
+    ${xLIB_PATH}/Abstractions/xNet/*.c
+    ${xLIB_PATH}/Abstractions/xDevice/*.c
+    ${xLIB_PATH}/Abstractions/xDevice/Communication/*.c
     ${xLIB_PATH}/Components/Terminal/*.c
     ${xLIB_PATH}/Components/Terminal/Adapters/*.c
     ${xLIB_PATH}/Components/Terminal/Communication/*.c
     ${xLIB_PATH}/Components/USART-Ports/*.c
     ${xLIB_PATH}/Components/USART-Ports/Adapters/STM32F4xx/*.c
+    ${xLIB_PATH}/Components/CAN-Ports/*.c
+    ${xLIB_PATH}/Components/CAN-Ports/Adapters/STM32F4xx/*.c
 )
 
 # Создание исполняемого файла
-add_executable(${PROJECT_NAME}.elf ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Указание скрипта линкера
 #set(CMAKE_EXE_LINKER_FLAGS "-T${CMAKE_CURRENT_SOURCE_DIR}/STM32CubeIDE/STM32F407VETX_FLASH.ld")
 #set(CMAKE_EXE_LINKER_FLAGS "-T${CMAKE_CURRENT_SOURCE_DIR}/STM32CubeIDE/STM32F407VETX_FLASH.ld")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T${CMAKE_CURRENT_SOURCE_DIR}/STM32CubeIDE/STM32F407VETX_FLASH.ld -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.map -Wl,--gc-sections")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T${CMAKE_CURRENT_SOURCE_DIR}/STM32CubeIDE/STM32F407VETX_FLASH.ld --specs=nosys.specs -Wl,-Map=${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.map -mcpu=cortex-m4 -Wl,--print-memory-usage -Wl,--gc-sections")
 
 #set(CMAKE_GNULD_IMAGE_VERSION "")
 
 # Указание библиотек для линковки
-target_link_libraries(${PROJECT_NAME}.elf
-    --specs=nosys.specs
+target_link_libraries(${PROJECT_NAME}
     -Wl,--gc-sections
     -static
     -mfpu=fpv4-sp-d16
     -mfloat-abi=hard
     -mthumb
+    -Wl,--print-memory-usage
     -Wl,--start-group
-    -lm
+    -lc -lm
     -Wl,--end-group
 )
 
+#add_custom_command(
+#    TARGET ${PROJECT_NAME}.elf
+#    POST_BUILD
+#    COMMAND arm-none-eabi-objdump -h $<TARGET_FILE:${PROJECT_NAME}.elf>
+#    COMMENT "Displaying section headers with arm-none-eabi-objdump"
+#)
+
+# Добавляем пользовательскую команду для вывода размеров секций
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND arm-none-eabi-size -A -x -t -d $<TARGET_FILE:${PROJECT_NAME}>
+    COMMENT "Displaying sizes of sections")
+
 # Генерация файла формата HEX
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-    COMMAND arm-none-eabi-objcopy -O ihex $<TARGET_FILE:${PROJECT_NAME}.elf> ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.hex
-)
+#add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+#    COMMAND arm-none-eabi-objcopy -O ihex $<TARGET_FILE:${PROJECT_NAME}.elf> ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.hex
+#)
+
+# Добавляем пользовательскую команду для создания бинарного образа
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND arm-none-eabi-objcopy -O binary $<TARGET_FILE:${PROJECT_NAME}> ${PROJECT_NAME}.bin
+    COMMENT "Creating binary image")
