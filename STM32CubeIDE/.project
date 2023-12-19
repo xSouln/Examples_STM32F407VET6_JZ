@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Examples_JZ-STM32F407VET6-V1.0</name>
+	<name>Board_JZ-STM32F407VET6-V1.0</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -37,9 +37,9 @@
 			<locationURI>Components</locationURI>
 		</link>
 		<link>
-			<name>Examples_JZ-STM32F407VET6-V1.0.ioc</name>
+			<name>Board_JZ-STM32F407VET6-V1.0.ioc</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Examples_JZ-STM32F407VET6-V1.0.ioc</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/Board_JZ-STM32F407VET6-V1.0.ioc</locationURI>
 		</link>
 		<link>
 			<name>SintezElectro</name>
@@ -845,7 +845,7 @@
 	<variableList>
 		<variable>
 			<name>Components</name>
-			<value>file:/C:/Users/Afhib/Desktop/Projects/Examples_JZ-STM32F407VET6-V1.0/Components</value>
+			<value>file:/C:/Users/Afhib/Desktop/Projects/Board_JZ-STM32F407VET6-V1.0/Components</value>
 		</variable>
 		<variable>
 			<name>SintezElectro</name>

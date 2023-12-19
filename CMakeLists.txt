@@ -22,7 +22,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # Путь к директории с вашими исходниками
-set(SOURCE_DIR C:/Users/Afhib/Desktop/Projects/Examples_JZ-STM32F407VET6-V1.0)
+set(SOURCE_DIR C:/Users/Afhib/Desktop/Projects/Board_JZ-STM32F407VET6-V1.0)
 set(ARM_NONE_EABI_DIR C:/assembly_tools/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-arm-none-eabi/bin)
 
 # Настройка кросс-компиляции
@@ -51,10 +51,10 @@ set(CMAKE_CXX_FLAGS "-mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 
 # Преобразуем строку в список аргументов
 string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
-project(Examples_JZ-STM32F407VET6-V1.0 C ASM)
+project(Board_JZ-STM32F407VET6-V1.0 C ASM)
 
 set(xLIB_PATH "C:/Users/Afhib/Desktop/Projects/xLibs")
-set(COMPONENTS_PATH "C:/Users/Afhib/Desktop/Projects/Examples_JZ-STM32F407VET6-V1.0/Components")
+set(COMPONENTS_PATH "C:/Users/Afhib/Desktop/Projects/Board_JZ-STM32F407VET6-V1.0/Components")
 set(SINTEZ_ELECTRO_SOURCES_PATH "C:/Users/Afhib/Desktop/Projects/Repositories-SintezElectro/Sources")
 
 # Добавление директорий с заголовочными файлами
