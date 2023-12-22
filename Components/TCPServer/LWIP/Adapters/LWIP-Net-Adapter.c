@@ -62,7 +62,7 @@ static void PrivateDHCP_Handler(xNetT* net)
 		{
 			ip4_addr_t startAddress = { 0 };
 
-			dhcp_stop(adapter->netif);
+			//dhcp_stop(adapter->netif);
 
 			//reset address
 			netif_set_addr(adapter->netif,
@@ -86,7 +86,7 @@ static void PrivateDHCP_Handler(xNetT* net)
 		{
 			if (xSystemGetTime(NULL) - net->DHCP.TimeStamp > net->DHCP.TimeOut)
 			{
-				dhcp_stop(adapter->netif);
+				//dhcp_stop(adapter->netif);
 				net->DHCP.Result = xResultTimeOut;
 				net->DHCP.State = xNetDHCP_StateIdle;
 				privateSendEvent(net, xNetEventDHCP_Error, 0);
@@ -238,7 +238,7 @@ static void PrivateHandler(xNetT* net)
 		{
 			ip4_addr_t startAddress = { 0 };
 
-			dhcp_stop(adapter->netif);
+			//dhcp_stop(adapter->netif);
 
 			//reset address
 			netif_set_addr(adapter->netif,
@@ -285,6 +285,8 @@ static void PrivateSocketHandler(xNetSocketT* socket)
 //------------------------------------------------------------------------------
 static xResult PrivateRequestListener(void* object, xNetAdapterRequestSelector selector, void* arg)
 {
+	#define CHECK_LWIP_SOCKET(socket) if ((int)socket == -1) { return xResultError; }
+
 	switch ((int)selector)
 	{
 		case xNetAdapterInitTcpSocket:
@@ -324,6 +326,8 @@ static xResult PrivateRequestListener(void* object, xNetAdapterRequestSelector s
 		{
 			xNetSocketT* socket = object;
 
+			CHECK_LWIP_SOCKET(socket->Handle);
+
 			struct sockaddr_storage dest_addr;
 			struct sockaddr_in* dest_addr_ip4 = (struct sockaddr_in*)&dest_addr;
 			dest_addr_ip4->sin_addr.s_addr = socket->Address.Value;
@@ -341,6 +345,9 @@ static xResult PrivateRequestListener(void* object, xNetAdapterRequestSelector s
 		case xNetAdapterListen:
 		{
 			xNetSocketT* socket = object;
+
+			CHECK_LWIP_SOCKET(socket->Handle);
+
 			int max_count = *(int*)arg;
 
 			setsockopt((int)socket->Handle, SOL_SOCKET, SO_REUSEADDR, &max_count, sizeof(max_count));
@@ -376,6 +383,8 @@ static xResult PrivateRequestListener(void* object, xNetAdapterRequestSelector s
 		{
 			xNetSocketT* server = object;
 			xNetSocketT* client = arg;
+
+			CHECK_LWIP_SOCKET(server->Handle);
 
 			// Large enough for both IPv4 or IPv6
 			struct sockaddr_storage source_addr;
@@ -451,6 +460,9 @@ static xResult PrivateRequestListener(void* object, xNetAdapterRequestSelector s
 		case xNetAdapterConnect:
 		{
 			xNetSocketT* client = object;
+
+			CHECK_LWIP_SOCKET(client->Handle);
+
 			struct sockaddr_in server_addr;
 
 			memset(&server_addr, 0, sizeof(server_addr));

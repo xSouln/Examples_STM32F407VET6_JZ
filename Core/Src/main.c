@@ -75,7 +75,7 @@ extern void ComponentsTimeSynchronization();
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	memset((void*)0x10000000, 0, 65536);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/

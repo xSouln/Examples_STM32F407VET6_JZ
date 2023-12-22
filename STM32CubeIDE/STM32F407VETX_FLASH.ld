@@ -39,7 +39,7 @@ ENTRY(Reset_Handler)
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
 
-_Min_Heap_Size = 0x1800; /* required amount of heap */
+_Min_Heap_Size = 0x0000; /* required amount of heap */
 _Min_Stack_Size = 0x500; /* required amount of stack */
 
 /* Memories definition */
@@ -166,6 +166,15 @@ SECTIONS
     . = ALIGN(4);
     _eccmram = .;       /* create a global symbol at ccmram end */
   } >CCMRAM AT> FLASH
+  
+  /* for DMARxDscrTab & DMATxDscrTab */
+  ._user_ram1_section :
+  {
+    . = ALIGN(8);
+    
+    . = ALIGN(8);
+  } >RAM
+  /* Modification end */
 
   /* Uninitialized data section into "RAM" Ram type memory */
   . = ALIGN(4);
@@ -187,10 +196,18 @@ SECTIONS
   ._user_heap_stack :
   {
     . = ALIGN(8);
+    
     PROVIDE ( end = . );
     PROVIDE ( _end = . );
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
+    
+    /* Инициализация нулями переменных, определенных внутри _user_heap_stack */
+    _svariables = .;
+    *(.variables)
+    *(.variables*)
+    _evariables = .;
+    
     . = ALIGN(8);
   } >CCMRAM
 

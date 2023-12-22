@@ -1,13 +1,21 @@
 //==============================================================================
 //includes:
 
-#include "Components.h"
+#include "LWIP-NetTcpServer-Component.h"
 
 #include "LWIP-NetTcpServer-Component.h"
 #include "Adapters/LWIP-Net-Adapter.h"
 #include "Adapters/LWIP-NetPort-Adapter.h"
+
+#include "Components.h"
 //==============================================================================
 //defines:
+
+#define RX_BUFFER_MEM_SECTION __attribute__((section("._user_heap_stack")))
+#define RX_OPERATION_BUFFER_MEM_SECTION
+#define TX_BUFFER_MEM_SECTION
+#define NET_MEM_SECTION __attribute__((section("._user_heap_stack")))
+#define NET_PORT_MEM_SECTION __attribute__((section("._user_heap_stack")))
 
 #define TASK_STACK_SIZE 0x200
 #define RX_OPERATION_BUFFER_SIZE 0x200
@@ -20,13 +28,13 @@ extern struct netif gnetif;
 //==============================================================================
 //variables:
 
-static uint8_t private_rx_operation_buffer[RX_OPERATION_BUFFER_SIZE];
-static uint8_t private_rx_buffer[RX_BUFFER_SIZE];
-static uint8_t private_tx_buffer[RX_BUFFER_SIZE];
+static uint8_t private_rx_operation_buffer[RX_OPERATION_BUFFER_SIZE] RX_OPERATION_BUFFER_MEM_SECTION;
+static uint8_t private_rx_buffer[RX_BUFFER_SIZE] RX_BUFFER_MEM_SECTION;
+static uint8_t private_tx_buffer[RX_BUFFER_SIZE] TX_BUFFER_MEM_SECTION;
 
 static TaskHandle_t task_handle;
 static StaticTask_t task_buffer;
-static StackType_t taskStack[TASK_STACK_SIZE];
+static StackType_t taskStack[TASK_STACK_SIZE] LWIP_TCP_SERVER_COMPONENT_MAIN_TASK_STACK_SECTION;
 
 xNetSocketT ListenSocket =
 {
@@ -42,8 +50,8 @@ xNetSocketT Socket =
 
 int RTOS_NetTcpServerTaskStackWaterMark;
 
-xNetT LWIP_Net;
-xPortT ServerPort;
+xNetT LWIP_Net NET_MEM_SECTION = { 0 };
+xPortT ServerPort NET_PORT_MEM_SECTION = { 0 };
 //==============================================================================
 //functions:
 
@@ -85,7 +93,7 @@ static void PrivateEventListener(ObjectBaseT* object, int selector, void* arg)
 			case xNetEventPhyDisconnected:
 			{
 				xNetClose(&ListenSocket);
-				xNetClose(&Socket);
+				//xNetClose(&Socket);
 				break;
 			}
 
@@ -106,7 +114,9 @@ static void Task(void* arg)
 	{
 		//vTaskDelay(pdMS_TO_TICKS(10));
 
-		if (ListenSocket.State == xNetSocketListen && Socket.State == xNetSocketIdle)
+		if (LWIP_Net.PhyIsConnecnted
+			&& ListenSocket.State == xNetSocketListen
+			&& Socket.State == xNetSocketIdle)
 		{
 			if (xNetAccept(&ListenSocket, &Socket) == xResultAccept)
 			{
@@ -202,6 +212,7 @@ xResult LWIP_NetTcpServerComponentInit(void* parent)
 			.Initializer = LWIP_NetAdapterInit
 		}
 	};
+
 	xNetInit(&LWIP_Net, &init);
 	xNetAddEventListener(&LWIP_Net, &privateNetEventSubscriber);
 

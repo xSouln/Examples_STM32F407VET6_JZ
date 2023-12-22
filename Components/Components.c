@@ -101,28 +101,6 @@ void ComponentsHandler()
 		PortE->Output.LED1 ^= 1;
 		PortE->Output.LED2 ^= PortE->Output.LED1;
 		PortE->Output.LED3 ^= PortE->Output.LED1 && PortE->Output.LED2;
-
-		/*CAN_LocalContentTemperatureSensoreEventT temperatureSensoreEventContent;
-		temperatureSensoreEventContent.Temperature = (float)time / 100;
-
-		CAN_LocalBaseEventPacketT eventPacket;
-		eventPacket.ContentType = 0;
-		eventPacket.Id = TEMPERATURE_SERVICE3_ID;
-		eventPacket.Content = temperatureSensoreEventContent.Value;
-		eventPacket.EventType = 0;
-		eventPacket.Content = temperatureSensoreEventContent.Value;
-
-		CAN_LocalSegmentT packet;
-		packet.Header.MessageType = CAN_LocalMessageTypeNotification;
-		packet.Header.ServiceType = xServiceTypeTemperatureControl;
-		packet.ExtensionIsEnabled = false;
-		packet.DataLength = sizeof(uint16_t) + sizeof(CAN_LocalContentTemperatureSensoreEventT);
-		packet.Data.DoubleWord = eventPacket.Value;
-
-		packet.DataLength = 8;
-
-		startTransmittingEventTimeStamp = time;
-		xPortExtendedTransmition(&CAN_Local1, &packet);*/
 	}
 
 #if FREERTOS_ENABLE == 1

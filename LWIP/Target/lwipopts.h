@@ -30,7 +30,7 @@
 
 /* Within 'USER CODE' section, code will be kept by default at each generation */
 /* USER CODE BEGIN 0 */
-
+#include "Common/xMemory.h"
 /* USER CODE END 0 */
 
 #ifdef __cplusplus
@@ -54,7 +54,7 @@
 /*----- Default Value for LWIP_DNS: 0 ---*/
 #define LWIP_DNS 1
 /*----- Default Value for MEMP_NUM_TCP_PCB: 5 ---*/
-#define MEMP_NUM_TCP_PCB 6
+#define MEMP_NUM_TCP_PCB 2
 /*----- Value in opt.h for MEM_ALIGNMENT: 1 -----*/
 #define MEM_ALIGNMENT 4
 /*----- Value in opt.h for LWIP_ETHERNET: LWIP_ARP || PPPOE_SUPPORT -*/
@@ -129,6 +129,19 @@
 /* USER CODE BEGIN 1 */
 #define LWIP_ERROR(message, expression, handler)
 #define LWIP_NOASSERT
+
+//#define MIN_SIZE 24
+#define MEM_SIZE (1024 * 8)
+#define MQTT_REQ_MAX_IN_FLIGHT 10
+#define MQTT_VAR_HEADER_BUFFER_LEN 256
+
+#define MEM_LIBC_MALLOC 1
+
+#define mem_clib_malloc xMemoryMalloc
+#define mem_clib_calloc xMemoryCalloc
+#define mem_clib_free xMemoryFree
+
+#define MQTT_CYCLIC_TIMER_INTERVAL 1
 //#define LWIP_ASSERT(message, assertion)
 /* USER CODE END 1 */
 

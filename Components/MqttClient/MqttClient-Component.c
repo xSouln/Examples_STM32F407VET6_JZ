@@ -8,6 +8,7 @@
 
 #include "TCPServer/LWIP/LWIP-NetTcpServer-Component.h"
 #include "Components/USART-Ports/USART-Ports-Component.h"
+#include "Adapters/MqttPort-Adapter.h"
 //==============================================================================
 //defines:
 
@@ -23,6 +24,8 @@
 #define MQTT_CLIENT_ID      "bro-123456"
 #define MQTT_TOPIC_RX		"bro-rx"
 #define MQTT_TOPIC_TX		"bro-tx"
+
+#define MQTT_TX_BUFFER_SIZE	250
 //==============================================================================
 //import:
 
@@ -32,77 +35,53 @@ extern struct netif gnetif;
 
 static TaskHandle_t taskHandle;
 static StaticTask_t taskBuffer;
-static StackType_t taskStack[TASK_STACK_SIZE];
+static StackType_t taskStack[TASK_STACK_SIZE] MQTT_CLIENT_COMPONENT_MAIN_TASK_STACK_SECTION;
 
 static int RTOS_MqttClientTaskStackWaterMark;
 static int privateTimeStamp;
 
+static uint8_t privateMqttTxBuffer[MQTT_TX_BUFFER_SIZE];
+
 mqtt_client_t* MqttClient = NULL;
+
+xPortT MqttPort;
 
 static struct
 {
 	uint32_t IsConnected : 1;
 
 } MqttClientState;
+
+uint32_t MqttTxTimeStamp = 0;
 //==============================================================================
 //functions:
 
-static void PrivateEventListener(ObjectBaseT* object, int selector, void* arg)
-{
-
-}
-//------------------------------------------------------------------------------
-static void mqtt_incoming_publish_cb(void *arg, const char *topic, u32_t tot_len)
-{
-	xPortStartTransmission(&SerialPort);
-	xPortTransmitData(&SerialPort, topic, tot_len);
-	xPortTransmitByte(&SerialPort, '\r');
-	xPortEndTransmission(&SerialPort);
-}
-//------------------------------------------------------------------------------
-static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t flags)
-{
-	xPortStartTransmission(&SerialPort);
-	xPortTransmitData(&SerialPort, data, len);
-	xPortTransmitByte(&SerialPort, '\r');
-	xPortEndTransmission(&SerialPort);
-}
-//------------------------------------------------------------------------------
-static void mqtt_sub_request_cb(void *arg, err_t result)
-{
-
-}
-//------------------------------------------------------------------------------
 static void privateMqttConnectionStateListener(mqtt_client_t *client, void *arg, mqtt_connection_status_t status)
 {
-	if (status == MQTT_CONNECT_ACCEPTED)
+	switch((int)status)
 	{
-		/* Setup callback for incoming publish requests */
-		mqtt_set_inpub_callback(client, mqtt_incoming_publish_cb, mqtt_incoming_data_cb, arg);
-		mqtt_subscribe(client, MQTT_TOPIC_RX, 1, mqtt_sub_request_cb, arg);
+		case MQTT_CONNECT_ACCEPTED:
+		{
+			MqttPort.Adapter.Interface->RequestListener(&MqttPort, xPortAdapterRequestOpen, client);
+			MqttClientState.IsConnected = true;
+			break;
+		}
 
-		xPortStartTransmission(&SerialPort);
-		xPortTransmitString(&SerialPort, "MQTT_CONNECT_ACCEPTED\r");
-		xPortEndTransmission(&SerialPort);
-
-		MqttClientState.IsConnected = true;
+		case MQTT_CONNECT_DISCONNECTED:
+			MqttClientState.IsConnected = true;
+			break;
 	}
-}
-//------------------------------------------------------------------------------
-static void mqtt_pub_request_cb(void *arg, err_t result)
-{
-
 }
 //------------------------------------------------------------------------------
 static void Task(void* arg)
 {
 	while (true)
 	{
-		vTaskDelay(pdMS_TO_TICKS(1));
+		vTaskDelay(pdMS_TO_TICKS(10));
 
 		uint32_t time = xSystemGetTime(NULL);
 
-		if (!MqttClientState.IsConnected && LWIP_Net.DHCP_Complite)
+		if (!MqttClientState.IsConnected && LWIP_Net.SNTP_Complite)
 		{
 			ip_addr_t address;
 			IP4_ADDR(&address,
@@ -124,21 +103,19 @@ static void Task(void* arg)
 					NULL,
 					&clientInfo);
 
-			xPortStartTransmission(&SerialPort);
-			xPortTransmitString(&SerialPort, "MQTT try connect\r");
-			xPortEndTransmission(&SerialPort);
+			vTaskDelay(pdMS_TO_TICKS(500));
 		}
 
-		if (MqttClientState.IsConnected && (time - privateTimeStamp) > 1000)
+		if (MqttClientState.IsConnected && (time - privateTimeStamp) > 5000)
 		{
 			privateTimeStamp = time;
 
-			char* data = "bro ebat zaebal!!! nado sushitsa";
-			uint8_t qos = 2; /* 0 1 or 2, see MQTT specification */
-			uint8_t retain = 0; /* No don't retain such crappy payload... */
-
-			mqtt_publish(MqttClient, MQTT_TOPIC_TX, data, strlen(data), qos, retain, mqtt_pub_request_cb, arg);
+			//xPortStartTransmission(&MqttPort);
+			//xPortTransmitString(&MqttPort, "bro ebat zaebal!!! nado sushitsa\r");
+			//xPortEndTransmission(&MqttPort);
 		}
+
+		xPortDirectlyHandler(MqttPort);
 
 		RTOS_MqttClientTaskStackWaterMark = uxTaskGetStackHighWaterMark(NULL);
 	}
@@ -147,6 +124,14 @@ static void Task(void* arg)
 void MqttClientComponentHandler()
 {
 
+}
+//------------------------------------------------------------------------------
+static void privateEventListener(xPortT* port, int selector, void* arg)
+{
+	switch((int)selector)
+	{
+		default: break;
+	}
 }
 //------------------------------------------------------------------------------
 static void privateLWIP_NetEventListener(xNetT* net, int selector, void* subscriber, void* arg)
@@ -163,6 +148,11 @@ static void privateLWIP_NetEventListener(xNetT* net, int selector, void* subscri
 //==============================================================================
 //initializations:
 
+static MqttPortAdapterT privateMqttPortAdapter =
+{
+	.RxTopic = MQTT_TOPIC_RX,
+	.TxTopic = MQTT_TOPIC_TX
+};
 //==============================================================================
 //initialization:
 
@@ -175,6 +165,22 @@ xResult MqttClientComponentInit(void* parent)
 	privateNetEventSubscriber.EventListener = privateLWIP_NetEventListener;
 
 	xNetAddEventListener(&LWIP_Net, &privateNetEventSubscriber);
+
+	MqttPortAdapterInitT portAdapterInit =
+	{
+		.TxBuffer = privateMqttTxBuffer,
+		.TxBufferSize = sizeof(privateMqttTxBuffer)
+	};
+
+	MqttPortAdapterInit(&MqttPort, &privateMqttPortAdapter, &portAdapterInit);
+
+	xPortInitT portInit =
+	{
+		.Parent = parent,
+		.EventListener = (void*)privateEventListener
+	};
+
+	xPortInit(&MqttPort, &portInit);
 
 	taskHandle = xTaskCreateStatic(Task, // Function that implements the task.
 									"Tcp server task", // Text name for the task.

@@ -22,6 +22,8 @@ extern "C" {
 //==============================================================================
 //defines:
 
+#define HOST_TRANSFER_LAYER_BUFFER_MEM_SECTION __attribute__((section("._user_heap_stack")))
+
 #define HOST_TRANSFER_LAYER_BUFFER_SIZE 20
 #define HOST_TRANSFER_LAYER_PORT CAN_Port1
 //==============================================================================

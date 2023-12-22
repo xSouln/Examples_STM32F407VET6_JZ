@@ -15,7 +15,12 @@ extern "C" {
 //==============================================================================
 //macros:
 
+#ifdef FREERTOS_USED
+#define DEVICE1_COMPONENT_MAIN_TASK_STACK_SECTION __attribute__((section("._user_heap_stack")))
+#endif
 
+#define DEVICE1_LOCAL_SERVICES_MEM_SECTION __attribute__((section("._user_heap_stack"))) = { 0 }
+#define DEVICE1_MEM_SECTION __attribute__((section("._user_heap_stack"))) = { 0 }
 //==============================================================================
 //import:
 

@@ -22,6 +22,7 @@ extern "C" {
 //==============================================================================
 //defines:
 
+#define REQUEST_CONTROL_BUFFER_MEM_SECTION __attribute__((section("._user_heap_stack")))
 #define REQUEST_CONTROL_BUFFER_SIZE 10
 #define REQUEST_CONTROL_PORT CAN_Port2
 //==============================================================================

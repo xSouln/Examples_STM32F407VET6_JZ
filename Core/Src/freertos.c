@@ -48,6 +48,8 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 uint8_t ucHeap[configTOTAL_HEAP_SIZE] FREERTOS_HEAP_SECTION;
+
+int RTOS_ComponentsDefaultTaskWaterMark;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -143,6 +145,8 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
 	  ComponentsHandler();
+
+	  RTOS_ComponentsDefaultTaskWaterMark = uxTaskGetStackHighWaterMark(NULL);
   }
   /* USER CODE END StartDefaultTask */
 }

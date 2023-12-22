@@ -12,7 +12,8 @@ extern "C" {
 //==============================================================================
 //defines:
 
-#define FREERTOS_HEAP_SECTION __attribute__((section(".ccmram")))
+#define FREERTOS_HEAP_SECTION //__attribute__((section(".ccmram")))
+#define COMPONENTS_MAIN_TASK_STACK_SECTION __attribute__((section("._user_heap_stack")))
 
 #define LWIP_ENABLE 1
 #define MQTT_ENABLE 1

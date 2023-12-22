@@ -10,6 +10,7 @@ extern "C" {
 //==============================================================================
 //includes:
 
+#include "LWIP-NetTcpServer-ComponentConfig.h"
 #include "Abstractions/xNet/xNet.h"
 //==============================================================================
 //defines:

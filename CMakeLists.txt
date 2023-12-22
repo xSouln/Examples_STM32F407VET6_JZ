@@ -16,13 +16,10 @@ set(CMAKE_EXECUTABLE_SUFFIX_ASM .elf)
 
 # This should be safe to set for a bare-metal cross-compiler
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # Путь к директории с вашими исходниками
-set(SOURCE_DIR C:/Users/Afhib/Desktop/Projects/Board_JZ-STM32F407VET6-V1.0)
 set(ARM_NONE_EABI_DIR C:/assembly_tools/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-arm-none-eabi/bin)
 
 # Настройка кросс-компиляции
@@ -53,6 +50,7 @@ string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 project(Board_JZ-STM32F407VET6-V1.0 C ASM)
 
+set(SOURCE_DIR C:/Users/Afhib/Desktop/Projects/Board_JZ-STM32F407VET6-V1.0)
 set(xLIB_PATH "C:/Users/Afhib/Desktop/Projects/xLibs")
 set(COMPONENTS_PATH "C:/Users/Afhib/Desktop/Projects/Board_JZ-STM32F407VET6-V1.0/Components")
 set(SINTEZ_ELECTRO_SOURCES_PATH "C:/Users/Afhib/Desktop/Projects/Repositories-SintezElectro/Sources")

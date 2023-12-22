@@ -1,8 +1,6 @@
 //==============================================================================
-//header:
-
-#ifndef _MQTT_CLIENT_COMPONENT_CONFIG_H_
-#define _MQTT_CLIENT_COMPONENT_CONFIG_H_
+#ifndef _X_NET_CONFIG_H_
+#define _X_NET_CONFIG_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -10,22 +8,14 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Components-Types.h"
-//==============================================================================
-//macros:
-
-#define MQTT_CLIENT_COMPONENT_MAIN_TASK_STACK_SECTION __attribute__((section("._user_heap_stack")))
-//==============================================================================
-//import:
-
 
 //==============================================================================
 //defines:
 
-
+#define xNET_SOCKET_NOT_INIT -1
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_MQTT_CLIENT_COMPONENT_CONFIG_H_
+#endif //_X_NET_CONFIG_H_

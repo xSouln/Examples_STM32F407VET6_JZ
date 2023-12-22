@@ -1250,6 +1250,10 @@ static void ETH_UpdateDescriptor(ETH_HandleTypeDef *heth)
       INCR_RX_DESC_INDEX(descidx, 1U);
       /* Get current descriptor address */
       dmarxdesc = (ETH_DMADescTypeDef *)heth->RxDescList.RxDesc[descidx];
+
+      __DSB();
+      heth->Instance->DMATPDR = 0;
+
       desccount--;
     }
   }

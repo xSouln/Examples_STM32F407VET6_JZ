@@ -14,7 +14,9 @@ extern "C" {
 //==============================================================================
 //macros:
 
-
+#ifdef INC_FREERTOS_H
+#define LWIP_TCP_SERVER_COMPONENT_MAIN_TASK_STACK_SECTION __attribute__((section("._user_heap_stack")))
+#endif
 //==============================================================================
 //import:
 

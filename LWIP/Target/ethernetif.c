@@ -52,7 +52,17 @@
 #define ETH_TX_BUFFER_MAX             ((ETH_TX_DESC_CNT) * 2U)
 
 /* USER CODE BEGIN 1 */
+uint32_t EthernetTxRequestsCount = 0;
+uint32_t EthernetTxAcceptedRequestsCount = 0;
+uint32_t EthernetRxTimeStamp = 0;
+uint32_t EthernetRxResponsesCount = 0;
+uint32_t EthernetErrorsCount = 0;
+uint32_t EthernetAllocateErrorsCount = 0;
+uint32_t EthernetFreeErrorsCount = 0;
+uint32_t EthernetInputErrorsCount = 0;
 
+uint32_t EthernetRxTimes[0xf + 1];
+uint8_t EthernetRxTimeIndex = 0;
 /* USER CODE END 1 */
 
 /* Private variables ---------------------------------------------------------*/
@@ -98,8 +108,8 @@ LWIP_MEMPOOL_DECLARE(RX_POOL, ETH_RX_BUFFER_CNT, sizeof(RxBuff_t), "Zero-copy RX
 /* Variable Definitions */
 static uint8_t RxAllocStatus;
 
-ETH_DMADescTypeDef  DMARxDscrTab[ETH_RX_DESC_CNT]; /* Ethernet Rx DMA Descriptors */
-ETH_DMADescTypeDef  DMATxDscrTab[ETH_TX_DESC_CNT]; /* Ethernet Tx DMA Descriptors */
+volatile ETH_DMADescTypeDef  DMARxDscrTab[ETH_RX_DESC_CNT + 1] __attribute__((section("._user_ram1_section"))); /* Ethernet Rx DMA Descriptors */
+volatile ETH_DMADescTypeDef  DMATxDscrTab[ETH_TX_DESC_CNT + 1] __attribute__((section("._user_ram1_section"))); /* Ethernet Tx DMA Descriptors */
 
 /* USER CODE BEGIN 2 */
 
@@ -140,6 +150,12 @@ void pbuf_free_custom(struct pbuf *p);
   */
 void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *handlerEth)
 {
+	EthernetRxTimes[EthernetRxTimeIndex] = xSystemGetTime(NULL);
+	EthernetRxTimeIndex++;
+	EthernetRxTimeIndex &= 0xf;
+
+	//EthernetRxTimeStamp = xSystemGetTime(NULL);
+	EthernetRxResponsesCount++;
   osSemaphoreRelease(RxPktSemaphore);
 }
 /**
@@ -149,6 +165,10 @@ void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *handlerEth)
   */
 void HAL_ETH_TxCpltCallback(ETH_HandleTypeDef *handlerEth)
 {
+	extern uint32_t MqttTxTimeStamp;
+	MqttTxTimeStamp = xSystemGetTime(NULL);
+	EthernetTxAcceptedRequestsCount++;
+
   osSemaphoreRelease(TxPktSemaphore);
 }
 /**
@@ -160,6 +180,7 @@ void HAL_ETH_ErrorCallback(ETH_HandleTypeDef *handlerEth)
 {
   if((HAL_ETH_GetDMAError(handlerEth) & ETH_DMASR_RBUS) == ETH_DMASR_RBUS)
   {
+	  EthernetErrorsCount++;
      osSemaphoreRelease(RxPktSemaphore);
   }
 }
@@ -353,6 +374,8 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
   err_t errval = ERR_OK;
   ETH_BufferTypeDef Txbuffer[ETH_TX_DESC_CNT] = {0};
 
+  EthernetTxRequestsCount++;
+
   memset(Txbuffer, 0 , ETH_TX_DESC_CNT*sizeof(ETH_BufferTypeDef));
 
   for(q = p; q != NULL; q = q->next)
@@ -439,6 +462,10 @@ void ethernetif_input(void* argument)
           if (netif->input( p, netif) != ERR_OK )
           {
             pbuf_free(p);
+          }
+          else
+          {
+        	  EthernetInputErrorsCount++;
           }
         }
       } while(p!=NULL);
@@ -541,6 +568,7 @@ void pbuf_free_custom(struct pbuf *p)
   if (RxAllocStatus == RX_ALLOC_ERROR)
   {
     RxAllocStatus = RX_ALLOC_OK;
+    EthernetFreeErrorsCount++;
     osSemaphoreRelease(RxPktSemaphore);
   }
 }
@@ -821,6 +849,7 @@ void HAL_ETH_RxAllocateCallback(uint8_t **buff)
   else
   {
     RxAllocStatus = RX_ALLOC_ERROR;
+    EthernetAllocateErrorsCount++;
     *buff = NULL;
   }
 /* USER CODE END HAL ETH RxAllocateCallback */
@@ -839,6 +868,9 @@ void HAL_ETH_RxLinkCallback(void **pStart, void **pEnd, uint8_t *buff, uint16_t 
   p->next = NULL;
   p->tot_len = 0;
   p->len = Length;
+
+  RxBuff_t* rx_buf_temp = (RxBuff_t*)p;
+  static volatile uint8_t rx_temp;
 
   /* Chain the buffer. */
   if (!*ppStart)
@@ -859,6 +891,12 @@ void HAL_ETH_RxLinkCallback(void **pStart, void **pEnd, uint8_t *buff, uint16_t 
   {
     p->tot_len += Length;
   }
+
+	//clearing
+	for (int i = 0; i < sizeof(rx_buf_temp->buff); i++)
+	{
+		rx_temp = rx_buf_temp->buff[i];
+	}
 
 /* USER CODE END HAL ETH RxLinkCallback */
 }
