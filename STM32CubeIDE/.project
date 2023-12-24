@@ -32,14 +32,14 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Components</name>
-			<type>2</type>
-			<locationURI>Components</locationURI>
-		</link>
-		<link>
 			<name>Board_JZ-STM32F407VET6-V1.0.ioc</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Board_JZ-STM32F407VET6-V1.0.ioc</locationURI>
+		</link>
+		<link>
+			<name>Components</name>
+			<type>2</type>
+			<locationURI>Components</locationURI>
 		</link>
 		<link>
 			<name>SintezElectro</name>
@@ -846,6 +846,10 @@
 		<variable>
 			<name>Components</name>
 			<value>file:/C:/Users/Afhib/Desktop/Projects/Board_JZ-STM32F407VET6-V1.0/Components</value>
+		</variable>
+		<variable>
+			<name>FreeRTOS_MQTT</name>
+			<value>file:/D:/Repositories/FreeRTOS/FreeRTOS-Plus/Source/Application-Protocols/coreMQTT/source</value>
 		</variable>
 		<variable>
 			<name>SintezElectro</name>

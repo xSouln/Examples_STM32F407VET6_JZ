@@ -3,7 +3,11 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.892961610">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.892961610" moduleId="org.eclipse.cdt.core.settings" name="Debug">
-				<externalSettings/>
+				<externalSettings>
+					<externalSetting>
+						<entry flags="RESOLVED" kind="includePath" name="D:\Repositories\paho.mqtt.embedded-c/MQTTClient-C/src"/>
+					</externalSetting>
+				</externalSettings>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
@@ -79,11 +83,15 @@
 									<listOptionValue builtIn="false" value="&quot;${xLIB_PATH}/Components&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/Configurations&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${PAHO_MQTT}/MQTTPacket/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${PAHO_MQTT}/MQTTClient-C/src&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${PAHO_MQTT}/MQTTClient-C/src/LWIP&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SINTEZ_ELECTRO_SOURCES_PATH}/CAN_Local&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SINTEZ_ELECTRO_SOURCES_PATH}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/FreeRTOS-Plus-TCP/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/FreeRTOS-Plus-TCP/Compiler&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/FreeRTOS-Plus-TCP/NetworkInterface&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/FreeRTOS-Plus-MQTT/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/FreeRTOS-Plus-MQTT/interface&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/Paho-MQTT&quot;"/>
+									<listOptionValue builtIn="false" value="../../Components/Interfaces/**"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.601474247" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.value.gnu18" valueType="enumerated"/>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.cyclomaticcomplexity.1675047541" name="Cyclomatic Complexity (-fcyclomatic-complexity)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.cyclomaticcomplexity" useByScannerDiscovery="false" value="false" valueType="boolean"/>
@@ -112,10 +120,10 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="SintezElectro|Paho-MQTT|Components|xLib|xLib/Templates/Adapters/Terminal-TransferLayer" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
-						<entry excluding="CAN|Devices/Device-3|Devices/Device-2|Services/DeviceControl" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
-						<entry excluding="build|Components/Devices/Device-3|Components/Devices/Device-2|Components/DeviceControl/Device-3|Components/DeviceControl/Device-2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SintezElectro"/>
-						<entry excluding="Components/CAN-Ports/Adapters/STM32F0xx|Components/USART-Ports/Adapters/STM32F0xx|Components/CAN-Ports/Adapters/STM32F1xx|Registers/registers_stm32f1xx|Components/USART-Ports/Adapters/STM32H7xx|Components/USART-Ports/Adapters/STM32F1xx|Peripherals/xUSART/Adapters|Peripherals/xUSART/Adapters/STM32F4xx|Components/USART-SerialPorts/Adapters/STM32H7xx|Components/USART-SerialPorts/Adapters/STM32F1xx|Drivers|Templates|Drivers/OV2640|Registers/registers_stm32h7xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xLib"/>
+						<entry excluding="Application/User/LWIP|Paho-MQTT|Middlewares/LwIP|FreeRTOS_MQTT|xLib/Templates/Adapters/Terminal-TransferLayer|Components|Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_eth.c|SintezElectro|xLib" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="MqttClient/Adapters/FreeRTOS-MQTT/Mqtt-Adapter.c|MqttClient/Adapters/Ports/FreeRTOS-MQTT|Paho-MQTT|MqttClient/Adapters/Ports/LWIP|CAN|MqttClient/Adapters/LWIP|FreeRTOS_MQTT|FreeRTOS-Plus-TCP/BufferManagement/BufferAllocation_1.c|Devices/Device-3|Devices/Device-2|Services/DeviceControl|MqttClient/Backup|MqttClient/Adapters/FreeRTOS-MQTT/MqttPort-Adapter.c|Net/Adapters/LWIP" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
+						<entry excluding="Components/Devices/Device-3|Components/Devices/Device-2|build|Components/DeviceControl/Device-3|Components/DeviceControl/Device-2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SintezElectro"/>
+						<entry excluding="Components/USART-SerialPorts/Adapters/STM32F1xx|Components/CAN-Ports/Adapters/STM32F1xx|Components/USART-Ports/Adapters/STM32F1xx|Templates|Registers/registers_stm32f1xx|Peripherals/xUSART/Adapters/STM32F4xx|Drivers|Components/USART-SerialPorts/Adapters/STM32H7xx|Drivers/OV2640|Components/CAN-Ports/Adapters/STM32F0xx|Peripherals/xUSART/Adapters|Components/USART-Ports/Adapters/STM32F0xx|Components/USART-Ports/Adapters/STM32H7xx|Registers/registers_stm32h7xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xLib"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -210,7 +218,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="xLib/Components/CAN-Ports/Adapters/STM32F0xx|xLib/Components/USART-Ports/Adapters/STM32F0xx|SintezElectro/build|xLib/Components/CAN-Ports/Adapters/STM32F1xx|xLib/Registers/registers_stm32f1xx|SintezElectro/Components/Devices/Device-3|SintezElectro/Components/Devices/Device-2|SintezElectro/Components/DeviceControl/Device-3|SintezElectro/Components/DeviceControl/Device-2|Components/CAN|Paho-MQTT|Components/Devices/Device-3|Components/Devices/Device-2|Components/Services/DeviceControl|xLib/Templates/Adapters/Terminal-TransferLayer|xLib/Components/USART-Ports/Adapters/STM32H7xx|xLib/Components/USART-Ports/Adapters/STM32F1xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Components/MqttClient/Adapters/FreeRTOS-MQTT/Mqtt-Adapter.c|Components/MqttClient/Adapters/Ports/FreeRTOS-MQTT|Components/Paho-MQTT|Components/MqttClient/Adapters/Ports/LWIP|Application/User/LWIP|xLib/Components/USART-Ports/Adapters/STM32F0xx|xLib/Components/USART-Ports/Adapters/STM32H7xx|SintezElectro/Components/Devices/Device-3|Middlewares/LwIP|SintezElectro/build|Components/Devices/Device-2|Components/MqttClient/Adapters/LWIP|SintezElectro/Components/Devices/Device-2|xLib/Components/CAN-Ports/Adapters/STM32F0xx|SintezElectro/Components/DeviceControl/Device-2|Components/CAN|Components/Devices/Device-3|Components/Net/Adapters/LWIP|Paho-MQTT|xLib/Components/CAN-Ports/Adapters/STM32F1xx|Components/MqttClient/Adapters/FreeRTOS-MQTT/MqttPort-Adapter.c|Components/FreeRTOS-Plus-TCP/BufferManagement/BufferAllocation_1.c|SintezElectro/Components/DeviceControl/Device-3|xLib/Templates/Adapters/Terminal-TransferLayer|Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_eth.c|xLib/Components/USART-Ports/Adapters/STM32F1xx|Components/Services/DeviceControl|Components/MqttClient/Backup|xLib/Registers/registers_stm32f1xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

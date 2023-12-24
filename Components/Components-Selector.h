@@ -18,7 +18,7 @@ extern "C" {
 
 #include "Components/Terminal/Terminal-Component.h"
 #include "Components/USART-Ports/USART-Ports-Component.h"
-#include "TcpServer/LWIP/LWIP-NetTcpServer-Component.h"
+#include "Net/Net-Component.h"
 #include "MqttClient/MqttClient-Component.h"
 
 #include "CAN-Ports/CAN_Ports-Component.h"

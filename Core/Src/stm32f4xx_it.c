@@ -265,16 +265,16 @@ void DMA2_Stream2_IRQHandler(void)
 /**
   * @brief This function handles Ethernet global interrupt.
   */
-void ETH_IRQHandler(void)
-{
+//void ETH_IRQHandler(void)
+//{
   /* USER CODE BEGIN ETH_IRQn 0 */
 
   /* USER CODE END ETH_IRQn 0 */
-  HAL_ETH_IRQHandler(&heth);
+//  HAL_ETH_IRQHandler(&heth);
   /* USER CODE BEGIN ETH_IRQn 1 */
 
   /* USER CODE END ETH_IRQn 1 */
-}
+//}
 
 /**
   * @brief This function handles CAN2 TX interrupts.

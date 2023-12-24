@@ -11,7 +11,7 @@ extern "C" {
 //includes:
 
 #include "MqttClient-ComponentConfig.h"
-#include "Abstractions/xNet/xNet.h"
+#include "Abstractions/xMQTT/xMQTT-Types.h"
 //==============================================================================
 //defines:
 

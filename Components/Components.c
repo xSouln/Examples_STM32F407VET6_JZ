@@ -77,8 +77,9 @@ void ComponentsHandler()
 {
 	UsartPortsComponentHandler();
 	TerminalComponentHandler();
-#if LWIP_ENABLE == 1
-	LWIP_NetTcpServerComponentHandler();
+
+#if NET_ENABLE == 1
+	NetComponentHandler();
 #endif
 
 #if DEVICE_CONTROL_ENABLE == 1
@@ -169,8 +170,8 @@ xResult ComponentsInit(void* parent)
 
 	UsartPortsComponentInit(parent);
 
-#if LWIP_ENABLE == 1
-	LWIP_NetTcpServerComponentInit(parent);
+#if NET_ENABLE == 1
+	NetComponentInit(parent);
 
 #if MQTT_ENABLE == 1
 	MqttClientComponentInit(parent);
