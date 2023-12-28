@@ -147,8 +147,6 @@ void StartDefaultTask(void *argument)
   MX_LWIP_Init();
 #endif
 
-  uint32_t ip;
-
   FreeRTOS_IPInit( ucIPAddress, ucNetMask, ucGatewayAddress, ucDNSServerAddress, ucMACAddress );
   /* USER CODE BEGIN StartDefaultTask */
   ComponentsInit(defaultTaskHandle);
@@ -156,7 +154,6 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
 	  ComponentsHandler();
-	  FreeRTOS_GetAddressConfiguration(&ip, NULL, NULL, NULL);
 
 	  RTOS_ComponentsDefaultTaskWaterMark = uxTaskGetStackHighWaterMark(NULL);
   }

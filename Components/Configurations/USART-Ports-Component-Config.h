@@ -16,37 +16,37 @@ extern "C" {
 //==============================================================================
 //defines:
 
-//#define SERIAL1_ENABLE
-//#define SERIAL2_ENABLE
-#define SERIAL3_ENABLE
-//#define SERIAL4_ENABLE
-//#define SERIAL5_ENABLE
-#define SERIAL6_ENABLE
+#define SERIAL1_ENABLE 0
+#define SERIAL2_ENABLE 0
+#define SERIAL3_ENABLE 1
+#define SERIAL4_ENABLE 0
+#define SERIAL5_ENABLE 0
+#define SERIAL6_ENABLE 1
 //------------------------------------------------------------------------------
 
 enum
 {
-#ifdef SERIAL1_ENABLE
+#if SERIAL1_ENABLE == 1
 	SERIAL1,
 #endif
 
-#ifdef SERIAL2_ENABLE
+#if SERIAL2_ENABLE == 1
 	SERIAL2,
 #endif
 
-#ifdef SERIAL3_ENABLE
+#if SERIAL3_ENABLE == 1
 	SERIAL3,
 #endif
 
-#ifdef SERIAL4_ENABLE
+#if SERIAL4_ENABLE == 1
 	SERIAL4,
 #endif
 
-#ifdef SERIAL5_ENABLE
+#if SERIAL5_ENABLE == 1
 	SERIAL5,
 #endif
 
-#ifdef SERIAL6_ENABLE
+#if SERIAL6_ENABLE == 1
 	SERIAL6,
 #endif
 
@@ -55,8 +55,9 @@ enum
 //------------------------------------------------------------------------------
 
 #define USART_PORTS_MEM_SECTION __attribute__((section("._user_heap_stack")))
+//------------------------------------------------------------------------------
 
-#ifdef SERIAL1_ENABLE
+#if SERIAL1_ENABLE == 1
 extern DMA_HandleTypeDef hdma_usart1_rx;
 
 #define SERIAL1_RX_CIRCLE_BUF_SIZE_MASK 0x1ff
@@ -71,8 +72,8 @@ extern DMA_HandleTypeDef hdma_usart1_rx;
 #define SERIAL1_RX_BUFFER_MEM_SECTION __attribute__((section("._user_heap_stack")))
 
 #endif
-
-#ifdef SERIAL2_ENABLE
+//------------------------------------------------------------------------------
+#if SERIAL2_ENABLE == 1
 extern DMA_HandleTypeDef hdma_usart2_rx;
 
 #define SERIAL2_RX_CIRCLE_BUF_SIZE_MASK 0x1ff
@@ -87,8 +88,8 @@ extern DMA_HandleTypeDef hdma_usart2_rx;
 #define SERIAL2_RX_BUFFER_MEM_SECTION __attribute__((section("._user_heap_stack")))
 
 #endif
-
-#ifdef SERIAL3_ENABLE
+//------------------------------------------------------------------------------
+#if SERIAL3_ENABLE == 1
 extern DMA_HandleTypeDef hdma_usart3_rx;
 
 #define SERIAL3_RX_CIRCLE_BUF_SIZE_MASK 0xff
@@ -103,8 +104,8 @@ extern DMA_HandleTypeDef hdma_usart3_rx;
 #define SERIAL3_RX_BUFFER_MEM_SECTION __attribute__((section("._user_heap_stack")))
 
 #endif
-
-#ifdef SERIAL4_ENABLE
+//------------------------------------------------------------------------------
+#if SERIAL4_ENABLE == 1
 #define SERIAL4_RX_CIRCLE_BUF_SIZE_MASK 0x1ff
 #define SERIAL4_RX_OBJECT_BUF_SIZE 0x1ff
 #define SERIAL4_TX_CIRCLE_BUF_SIZE_MASK 0x3ff
@@ -117,8 +118,8 @@ extern DMA_HandleTypeDef hdma_usart3_rx;
 #define SERIAL4_RX_BUFFER_MEM_SECTION __attribute__((section("._user_heap_stack")))
 
 #endif
-
-#ifdef SERIAL5_ENABLE
+//------------------------------------------------------------------------------
+#if SERIAL5_ENABLE == 1
 #define SERIAL5_RX_CIRCLE_BUF_SIZE_MASK 0x1ff
 #define SERIAL5_RX_OBJECT_BUF_SIZE 0x1ff
 #define SERIAL5_TX_CIRCLE_BUF_SIZE_MASK 0x3ff
@@ -131,8 +132,8 @@ extern DMA_HandleTypeDef hdma_usart3_rx;
 #define SERIAL5_RX_BUFFER_MEM_SECTION __attribute__((section("._user_heap_stack")))
 
 #endif
-
-#ifdef SERIAL6_ENABLE
+//------------------------------------------------------------------------------
+#if SERIAL6_ENABLE == 1
 extern DMA_HandleTypeDef hdma_usart6_rx;
 
 #define SERIAL6_RX_CIRCLE_BUF_SIZE_MASK 0xff
@@ -147,6 +148,7 @@ extern DMA_HandleTypeDef hdma_usart6_rx;
 #define SERIAL6_RX_BUFFER_MEM_SECTION __attribute__((section("._user_heap_stack")))
 
 #endif
+//------------------------------------------------------------------------------
 
 #define DEBUG_SERIAL_PORT_DEFAULT_NUMBER SERIAL3
 //==============================================================================

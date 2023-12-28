@@ -21,6 +21,8 @@ extern "C" {
 
 #define DEVICE1_LOCAL_SERVICES_MEM_SECTION __attribute__((section("._user_heap_stack"))) = { 0 }
 #define DEVICE1_MEM_SECTION __attribute__((section("._user_heap_stack"))) = { 0 }
+
+#define DEVICE_1_TRANSFER_LAYER &LocalTransferLayer
 //==============================================================================
 //import:
 

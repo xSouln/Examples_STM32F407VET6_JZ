@@ -170,34 +170,10 @@ static void PrivateHandler(xNetT* net)
 
 	if (dhcpLastState != net->DHCP_Complite && net->DHCP_Complite)
 	{
+		FreeRTOS_GetAddressConfiguration(&net->LocalAddress.Value, NULL, NULL, NULL);
+
 		privateSendEvent(net, xNetEventDHCP_Complite, 0);
 	}
-	/*
-	NetAdapterT* adapter = (NetAdapterT*)net->Adapter.Content;
-	struct
-	{
-		uint32_t LastPhyIsConnecnted : 1;
-
-	} Flags;
-
-	Flags.LastPhyIsConnecnted = net->PhyIsConnecnted;
-
-	if (Flags.LastPhyIsConnecnted != net->PhyIsConnecnted)
-	{
-		if (!net->PhyIsConnecnted)
-		{
-
-			net->DHCP_Complite = false;
-			net->SNTP_Complite = false;
-		}
-
-		int eventSelector = net->PhyIsConnecnted ? xNetEventPhyConnected : xNetEventPhyDisconnected;
-		privateSendEvent(net, eventSelector, 0);
-	}
-
-	PrivateDHCP_Handler(net);
-	PrivateSNTP_Handler(net);
-	*/
 
 	PrivateSNTP_Handler(net);
 }
@@ -208,6 +184,9 @@ static void PrivateCloseSocket(xNetSocketT* socket)
 	{
 		FreeRTOS_shutdown(socket->Handle, FREERTOS_SHUT_RDWR);
 		FreeRTOS_closesocket(socket->Handle);
+
+		socket->State = xNetSocketIdle;
+		socket->Handle = NULL;
 	}
 }
 //------------------------------------------------------------------------------
@@ -445,7 +424,7 @@ static void PrivateEventListener(void* object, xNetAdapterEventSelector selector
 //------------------------------------------------------------------------------
 static int PrivateTransmit(xNetSocketT* socket, void* data, int size)
 {
-	if (socket->Handle == FREERTOS_INVALID_SOCKET)
+	if (socket->Handle == FREERTOS_INVALID_SOCKET || socket->Handle == NULL)
 	{
 		return -xResultError;
 	}
@@ -472,7 +451,7 @@ static int PrivateTransmit(xNetSocketT* socket, void* data, int size)
 //------------------------------------------------------------------------------
 static int PrivateReceive(xNetSocketT* socket, void* buffer, int size)
 {
-	if (socket->Handle == FREERTOS_INVALID_SOCKET)
+	if (socket->Handle == FREERTOS_INVALID_SOCKET || socket->Handle == NULL)
 	{
 		return -xResultError;
 	}

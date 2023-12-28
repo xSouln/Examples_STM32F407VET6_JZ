@@ -58,7 +58,7 @@ xPortT NetPort NET_PORT_MEM_SECTION = { 0 };
 //==============================================================================
 //functions:
 
-static void privateEventListener(ObjectBaseT* object, int selector, void* arg)
+static void privateEventListener(ObjectBaseT* object, int selector, uint32_t description, void* arg)
 {
 	if (object->Description->ObjectId == xPORT_OBJECT_ID)
 	{
@@ -145,7 +145,6 @@ void NetComponentHandler()
 	char* result;
 
 	xNetHandler(&Net);
-
 	xNetSocketHandler(&ListenSocket);
 
 	if (Net.PhyIsConnecnted && Net.DHCP_Complite)
@@ -182,7 +181,7 @@ void NetComponentHandler()
 		}
 	}
 
-	xPortHandler(&NetPort);
+	//vTaskDelay(pdMS_TO_TICKS(33));
 }
 //==============================================================================
 //initializations:

@@ -11,7 +11,7 @@
 //==============================================================================
 //defines:
 
-#define TASK_STACK_SIZE 0x200
+#define COMPONENTS_MAIN_TASK_STACK_SIZE 0x200
 
 #define HTTP_HOST "device-api.sintez.by"
 #define HTTP_HOST_AUTHORIZATION "X-Sintez-Auth: 6b9f7b57e10f498e634204e77009e472"
@@ -37,37 +37,18 @@ int RTOS_ComponentsTaskStackWaterMark;
 //==============================================================================
 //functions:
 
-static void privateTerminalComponentEventListener(xTerminalT* terminal, xTerminalEventSelector selector, void* arg)
-{
-	switch((int)selector)
-	{
-		case xTerminalEventTime_1000ms:
-			break;
 
-		default: break;
-	}
-}
 //==============================================================================
 //default functions:
 
-xResult ComponentsRequestListener(ObjectBaseT* object, int selector, void* arg)
+xResult ComponentsRequestListener(ObjectBaseT* object, int selector, uint32_t description, void* arg)
 {
 	return xResultNotSupported;
 }
 //------------------------------------------------------------------------------
-void ComponentsEventListener(ObjectBaseT* object, int selector, void* arg)
+void ComponentsEventListener(ObjectBaseT* object, int selector, uint32_t description, void* arg)
 {
-	if (object->Description->Key != OBJECT_DESCRIPTION_KEY)
-	{
-		return;
-	}
 
-	switch(object->Description->ObjectId)
-	{
-		case xTERMINAL_UID:
-			privateTerminalComponentEventListener((xTerminalT*)object, selector, arg);
-			break;
-	}
 }
 //------------------------------------------------------------------------------
 /**
@@ -136,7 +117,7 @@ void Timer4_IRQ_Handler(xTimerT* timer, xTimerHandleT* handle)
 	ComponentsTimeSynchronization();
 }
 //------------------------------------------------------------------------------
-static void privateCustomSubscriberEventListener(xServiceT* service, xServiceSubscriberT* Subscriber, int selector, void* arg)
+static void privateCustomSubscriberEventListener(xServiceT* service, int selector, uint32_t description, void* arg)
 {
 	CAN_LocalContentTemperatureSensoreEventT* content = arg;
 
@@ -162,11 +143,9 @@ static xServiceSubscriberT privateCustomSubscriber =
  */
 xResult ComponentsInit(void* parent)
 {
-	xSystemLayersInit();
+	xSystemInit(parent);
 
 	TerminalComponentInit(parent);
-
-	xSystemInit(parent);
 
 	UsartPortsComponentInit(parent);
 

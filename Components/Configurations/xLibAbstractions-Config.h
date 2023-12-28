@@ -1,8 +1,6 @@
 //==============================================================================
-//header:
-
-#ifndef _CORE_MQTT_CONFIG_H_
-#define _CORE_MQTT_CONFIG_H_
+#ifndef _X_LIB_ABSTRACTION_CONFIG_H_
+#define _X_LIB_ABSTRACTION_CONFIG_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -14,16 +12,10 @@ extern "C" {
 //==============================================================================
 //defines:
 
-#define MQTT_RECV_POLLING_TIMEOUT_MS 0
-
-typedef struct NetworkContext
-{
-	void* Context;
-
-} NetworkContextT;
+#define xNET_ABSTRACTION_ENABLE 1
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_CORE_MQTT_CONFIG_H_
+#endif //_X_LIB_ABSTRACTION_CONFIG_H_

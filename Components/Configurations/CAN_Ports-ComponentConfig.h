@@ -16,36 +16,36 @@ extern "C" {
 //==============================================================================
 //defines:
 
-#define CAN_PORT1_ENABLE
-#define CAN_PORT2_ENABLE
-//#define CAN_PORT3_ENABLE
-//#define CAN_PORT4_ENABLE
-//#define CAN_PORT5_ENABLE
+#define CAN_PORT1_ENABLE 1
+#define CAN_PORT2_ENABLE 1
+#define CAN_PORT3_ENABLE 0
+#define CAN_PORT4_ENABLE 0
+#define CAN_PORT5_ENABLE 0
 //------------------------------------------------------------------------------
 
 enum
 {
-#ifdef CAN_PORT1_ENABLE
+#if CAN_PORT1_ENABLE == 1
 	CAN_PORT1,
 #endif
 
-#ifdef CAN_PORT2_ENABLE
+#if CAN_PORT2_ENABLE == 1
 	CAN_PORT2,
 #endif
 
-#ifdef CAN_PORT3_ENABLE
+#if CAN_PORT3_ENABLE == 1
 	CAN_PORT3,
 #endif
 
-#ifdef CAN_PORT4_ENABLE
+#if CAN_PORT4_ENABLE == 1
 	CAN_PORT4,
 #endif
 
-#ifdef CAN_PORT5_ENABLE
+#if CAN_PORT5_ENABLE == 1
 	CAN_PORT5,
 #endif
 
-#ifdef CAN_PORT6_ENABLE
+#if CAN_PORT6_ENABLE == 1
 	CAN_PORT6,
 #endif
 
@@ -61,7 +61,7 @@ enum
 
 #endif
 //------------------------------------------------------------------------------
-#ifdef CAN_PORT1_ENABLE
+#if CAN_PORT1_ENABLE == 1
 extern CAN_HandleTypeDef hcan1;
 
 #define CAN_PORT1_HANDLE hcan1
@@ -85,7 +85,7 @@ extern CAN_HandleTypeDef hcan1;
 #endif
 //------------------------------------------------------------------------------
 
-#ifdef CAN_PORT2_ENABLE
+#if CAN_PORT2_ENABLE == 1
 extern CAN_HandleTypeDef hcan2;
 
 #define CAN_PORT2_HANDLE hcan2

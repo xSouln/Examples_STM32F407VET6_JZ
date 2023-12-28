@@ -49,7 +49,7 @@ static void PrivateHandler(xPortT* port)
 	}
 }
 //------------------------------------------------------------------------------
-static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector selector, void* arg)
+static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector selector, uint32_t description, void* arg)
 {
 	NetPortAdapterT* adapter = (NetPortAdapterT*)port->Adapter.Content;
 	xNetSocketT* socket = port->Binding;
@@ -111,7 +111,7 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 	return xResultAccept;
 }
 //------------------------------------------------------------------------------
-static void PrivateEventListener(xPortT* port, xPortAdapterEventSelector selector, void* arg)
+static void PrivateEventListener(xPortT* port, xPortAdapterEventSelector selector, uint32_t description, void* arg)
 {
 	//register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
 
@@ -146,11 +146,11 @@ static void PrivateRxReceiverEventListener(xRxReceiverT* receiver, xRxReceiverEv
 	switch ((uint8_t)event)
 	{
 		case xRxReceiverEventEndLine:
-			xPortEventListener(port, xPortObjectEventRxFoundEndLine, arg);
+			xPortEventListener(port, xPortObjectEventRxFoundEndLine, 0, arg);
 			break;
 
 		case xRxReceiverEventBufferIsFull:
-			xPortEventListener(port, xPortObjectEventRxBufferIsFull, arg);
+			xPortEventListener(port, xPortObjectEventRxBufferIsFull, 0, arg);
 			break;
 
 		default: return;
@@ -170,11 +170,6 @@ static xPortAdapterInterfaceT privatePortInterface =
 	.Receive = (xPortAdapterReceiveActionT)PrivateReceive
 };
 //------------------------------------------------------------------------------
-static xRxReceiverInterfaceT privateRxReceiverInterface =
-{
-	.EventListener = (xRxReceiverEventListenerT)PrivateRxReceiverEventListener
-};
-//------------------------------------------------------------------------------
 xResult NetPortAdapterInit(xPortT* port, NetPortAdapterT* adapter, NetPortAdapterInitT* adapterInit)
 {
 	if (port)
@@ -188,7 +183,7 @@ xResult NetPortAdapterInit(xPortT* port, NetPortAdapterT* adapter, NetPortAdapte
 
 		xRxReceiverInit(&adapter->RxReceiver, 
 						port,
-						&privateRxReceiverInterface,
+						PrivateRxReceiverEventListener,
 						adapterInit->RxBuffer,
 						adapterInit->RxBufferSize);
 
