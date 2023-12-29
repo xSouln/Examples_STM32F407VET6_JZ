@@ -91,7 +91,7 @@
 									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/FreeRTOS-Plus-MQTT/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/FreeRTOS-Plus-MQTT/interface&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/Paho-MQTT&quot;"/>
-									<listOptionValue builtIn="false" value="../../Components/Interfaces/**"/>
+									<listOptionValue builtIn="false" value="../../Components/Interfaces"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.601474247" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.value.gnu18" valueType="enumerated"/>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.cyclomaticcomplexity.1675047541" name="Cyclomatic Complexity (-fcyclomatic-complexity)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.cyclomaticcomplexity" useByScannerDiscovery="false" value="false" valueType="boolean"/>

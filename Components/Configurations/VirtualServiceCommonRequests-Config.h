@@ -15,7 +15,7 @@ extern "C" {
 //defines:
 
 #define VIRTUAL_SERVICE_DEFAULT_REQUEST_CONTROL HostRequestControl
-#define VIRTUAL_SERVICE_DEFAULT_GAP (&HostGAP)
+#define VIRTUAL_SERVICE_DEFAULT_GAP (&HostDevice)
 //==============================================================================
 //import:
 
