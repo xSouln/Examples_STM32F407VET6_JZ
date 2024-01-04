@@ -38,9 +38,11 @@ ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
 _estack = ORIGIN(RAM) + LENGTH(RAM); /* end of "RAM" Ram type memory */
+__ccmram_memory_start_address = ORIGIN(CCMRAM);
+__ccmram_memory_size = LENGTH(CCMRAM);
 
 _Min_Heap_Size = 0x0000; /* required amount of heap */
-_Min_Stack_Size = 0x500; /* required amount of stack */
+_Min_Stack_Size = 0x300; /* required amount of stack */
 
 /* Memories definition */
 MEMORY
@@ -196,6 +198,7 @@ SECTIONS
   ._user_heap_stack :
   {
     . = ALIGN(8);
+    _s_user_heap_stack = .;
     
     PROVIDE ( end = . );
     PROVIDE ( _end = . );
@@ -208,6 +211,7 @@ SECTIONS
     *(.variables*)
     _evariables = .;
     
+    _e_user_heap_stack = .;    
     . = ALIGN(8);
   } >CCMRAM
 

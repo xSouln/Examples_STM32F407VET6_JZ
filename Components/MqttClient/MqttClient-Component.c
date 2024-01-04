@@ -26,7 +26,7 @@ static StaticTask_t taskBuffer;
 static StackType_t taskStack[MQTT_TASK_STACK_SIZE] MQTT_CLIENT_COMPONENT_MAIN_TASK_STACK_SECTION;
 
 static int RTOS_MqttClientTaskStackWaterMark;
-static int privateTimeStamp;
+//static int privateTimeStamp;
 
 static uint8_t privateMqttTxBuffer[MQTT_TX_BUFFER_SIZE];
 static uint8_t privateMqttPortTxBuffer[MQTT_PORT_TX_BUFFER];
@@ -35,20 +35,6 @@ xPortT MqttPort;
 xMqttT MqttClient;
 
 uint32_t MqttTxTimeStamp = 0;
-
-static struct
-{
-	uint32_t IsSubscribed : 1;
-
-} MqttComponentFlags;
-
-static const xNetAddressT privateBrokerNetAddress =
-{
-	.Octet1 = MQTT_BROKER_IP_ADDR3,
-	.Octet2 = MQTT_BROKER_IP_ADDR2,
-	.Octet3 = MQTT_BROKER_IP_ADDR1,
-	.Octet4 = MQTT_BROKER_IP_ADDR0,
-};
 //==============================================================================
 //functions:
 
@@ -60,7 +46,7 @@ static void privateTask(void* arg)
 	{
 		//vTaskDelay(pdMS_TO_TICKS(10));
 		RTOS_MqttClientTaskStackWaterMark = uxTaskGetStackHighWaterMark(NULL);
-		uint32_t time = xSystemGetTime(NULL);
+		//uint32_t time = xSystemGetTime(NULL);
 
 		/*if (!MqttClient.Handle && Net.SNTP_Complite)
 		{
@@ -137,8 +123,6 @@ static void privateEventListener(xPortT* port, int selector, uint32_t descriptio
 }
 //==============================================================================
 //initializations:
-
-static MqttClientAdapterT privateMqttClientAdapter;
 
 static MqttPortAdapterT privateMqttPortAdapter =
 {

@@ -239,7 +239,7 @@ xResult NetComponentInit(void* parent)
 	xPortInitT portInit =
 	{
 		.Parent = parent,
-		.EventListener = privateEventListener
+		.EventListener = (void*)privateEventListener
 	};
 
 	xPortInit(&NetPort, &portInit);

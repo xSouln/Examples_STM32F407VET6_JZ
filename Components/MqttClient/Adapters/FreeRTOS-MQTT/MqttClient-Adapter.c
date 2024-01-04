@@ -159,13 +159,6 @@ static xResult privateEventListener(xMqttT* mqtt, xMqttEventSelector selector, u
 	}
 }
 //------------------------------------------------------------------------------
-static void privateNetEventListener(xNetT* net, int eventSelector, void* subscriber, void* arg)
-{
-	xMqttT* mqtt = subscriber;
-
-
-}
-//------------------------------------------------------------------------------
 static int32_t privateTransportReceive(NetworkContext_t* pNetworkContext, void* pBuffer, size_t bytesToRecv)
 {
 	xMqttT* mqtt = pNetworkContext->Context;
@@ -248,7 +241,7 @@ static void privateMQTTCallback(struct MQTTContext * pContext,
 //------------------------------------------------------------------------------
 static uint32_t privateMQTTGetTime(void)
 {
-	return xSystemGetTime(NULL);
+	return xSystemGetTime();
 }
 //==============================================================================
 //initializations:

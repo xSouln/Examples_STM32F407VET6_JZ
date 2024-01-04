@@ -17,29 +17,29 @@ static SemaphoreHandle_t privateRNGMutex;
 //==============================================================================
 //functions:
 
-xSystemTimeT xSystemGetTime(void* context)
+xSystemTimeT xSystemGetTime(void)
 {
 	return HAL_GetTick();
 }
 //------------------------------------------------------------------------------
-void xSystemDelay(void* context, xSystemTimeT time)
+void xSystemDelay(xSystemTimeT time)
 {
 	HAL_Delay(time);
 }
 //------------------------------------------------------------------------------
-xResult xSystemEnableIRQ(void* context)
+void xSystemEnableIRQ(void* context)
 {
-	return xResultNotSupported;
+	__enable_irq();
 }
 //------------------------------------------------------------------------------
-xResult xSystemDisableIRQ(void* context)
+void xSystemDisableIRQ(void* context)
 {
-	return xResultNotSupported;
+	__disable_irq();
 }
 //------------------------------------------------------------------------------
-xResult xSystemReset(void* context)
+void xSystemReset(void* context)
 {
-	return xResultNotSupported;
+
 }
 //------------------------------------------------------------------------------
 uint32_t xSystemGetRandom()

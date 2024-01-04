@@ -43,6 +43,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define CCMRAM_SECTION_START_ADDRESS 0x10000000
+#define CCMRAM_SECTION_SIZE 0x10000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -65,7 +67,18 @@ extern void ComponentsTimeSynchronization();
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/*
+void ccmram_init(void)
+{
+    // Очистка секции CCMRAM
+    uint32_t *ccmram_ptr = &__ccmram_start;
+    while (ccmram_ptr < &__ccmram_end) {
+        *ccmram_ptr++ = 0;
+    }
+}
 
+void (*const ccmram_init_ptr)(void) __attribute__((section(".init_array"))) = ccmram_init;
+*/
 /* USER CODE END 0 */
 
 /**
@@ -75,7 +88,7 @@ extern void ComponentsTimeSynchronization();
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	memset((void*)0x10000000, 0, 65536);
+	memset((void*)CCMRAM_SECTION_START_ADDRESS, 0, CCMRAM_SECTION_SIZE);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/

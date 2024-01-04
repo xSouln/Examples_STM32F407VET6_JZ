@@ -12,7 +12,7 @@
 //==============================================================================
 //types:
 
-static enum
+enum
 {
 	ConncetionStateCreateSocket,
 	ConncetionStateConnectSocket,
@@ -20,7 +20,7 @@ static enum
 	ConncetionStateSubscribe,
 	ConncetionStateComplited
 
-} ConncetionState;
+};
 //==============================================================================
 //variables:
 
@@ -315,7 +315,7 @@ static void privateMQTTCallback(struct MQTTContext * pContext,
 //------------------------------------------------------------------------------
 static uint32_t privateMQTTGetTime(void)
 {
-	return xSystemGetTime(NULL);
+	return xSystemGetTime();
 }
 //------------------------------------------------------------------------------
 static int PrivateTransmit(xPortT* port, void* data, uint32_t size)

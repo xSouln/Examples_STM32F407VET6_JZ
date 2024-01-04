@@ -18,12 +18,7 @@
 //==============================================================================
 //variables:
 
-static int keepAlive = 1;
-static int keepIdle = 1;
-static int keepInterval = 1;
-static int keepCount = 2;
 static xNetNTP_PacketT NTP_Packet;
-static xNetAddressT ServerIpAddres;
 //==============================================================================
 //prototypes:
 
@@ -47,6 +42,7 @@ static void privateSendEvent(xNetT* net, xNetEventSelector selector, void* arg)
 	xListStopEnumeration((xListT*)&net->Subscribers);
 }
 //------------------------------------------------------------------------------
+/*
 static void PrivateDHCP_Handler(xNetT* net)
 {
 	NetAdapterT* adapter = (NetAdapterT*)net->Adapter.Content;
@@ -58,6 +54,7 @@ static void PrivateDHCP_Handler(xNetT* net)
 
 
 }
+*/
 //------------------------------------------------------------------------------
 static void PrivateSNTP_Handler(xNetT* net)
 {
@@ -194,8 +191,8 @@ static void PrivateSocketHandler(xNetSocketT* socket)
 {
 	if ((int)socket->Handle != -1)
 	{
-		int optval;
-    	socklen_t optlen = sizeof(optval);
+		//int optval;
+    	//socklen_t optlen = sizeof(optval);
 
     	//FreeRTOS_getsockopt(xSocket, 0, FREERTOS_SO_ERROR, &optval, &optlen);
 

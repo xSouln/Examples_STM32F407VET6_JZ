@@ -1,8 +1,6 @@
 //==============================================================================
 //includes:
 
-#include <malloc.h>
-
 #include "Components.h"
 #include "main.h"
 #include "Peripherals/xTimer/xTimer.h"
@@ -11,8 +9,10 @@
 //==============================================================================
 //defines:
 
+#if FREERTOS_ENABLE == 1
 #define COMPONENTS_MAIN_TASK_STACK_SIZE 0x200
-
+#endif
+//------------------------------------------------------------------------------
 #define HTTP_HOST "device-api.sintez.by"
 #define HTTP_HOST_AUTHORIZATION "X-Sintez-Auth: 6b9f7b57e10f498e634204e77009e472"
 #define HTTP_REPORT_DEVICE_ID "ce501046-f876-4bf6-8151-117b711340c5"
@@ -22,18 +22,16 @@
 
 UniqueDeviceID_T* UniqueDeviceID = (void*)0x1FFF7A10;
 
-struct mallinfo HeapInfo;
-
 static uint32_t ledToggleTimeStamp;
-static uint32_t startTransmittingEventTimeStamp;
-static uint32_t eventTransmissionTime;
-
-static uint32_t receivedEventsCount;
+//------------------------------------------------------------------------------
+#if FREERTOS_ENABLE == 1
 
 int RTOS_FreeHeapSize;
 int RTOS_ComponentsTaskStackWaterMark;
 
 //static TaskHandle_t taskHandle;
+#endif
+
 //==============================================================================
 //functions:
 
@@ -71,11 +69,9 @@ void ComponentsHandler()
 	RequestControlComponentHandler();
 
 	Device1ComponentHandler();
-	//Device2ComponentHandler();
-	//Device3ComponentHandler();
 
 #endif
-	uint32_t time = xSystemGetTime(ComponentsHandler);
+	uint32_t time = xSystemGetTime();
 	if (time - ledToggleTimeStamp > 999)
 	{
 		ledToggleTimeStamp = time;
@@ -89,8 +85,6 @@ void ComponentsHandler()
 	RTOS_FreeHeapSize = xPortGetFreeHeapSize();
 	RTOS_ComponentsTaskStackWaterMark = uxTaskGetStackHighWaterMark(NULL);
 #endif
-
-	HeapInfo = mallinfo();
 }
 //------------------------------------------------------------------------------
 /**
@@ -104,8 +98,6 @@ inline void ComponentsTimeSynchronization()
 #if DEVICE_CONTROL_ENABLE == 1
 
 	Device1ComponentTimeSynchronization();
-	//Device2ComponentTimeSynchronization();
-	//Device3ComponentTimeSynchronization();
 
 #endif
 }
@@ -116,26 +108,9 @@ void Timer4_IRQ_Handler(xTimerT* timer, xTimerHandleT* handle)
 
 	ComponentsTimeSynchronization();
 }
-//------------------------------------------------------------------------------
-static void privateCustomSubscriberEventListener(xServiceT* service, int selector, uint32_t description, void* arg)
-{
-	CAN_LocalContentTemperatureSensoreEventT* content = arg;
-
-	if (content->Temperature > 20.0f)
-	{
-		receivedEventsCount++;
-	}
-
-	eventTransmissionTime = xSystemGetTime(NULL) - startTransmittingEventTimeStamp;
-}
 //==============================================================================
 //initialization:
 
-static xServiceSubscriberT privateCustomSubscriber =
-{
-	.EventListener = privateCustomSubscriberEventListener
-};
-//------------------------------------------------------------------------------
 /**
  * @brief initializing the component
  * @param parent binding to the parent object
@@ -169,10 +144,6 @@ xResult ComponentsInit(void* parent)
 
 	RequestControlComponentInit(parent);
 	Device1ComponentInit(parent);
-	//Device2ComponentInit(parent);
-	//Device3ComponentInit(parent);
-
-	xServiceSubscribe((void*)&TemperatureService3, &privateCustomSubscriber);
 
 #endif
 
