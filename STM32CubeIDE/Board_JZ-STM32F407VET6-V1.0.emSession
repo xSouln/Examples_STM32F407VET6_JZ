@@ -1,7 +1,7 @@
 <!DOCTYPE CrossStudio_Session_File>
 <session>
  <Bookmarks/>
- <Breakpoints groups="" active_group="Breakpoints"/>
+ <Breakpoints groups="Breakpoints" active_group="Breakpoints"/>
  <ExecutionProfileWindow/>
  <FrameBuffer/>
  <Memory1/>
@@ -12,6 +12,7 @@
   <ProjectSessionItem path="Examples_JZ-STM32F407VET6-V1.0"/>
   <ProjectSessionItem path="Examples_JZ-STM32F407VET6-V1.0;Examples_JZ-STM32F407VET6-V1.0"/>
   <ProjectSessionItem path="Examples_JZ-STM32F407VET6-V1.0;Examples_JZ-STM32F407VET6-V1.0;."/>
+  <ProjectSessionItem path="Examples_JZ-STM32F407VET6-V1.0;Examples_JZ-STM32F407VET6-V1.0;.;Drivers"/>
  </Project>
  <Register1/>
  <Register2/>

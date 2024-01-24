@@ -11,9 +11,15 @@
 
 void* xMemoryAllocate(int count, int typeSize)
 {
+	void* result = NULL;
 	uint32_t size = count * typeSize;
 
-	void* result = pvPortMalloc(size);
+	if (!size)
+	{
+		return result;
+	}
+
+	result = pvPortMalloc(size);
 
 	while (!result)
 	{

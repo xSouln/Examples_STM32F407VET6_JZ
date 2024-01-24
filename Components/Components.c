@@ -78,7 +78,7 @@ void ComponentsHandler()
 
 		PortE->Output.LED1 ^= 1;
 		PortE->Output.LED2 ^= PortE->Output.LED1;
-		PortE->Output.LED3 ^= PortE->Output.LED1 && PortE->Output.LED2;
+		//PortE->Output.LED3 ^= PortE->Output.LED1 && PortE->Output.LED2;
 	}
 
 #if FREERTOS_ENABLE == 1

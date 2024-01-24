@@ -11,7 +11,6 @@ extern "C" {
 //includes:
 
 #include "Components-Types.h"
-#include "Device1-ComponentConfig.h"
 //==============================================================================
 //macros:
 
@@ -19,8 +18,12 @@ extern "C" {
 #define DEVICE1_COMPONENT_MAIN_TASK_STACK_SECTION __attribute__((section("._user_heap_stack")))
 #endif
 
-#define DEVICE1_LOCAL_SERVICES_MEM_SECTION __attribute__((section("._user_heap_stack"))) = { 0 }
-#define DEVICE1_MEM_SECTION __attribute__((section("._user_heap_stack"))) = { 0 }
+#define DEVICE1_LOCAL_SERVICES_MEM_SECTION __attribute__((section("._user_heap_stack")))
+#define DEVICE1_MEM_SECTION __attribute__((section("._user_heap_stack")))
+
+#define DEVICE1_PIN1_PORT PortE
+#define DEVICE1_PIN1_HARDWARE_OTPUT 15
+#define DEVICE1_PIN1_LOGIC_OTPUT 0
 
 #define DEVICE_1_TRANSFER_LAYER &LocalTransferLayer
 //==============================================================================
