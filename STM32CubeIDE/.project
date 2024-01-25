@@ -39,7 +39,7 @@
 		<link>
 			<name>Components</name>
 			<type>2</type>
-			<locationURI>Components</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Components</locationURI>
 		</link>
 		<link>
 			<name>SintezElectro</name>
@@ -60,16 +60,6 @@
 			<name>Paho-MQTT/MQTTClient.h</name>
 			<type>1</type>
 			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTClient-C/src/MQTTClient.h</location>
-		</link>
-		<link>
-			<name>Components/Configurations/FreeRTOSConfig.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Core/Inc/FreeRTOSConfig.h</locationURI>
-		</link>
-		<link>
-			<name>Components/Configurations/lwipopts.h</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/LWIP/Target/lwipopts.h</locationURI>
 		</link>
 		<link>
 			<name>Drivers/CMSIS/system_stm32f4xx.c</name>
@@ -844,20 +834,8 @@
 	</linkedResources>
 	<variableList>
 		<variable>
-			<name>Components</name>
-			<value>file:/C:/Users/Afhib/Desktop/Projects/Board_JZ-STM32F407VET6-V1.0/Components</value>
-		</variable>
-		<variable>
 			<name>FreeRTOS_MQTT</name>
 			<value>file:/D:/Repositories/FreeRTOS/FreeRTOS-Plus/Source/Application-Protocols/coreMQTT/source</value>
-		</variable>
-		<variable>
-			<name>SintezElectro</name>
-			<value>file:/C:/Users/Afhib/Desktop/Projects/Repositories-SintezElectro/Sources</value>
-		</variable>
-		<variable>
-			<name>xLib</name>
-			<value>file:/C:/Users/Afhib/Desktop/Projects/xLibs</value>
 		</variable>
 	</variableList>
 </projectDescription>

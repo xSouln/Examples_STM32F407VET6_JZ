@@ -81,16 +81,15 @@
 									<listOptionValue builtIn="false" value="../../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="&quot;${xLIB_PATH}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${xLIB_PATH}/Components&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/Configurations&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SINTEZ_ELECTRO_SOURCES_PATH}/CAN_Local&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${SINTEZ_ELECTRO_SOURCES_PATH}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/Configurations&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/FreeRTOS-Plus-TCP/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/FreeRTOS-Plus-TCP/Compiler&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/FreeRTOS-Plus-TCP/NetworkInterface&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/FreeRTOS-Plus-MQTT/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/FreeRTOS-Plus-MQTT/interface&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${COMPONENTS_PATH}/Paho-MQTT&quot;"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.601474247" name="Language standard" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard" useByScannerDiscovery="true" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.languagestandard.value.gnu18" valueType="enumerated"/>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.cyclomaticcomplexity.1675047541" name="Cyclomatic Complexity (-fcyclomatic-complexity)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.cyclomaticcomplexity" useByScannerDiscovery="false" value="false" valueType="boolean"/>
@@ -120,7 +119,7 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry excluding="Application/User/LWIP|Paho-MQTT|Middlewares/LwIP|FreeRTOS_MQTT|xLib/Templates/Adapters/Terminal-TransferLayer|Components|Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_eth.c|SintezElectro|xLib" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
-						<entry excluding="Interfaces/Paho-MQTT-Interface|MqttClient/Adapters/Ports/xMQTT|MqttClient/Adapters/FreeRTOS-MQTT/Mqtt-Adapter.c|Paho-MQTT|MqttClient/Adapters/Ports/LWIP|CAN|MqttClient/Adapters/LWIP|FreeRTOS_MQTT|FreeRTOS-Plus-TCP/BufferManagement/BufferAllocation_1.c|Devices/Device-3|Devices/Device-2|Services/DeviceControl|MqttClient/Backup|MqttClient/Adapters/FreeRTOS-MQTT/MqttPort-Adapter.c|Net/Adapters/LWIP" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
+						<entry excluding="FreeRTOS-Plus-TCP/BufferManagement/BufferAllocation_1.c|Interfaces/Paho-MQTT-Interface|MqttClient/Adapters/FreeRTOS-MQTT/Mqtt-Adapter.c|MqttClient/Adapters/Ports/xMQTT|MqttClient/Adapters/Ports/LWIP|Net/Adapters/LWIP|MqttClient/Backup|MqttClient/Adapters/LWIP|Paho-MQTT" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
 						<entry excluding="Services/Trigger|Components/Devices/Device-3|Components/Devices/Device-2|build|Components/DeviceControl/Device-3|Components/DeviceControl/Device-2" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SintezElectro"/>
 						<entry excluding="Components/USART-SerialPorts/Adapters/STM32F1xx|Components/CAN-Ports/Adapters/STM32F1xx|Components/USART-Ports/Adapters/STM32F1xx|Templates|Registers/registers_stm32f1xx|Peripherals/xUSART/Adapters/STM32F4xx|Drivers|Components/USART-SerialPorts/Adapters/STM32H7xx|Drivers/OV2640|Components/CAN-Ports/Adapters/STM32F0xx|Peripherals/xUSART/Adapters|Components/USART-Ports/Adapters/STM32F0xx|Components/USART-Ports/Adapters/STM32H7xx|Registers/registers_stm32h7xx" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xLib"/>
 					</sourceEntries>
