@@ -18,10 +18,6 @@ extern "C" {
 //==============================================================================
 //defines:
 
-#define xUSART_USER_CONFIG 1
-#define xTIMER_USER_CONFIG 1
-#define xCAN_USER_CONFIG 1
-
 #define OS_TYPE_NON 0
 #define OS_TYPE_FREERTOS 1
 
@@ -97,7 +93,7 @@ typedef struct PACKED_PREFIX
 //==============================================================================
 //values:
 
-extern UniqueDeviceID_T* UniqueDeviceID;
+extern const UniqueDeviceID_T* UniqueDeviceID;
 //==============================================================================
 #ifdef __cplusplus
 }
