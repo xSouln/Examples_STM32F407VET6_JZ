@@ -21,9 +21,13 @@ extern "C" {
 #define xUSART_USER_CONFIG 0
 #define xTIMER_USER_CONFIG 0
 #define xCAN_USER_CONFIG 0
+#define xGPIO_USER_CONFIG 1
+#define NET_COMPONENT_ENABLE 1
 
 #define DEVICE1_COMPONENT_USER_CONFIG 1
 #define HOST_DEVICE_COMPONENT_USER_CONFIG 1
+#define FLASH_MEMORY_CONTROL_COMPONENT_ENABLE 1
+#define FLASH_MEMORY_CONTROL_ADAPTER_FOR_STM32_USED 1
 //==============================================================================
 //peripherals:
 
@@ -48,6 +52,11 @@ extern "C" {
 
 #define DEBUG_SERIAL_PORT_DEFAULT_NUMBER SERIAL6
 
+#define SERIAL3_TX_CIRCLE_BUF_SIZE_MASK 0x1ff
+#define SERIAL1_TX_CIRCLE_BUF_SIZE_MASK 0x1ff
+
+#define SERIAL6_RX_CIRCLE_BUF_SIZE_MASK 0x1ff
+
 #endif
 //------------------------------------------------------------------------------
 #define CAN_PORTS_COMPONENT_ENABLE 1
@@ -64,13 +73,15 @@ extern "C" {
 
 #endif
 //------------------------------------------------------------------------------
-#define HOST_DEVICE_COMPONENT_ENABLE 0
+#define HOST_DEVICE_COMPONENT_ENABLE 1
 #if HOST_DEVICE_COMPONENT_ENABLE == 1
 //------------------------------------------------------------------------------
 #define HOST_REQUEST_CONTROL_COMPONENT_ENABLE 1
 #define HOST_TRANSFER_LAYER_COMPONENT_ENABLE 1
 
 #define HOST_DEVICE_ID 2000
+
+#define HOST_DEVICE_ROUTING_TABLE_SIZE 0
 
 #define HOST_DEVICE_TEMPERATURE_SERVICE1_ENABLE 1
 #define HOST_DEVICE_TEMPERATURE_SERVICE2_ENABLE 1
@@ -98,9 +109,9 @@ enum
 //------------------------------------------------------------------------------
 #if HOST_DEVICE_DIGITAL_INPUTS_SERVICE1_ENABLE == 1
 
-#define HOST_DEVICE_DIGITAL_INPUTS_SERVICE1_PORT0 PortA
+#define HOST_DEVICE_DIGITAL_INPUTS_SERVICE1_PORT0 PortE
 #define HOST_DEVICE_DIGITAL_INPUTS_SERVICE1_LOGIC_PIN0 1
-#define HOST_DEVICE_DIGITAL_INPUTS_SERVICE1_HARDWARE_PIN0 4
+#define HOST_DEVICE_DIGITAL_INPUTS_SERVICE1_HARDWARE_PIN0 10
 /*
 #define HOST_DEVICE_DIGITAL_INPUTS_SERVICE1_PORT1 PortA
 #define HOST_DEVICE_DIGITAL_INPUTS_SERVICE1_LOGIC_PIN1 0
@@ -113,24 +124,26 @@ enum
 #define DEVICE1_COMPONENT_ENABLE 1
 #if DEVICE1_COMPONENT_ENABLE == 1
 //------------------------------------------------------------------------------
+#define HOST_DEVICE_MAIN_TASK_STACK_SIZE 0x200
+
 #define DEVICE1_DIGITAL_INPUTS_SERVICE1_ENABLE 1
 
-#define DEVICE1_DIGITAL_INPUTS_SERVICE1_PORT0 GPIOD
+#define DEVICE1_DIGITAL_INPUTS_SERVICE1_PORT0 PortE
 #define DEVICE1_DIGITAL_INPUTS_SERVICE1_LOGIC_PIN0 0
-#define DEVICE1_DIGITAL_INPUTS_SERVICE1_HARDWARE_PIN0 2
+#define DEVICE1_DIGITAL_INPUTS_SERVICE1_HARDWARE_PIN0 11
 
 #define DEVICE1_DIGITAL_INPUTS_SERVICE1_PORT1 GPIOD
 #define DEVICE1_DIGITAL_INPUTS_SERVICE1_LOGIC_PIN1 1
-#define DEVICE1_DIGITAL_INPUTS_SERVICE1_HARDWARE_PIN1 3
+#define DEVICE1_DIGITAL_INPUTS_SERVICE1_HARDWARE_PIN1 12
 //------------------------------------------------------------------------------
 #define DEVICE1_DIGITAL_OUTPUTS_SERVICE1_ENABLE 1
 
-#define DEVICE1_DIGITAL_OUTPUTS_SERVICE1_PORT1 GPIOA
-#define DEVICE1_DIGITAL_OUTPUTS_SERVICE1_HARDWARE_PIN1 7
+#define DEVICE1_DIGITAL_OUTPUTS_SERVICE1_PORT1 PortE
+#define DEVICE1_DIGITAL_OUTPUTS_SERVICE1_HARDWARE_PIN1 14
 #define DEVICE1_DIGITAL_OUTPUTS_SERVICE1_LOGIC_PIN1 0
 
 #define DEVICE1_DIGITAL_OUTPUTS_SERVICE1_PORT2 GPIOA
-#define DEVICE1_DIGITAL_OUTPUTS_SERVICE1_HARDWARE_PIN2 5
+#define DEVICE1_DIGITAL_OUTPUTS_SERVICE1_HARDWARE_PIN2 15
 #define DEVICE1_DIGITAL_OUTPUTS_SERVICE1_LOGIC_PIN2 1
 //------------------------------------------------------------------------------
 #define DEVICE1_DIGITAL_OUTPUTS_ROUTER1_ENABLE 1
@@ -147,6 +160,14 @@ enum
 #endif
 //------------------------------------------------------------------------------
 #define LED1_Port PortE
+//==============================================================================
+//functions:
+
+#define InternalComponentsHandler()
+#define InternalComponentsInit(parent)
+//==============================================================================
+//import:
+
 //==============================================================================
 #ifdef __cplusplus
 }

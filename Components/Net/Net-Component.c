@@ -1,8 +1,12 @@
+//==============================================================================
+//header:
 
+#include "Net-Component.h"
+
+#ifdef _NET_COMPONENT_H_
 //==============================================================================
 //includes:
 
-#include "Net-Component.h"
 #include "Components.h"
 
 #if NET_TARGET_LAYOUT == NET_LWIP_LAYOUT
@@ -246,8 +250,7 @@ xResult NetComponentInit(void* parent)
 
 	xPortSetBinding(&NetPort, &Socket);
 
-	taskHandle =
-			xTaskCreateStatic(privateTask, // Function that implements the task.
+	taskHandle = xTaskCreateStatic(privateTask, // Function that implements the task.
 								"net task", // Text name for the task.
 								NET_TASK_STACK_SIZE, // Number of indexes in the xStack array.
 								NULL, // Parameter passed into the task.
@@ -258,3 +261,4 @@ xResult NetComponentInit(void* parent)
 	return xResultAccept;
 }
 //==============================================================================
+#endif //_NET_COMPONENT_H_

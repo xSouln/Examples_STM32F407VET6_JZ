@@ -3,7 +3,7 @@
 
 #include "Net-ComponentConfig.h"
 //------------------------------------------------------------------------------
-#if !defined(_NET_COMPONENT_H_) && NET_TARGET_LAYOUT != NET_UNDEFINED_LAYOUT
+#if !defined(_NET_COMPONENT_H_) && NET_COMPONENT_ENABLE == 1
 #define _NET_COMPONENT_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus

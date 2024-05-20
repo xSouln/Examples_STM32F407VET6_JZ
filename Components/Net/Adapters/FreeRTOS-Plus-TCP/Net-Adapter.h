@@ -1,7 +1,9 @@
 //==============================================================================
 //header:
 
-#ifndef _NET_ADAPTER_H_
+#include "Components-Config.h"
+
+#if !defined(_NET_ADAPTER_H_) && NET_COMPONENT_ENABLE == 1 && NET_TARGET_LAYOUT == NET_FREERTOS_LAYOUT
 #define _NET_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus

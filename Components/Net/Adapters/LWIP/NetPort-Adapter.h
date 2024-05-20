@@ -1,9 +1,10 @@
 //==============================================================================
 //header:
 
-#ifndef _NET_PORT_ADAPTER_H_
-#define _NET_PORT_ADAPTER_H_
+#include "Components-Config.h"
 
+#if !defined(_NET_PORT_ADAPTER_H_) && NET_COMPONENT_ENABLE == 1 && NET_TARGET_LAYOUT == NET_LWIP_LAYOUT
+#define _NET_PORT_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {

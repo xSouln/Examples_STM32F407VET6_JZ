@@ -308,7 +308,7 @@ void CAN2_RX0_IRQHandler(void)
 void USART6_IRQHandler(void)
 {
   /* USER CODE BEGIN USART6_IRQn 0 */
-
+	xUSART_IRQ_Handler(xUSART6);
   /* USER CODE END USART6_IRQn 0 */
   /* USER CODE BEGIN USART6_IRQn 1 */
 

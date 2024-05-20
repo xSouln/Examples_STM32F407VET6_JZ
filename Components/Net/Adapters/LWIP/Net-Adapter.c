@@ -1,7 +1,12 @@
 //==============================================================================
-//includes:
+//header:
 
 #include "Net-Adapter.h"
+
+#ifdef _NET_ADAPTER_H_
+//==============================================================================
+//includes:
+
 #include "Common/xMemory.h"
 #include "Abstractions/xSystem/xSystem.h"
 
@@ -584,3 +589,4 @@ xResult LWIP_NetAdapterInit(xNetT* net, xNetAdapterInitT* init)
 	return xResultError;
 }
 //==============================================================================
+#endif //_NET_ADAPTER_H_

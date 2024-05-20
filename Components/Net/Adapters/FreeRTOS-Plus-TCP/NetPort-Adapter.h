@@ -1,9 +1,10 @@
 //==============================================================================
 //header:
 
-#ifndef _NET_PORT_ADAPTER_H_
-#define _NET_PORT_ADAPTER_H_
+#include "Components-Config.h"
 
+#if !defined(_NET_PORT_ADAPTER_H_) && NET_COMPONENT_ENABLE == 1 && NET_TARGET_LAYOUT == NET_FREERTOS_LAYOUT
+#define _NET_PORT_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -11,9 +12,10 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include <Components-Types.h>
+#include "Components-Types.h"
 #include "Common/xRxReceiver.h"
 #include "Common/xDataBuffer.h"
+#include "Common/xCircleBuffer.h"
 #include "Abstractions/xNet/xNet.h"
 #include "Abstractions/xPort/xPort.h"
 //==============================================================================
@@ -21,10 +23,21 @@ extern "C" {
 
 typedef struct
 {
+	xCircleBufferT RxCircleBuffer;
+	uint8_t RxCircleBufferMemory[512];
+
+	TaskHandle_t RxTaskHandle;
+
+} NetPortAdapterInternalT;
+//------------------------------------------------------------------------------
+typedef struct
+{
 	xPortAdapterBaseT Base;
 
 	xRxReceiverT RxReceiver;
 	xDataBufferT TxBuffer;
+
+	NetPortAdapterInternalT Internal;
 
 	uint8_t* RxOperationBuffer;
 	int RxOperationBufferSize;

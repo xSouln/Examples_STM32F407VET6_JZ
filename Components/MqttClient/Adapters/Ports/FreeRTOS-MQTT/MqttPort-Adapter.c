@@ -141,7 +141,7 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 	switch ((uint32_t)selector)
 	{
 		case xPortAdapterRequestGetTxBufferSize:
-			*(uint32_t*)arg = adapter->Internal.TxDataBuffer.Size;
+			*(uint32_t*)arg = adapter->Internal.TxDataBuffer.MaxLength;
 			break;
 
 		case xPortAdapterRequestGetTxBufferFreeSize:
@@ -193,14 +193,14 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 
 		case xPortAdapterRequestEndTransmission:
 		{
-			if (adapter->Internal.TxDataBuffer.DataSize)
+			if (adapter->Internal.TxDataBuffer.Length)
 			{
 				MQTTPublishInfo_t publishInfo = { 0 };
 				publishInfo.qos = MQTTQoS0;
 				publishInfo.pTopicName = adapter->TxTopic;
 				publishInfo.topicNameLength = adapter->Internal.TxTopicLength;
 				publishInfo.pPayload = adapter->Internal.TxDataBuffer.Data;
-				publishInfo.payloadLength = adapter->Internal.TxDataBuffer.DataSize;
+				publishInfo.payloadLength = adapter->Internal.TxDataBuffer.Length;
 
 				MQTT_Publish(&adapter->Internal.MQTTContext, &publishInfo, 0);
 
@@ -374,7 +374,7 @@ xResult MqttPortAdapterInit(xPortT* port, MqttPortAdapterT* adapter, MqttPortAda
 		adapter->Internal.RxTopicLength = strlen(init->RxTopic);
 
 		adapter->Internal.TxDataBuffer.Memory = init->TxBuffer;
-		adapter->Internal.TxDataBuffer.Size = init->TxBufferSize;
+		adapter->Internal.TxDataBuffer.MaxLength = init->TxBufferSize;
 
 		/*adapter->Internal.RxReceiver.Base.Parent = port;
 		adapter->Internal.RxReceiver.Buffer = init->RxBuffer;

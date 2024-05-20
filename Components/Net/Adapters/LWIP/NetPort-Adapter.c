@@ -1,7 +1,12 @@
 //==============================================================================
-//includes:
+//header:
 
 #include "NetPort-Adapter.h"
+
+#ifdef _NET_PORT_ADAPTER_H_
+//==============================================================================
+//includes:
+
 #include "lwip/err.h"
 #include "lwip/sockets.h"
 #include "lwip/sys.h"
@@ -206,3 +211,4 @@ xResult NetPortAdapterInit(xPortT* port, NetPortAdapterT* adapter, NetPortAdapte
   return xResultError;
 }
 //==============================================================================
+#endif //_NET_PORT_ADAPTER_H_

@@ -17,23 +17,23 @@
 
 //#define FreeRTOS_printf(str, ...)
 
-#define ipconfigNUM_SOCKETS 10
+#define ipconfigNUM_SOCKETS 3
 #define ipconfigSOCKETS_UDP     1
 #define ipconfigUDP_MAX_RX_PACKETS    5
 #define ipconfigUDP_MAX_TX_PACKETS    5
 
 #define ipconfigBYTE_ORDER                      pdFREERTOS_LITTLE_ENDIAN        // Reference manual Pg 192
 
-#define ipconfigDRIVER_INCLUDED_TX_IP_CHECKSUM  1       // not sure about this - Ethernet checksum is added by hardware, but not TCP cksum
-#define ipconfigDRIVER_INCLUDED_RX_IP_CHECKSUM  1
+//#define ipconfigDRIVER_INCLUDED_TX_IP_CHECKSUM  1       // not sure about this - Ethernet checksum is added by hardware, but not TCP cksum
+//#define ipconfigDRIVER_INCLUDED_RX_IP_CHECKSUM  1
 #define ipconfigETHERNET_DRIVER_FILTERS_FRAME_TYPES 1   // hardware will filter Ethernet packets based on MAC address
 
 #define ipconfigNETWORK_MTU                     1526
 #define ipconfigTCP_MSS                         460//536 //1460
-#define ipconfigTCP_TX_BUFFER_LENGTH            ( 6 * ipconfigTCP_MSS )
-#define ipconfigTCP_RX_BUFFER_LENGTH            ( 24 * ipconfigTCP_MSS )
+#define ipconfigTCP_TX_BUFFER_LENGTH            ( 8 * ipconfigTCP_MSS )
+#define ipconfigTCP_RX_BUFFER_LENGTH            ( 8 * ipconfigTCP_MSS )
 
-#define ipconfigNUM_NETWORK_BUFFER_DESCRIPTORS  16
+#define ipconfigNUM_NETWORK_BUFFER_DESCRIPTORS  4
 #define ipconfigZERO_COPY_TX_DRIVER             0   // zero copy would be good but fsl_enet.c/h doesn't support it so would have to be rerwitten.
 #define ipconfigZERO_COPY_RX_DRIVER             0
 

@@ -1,14 +1,35 @@
 //==============================================================================
-//includes:
+//header:
 
 #include "NetPort-Adapter.h"
-#include "lwip/err.h"
-#include "lwip/sockets.h"
-#include "lwip/sys.h"
-#include "lwip/netdb.h"
+
+#ifdef _NET_PORT_ADAPTER_H_
+//==============================================================================
+//includes:
+
+
 //==============================================================================
 //functions:
 
+static void privateRxTask(xPortT* port)
+{
+	NetPortAdapterT* adapter = (NetPortAdapterT*)port->Adapter.Content;
+	xNetSocketT* socket = port->Binding;
+
+	while (true)
+	{
+		if (socket != NULL && socket->State == xNetSocketEstablished)
+		{
+			int len = xNetReceive(socket, adapter->RxOperationBuffer, adapter->RxOperationBufferSize);
+
+			if (len > 0)
+			{
+				xCircleBufferAdd(&adapter->Internal.RxCircleBuffer, adapter->RxOperationBuffer, len);
+			}
+		}
+	}
+}
+//------------------------------------------------------------------------------
 static void PrivateHandler(xPortT* port)
 {
 	NetPortAdapterT* adapter = (NetPortAdapterT*)port->Adapter.Content;
@@ -16,34 +37,15 @@ static void PrivateHandler(xPortT* port)
 
 	xNetSocketHandler(socket);
 
+	xRxReceiverRead(&adapter->RxReceiver, &adapter->Internal.RxCircleBuffer);
+
 	if (socket != NULL && socket->State == xNetSocketEstablished)
 	{
-		int rcvbuf = adapter->RxOperationBufferSize;
-    	//socklen_t optlen = sizeof(rcvbuf);
-
-		//if (getsockopt(socket->Number, SOL_SOCKET, SO_RCVBUF, &rcvbuf, &optlen) == 0 && rcvbuf > 0)
-		{
-			if (rcvbuf > adapter->RxOperationBufferSize)
-			{
-				rcvbuf = adapter->RxOperationBufferSize;
-			}
-
-			if (rcvbuf)
-			{
-				int len = xNetReceive(socket, adapter->RxOperationBuffer, rcvbuf);
-
-				if (len > 0)
-				{
-					xRxReceiverReceive(&adapter->RxReceiver, adapter->RxOperationBuffer, len);
-				}
-			}
-		}
-
-		if (adapter->TxBuffer.DataSize)
+		if (adapter->TxBuffer.Length)
 		{
 			xSemaphoreTake(adapter->TransactionMutex, portMAX_DELAY);
-			xNetTransmit(socket, adapter->TxBuffer.Data, adapter->TxBuffer.DataSize);
-			adapter->TxBuffer.DataSize = 0;
+			xNetTransmit(socket, adapter->TxBuffer.Data, adapter->TxBuffer.Length);
+			adapter->TxBuffer.Length = 0;
 			xSemaphoreGive(adapter->TransactionMutex);
 		}
 	}
@@ -99,8 +101,8 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 		case xPortAdapterRequestEndTransmission:
 			if (socket->State == xNetSocketEstablished)
 			{
-				xNetTransmit(socket, adapter->TxBuffer.Data, adapter->TxBuffer.DataSize);
-				adapter->TxBuffer.DataSize = 0;
+				xNetTransmit(socket, adapter->TxBuffer.Data, adapter->TxBuffer.Length);
+				adapter->TxBuffer.Length = 0;
 			}
 			xSemaphoreGive(adapter->TransactionMutex);
 			break;
@@ -181,6 +183,9 @@ xResult NetPortAdapterInit(xPortT* port, NetPortAdapterT* adapter, NetPortAdapte
 		adapter->RxOperationBuffer = adapterInit->RxOperationBuffer;
 		adapter->RxOperationBufferSize = adapterInit->RxOperationBufferSize;
 
+		adapter->Internal.RxCircleBuffer.SizeMask = 0x1ff;
+		adapter->Internal.RxCircleBuffer.Memory = adapter->Internal.RxCircleBufferMemory;
+
 		xRxReceiverInit(&adapter->RxReceiver, 
 						port,
 						PrivateRxReceiverEventListener,
@@ -188,16 +193,22 @@ xResult NetPortAdapterInit(xPortT* port, NetPortAdapterT* adapter, NetPortAdapte
 						adapterInit->RxBufferSize);
 
 		xDataBufferInit(&adapter->TxBuffer,
-						port,
-						0,
 						adapterInit->TxBuffer,
 						adapterInit->TxBufferSize);
 
 		adapter->TransactionMutex = xSemaphoreCreateMutex();
 		
+		xTaskCreate((void*)privateRxTask, // Function that implements the task.
+						"net port task", // Text name for the task.
+						0x100, // Number of indexes in the xStack array.
+						port, // Parameter passed into the task.
+						osPriorityNormal, // Priority at which the task is created.
+						&adapter->Internal.RxTaskHandle);
+
 		return xResultAccept;
 	}
   
   return xResultError;
 }
 //==============================================================================
+#endif //_NET_PORT_ADAPTER_H_

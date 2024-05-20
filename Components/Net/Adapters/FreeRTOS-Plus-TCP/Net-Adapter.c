@@ -1,7 +1,11 @@
 //==============================================================================
-//includes:
+//header:
 
 #include "Net-Adapter.h"
+
+#ifdef _NET_ADAPTER_H_
+//==============================================================================
+//includes:
 
 #include "Common/xMemory.h"
 #include "Abstractions/xSystem/xSystem.h"
@@ -431,7 +435,7 @@ static int PrivateTransmit(xNetSocketT* socket, void* data, int size)
 
 	while (sended < size)
 	{
-		int len = FreeRTOS_send(socket->Handle, mem + sended, size - sended, 0);
+		int len = FreeRTOS_send(socket->Handle, mem + sended, size - sended, FREERTOS_MSG_DONTWAIT);
 
 		if(len < 0)
 		{
@@ -453,7 +457,7 @@ static int PrivateReceive(xNetSocketT* socket, void* buffer, int size)
 		return -xResultError;
 	}
 
-	BaseType_t bytesRead = FreeRTOS_recv(socket->Handle, buffer, size, 0);
+	BaseType_t bytesRead = FreeRTOS_recv(socket->Handle, buffer, size, FREERTOS_MSG_DONTWAIT);
 
 	if (bytesRead < 0)
 	{
@@ -494,3 +498,4 @@ xResult NetAdapterInit(xNetT* net, NetAdapterT* adapter, NetAdapterInitT* adapte
 	return xResultError;
 }
 //==============================================================================
+#endif //_NET_ADAPTER_H_
