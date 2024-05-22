@@ -16,7 +16,7 @@ extern "C" {
 
 #ifdef INC_FREERTOS_H
 
-#define NET_TASK_STACK_SIZE 0x200
+#define NET_TASK_STACK_SIZE 0x100
 #define NET_COMPONENT_MAIN_TASK_STACK_SECTION __attribute__((section("._user_heap_stack")))
 
 #endif

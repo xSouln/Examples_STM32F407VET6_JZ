@@ -147,7 +147,7 @@ void StartDefaultTask(void *argument)
   MX_LWIP_Init();
 #endif
 
-  FreeRTOS_IPInit( ucIPAddress, ucNetMask, ucGatewayAddress, ucDNSServerAddress, ucMACAddress );
+  FreeRTOS_IPInit(ucIPAddress, ucNetMask, ucGatewayAddress, ucDNSServerAddress, ucMACAddress);
   /* USER CODE BEGIN StartDefaultTask */
   ComponentsInit(defaultTaskHandle);
   /* Infinite loop */
