@@ -50,8 +50,6 @@ typedef StaticEventGroup_t osStaticEventGroupDef_t;
 /* USER CODE BEGIN Variables */
 uint8_t ucHeap[configTOTAL_HEAP_SIZE] FREERTOS_HEAP_SECTION;
 
-int RTOS_ComponentsDefaultTaskWaterMark;
-
 static const uint8_t ucIPAddress[ 4 ] = { configIP_ADDR0, configIP_ADDR1, configIP_ADDR2, configIP_ADDR3 };
 static const uint8_t ucNetMask[ 4 ] = { configNET_MASK0, configNET_MASK1, configNET_MASK2, configNET_MASK3 };
 static const uint8_t ucGatewayAddress[ 4 ] = { configGATEWAY_ADDR0, configGATEWAY_ADDR1, configGATEWAY_ADDR2, configGATEWAY_ADDR3 };
@@ -154,8 +152,6 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
 	  ComponentsHandler();
-
-	  RTOS_ComponentsDefaultTaskWaterMark = uxTaskGetStackHighWaterMark(NULL);
   }
   /* USER CODE END StartDefaultTask */
 }
