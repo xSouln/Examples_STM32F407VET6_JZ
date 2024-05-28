@@ -37,27 +37,7 @@ extern "C" {
 //==============================================================================
 //types:
 
-typedef struct PACKED_PREFIX
-{
-	uint16_t Id_1;
-	uint16_t Id_2;
 
-	union
-	{
-		struct
-		{
-			uint32_t Id_3;
-			uint32_t Id_4;
-		};
-
-		uint64_t MAC;
-	};
-
-} UniqueDeviceID_T;
-//==============================================================================
-//values:
-
-extern volatile const UniqueDeviceID_T* UniqueDeviceID;
 //==============================================================================
 #ifdef __cplusplus
 }
