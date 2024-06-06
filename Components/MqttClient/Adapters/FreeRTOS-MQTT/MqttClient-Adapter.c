@@ -36,6 +36,7 @@ static void privateHandler(xMqttT* mqtt)
 	//MQTT_ReceiveLoop(&adapter->Internal.MQTTContext);
 }
 //------------------------------------------------------------------------------
+
 static xResult privateRequestListener(xMqttT* mqtt, xMqttRequestSelector selector, uint32_t mode, void* in, void* out)
 {
 	MqttClientAdapterT* adapter = (MqttClientAdapterT*)mqtt->Adapter.Content;
@@ -149,6 +150,7 @@ static xResult privateRequestListener(xMqttT* mqtt, xMqttRequestSelector selecto
 	return xResultAccept;
 }
 //------------------------------------------------------------------------------
+
 static xResult privateEventListener(xMqttT* mqtt, xMqttEventSelector selector, uint32_t mode, void* in, void* out)
 {
 	//register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
@@ -159,6 +161,7 @@ static xResult privateEventListener(xMqttT* mqtt, xMqttEventSelector selector, u
 	}
 }
 //------------------------------------------------------------------------------
+
 static int32_t privateTransportReceive(NetworkContext_t* pNetworkContext, void* pBuffer, size_t bytesToRecv)
 {
 	xMqttT* mqtt = pNetworkContext->Context;
@@ -187,6 +190,7 @@ static int32_t privateTransportReceive(NetworkContext_t* pNetworkContext, void* 
 	return bytesRead;
 }
 //------------------------------------------------------------------------------
+
 static int32_t privateTransportSend(NetworkContext_t* pNetworkContext, const void* pBuffer, size_t bytesToSend)
 {
 	xMqttT* mqtt = pNetworkContext->Context;
@@ -221,6 +225,7 @@ static int32_t privateTransportSend(NetworkContext_t* pNetworkContext, const voi
 	return sended;
 }
 //------------------------------------------------------------------------------
+
 static void privateMQTTCallback(struct MQTTContext * pContext,
         struct MQTTPacketInfo * pPacketInfo,
         struct MQTTDeserializedInfo * pDeserializedInfo)
@@ -239,6 +244,7 @@ static void privateMQTTCallback(struct MQTTContext * pContext,
 	MQTT_Publish(pContext, &publishInfo, 0);
 }
 //------------------------------------------------------------------------------
+
 static uint32_t privateMQTTGetTime(void)
 {
 	return xSystemGetTime();

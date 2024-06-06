@@ -1,7 +1,9 @@
 //=============================================================================
 //header:
 
+#include "MqttClient-Component.h"
 
+#if defined(_MQTT_CLIENT_COMPONENT_H_)
 //=============================================================================
 //includes:
 
@@ -13,7 +15,7 @@
 //==============================================================================
 //defines:
 
-#define MQTT_PORT_TX_BUFFER 200
+
 //==============================================================================
 //import:
 
@@ -21,15 +23,20 @@
 //==============================================================================
 //variables:
 
+#if MQTT_CLIENT_COMPONENT_TASK_ENABLE == 1
+
 static TaskHandle_t taskHandle;
 static StaticTask_t taskBuffer;
-static StackType_t taskStack[MQTT_TASK_STACK_SIZE] MQTT_CLIENT_COMPONENT_MAIN_TASK_STACK_SECTION;
+static StackType_t taskStack[MQTT_TASK_STACK_SIZE] MQTT_CLIENT_COMPONENT_TASK_STACK_SECTION;
 
 static int RTOS_MqttClientTaskStackWaterMark;
-//static int privateTimeStamp;
 
-static uint8_t privateMqttTxBuffer[MQTT_TX_BUFFER_SIZE];
-static uint8_t privateMqttPortTxBuffer[MQTT_PORT_TX_BUFFER];
+#endif //MQTT_CLIENT_COMPONENT_TASK_ENABLE
+//------------------------------------------------------------------------------
+
+static uint8_t privateMqttTxBuffer[MQTT_CLIENT_RX_BUFFER_SIZE];
+static uint8_t privateMqttPortTxBuffer[MQTT_CLIENT_PORT_TX_BUFFER_SIZE];
+//------------------------------------------------------------------------------
 
 xPortT MqttPort;
 xMqttT MqttClient;
@@ -38,58 +45,12 @@ uint32_t MqttTxTimeStamp = 0;
 //==============================================================================
 //functions:
 
+#if MQTT_CLIENT_COMPONENT_TASK_ENABLE == 1
 static void privateTask(void* arg)
 {
 	while (true)
 	{
-		//vTaskDelay(pdMS_TO_TICKS(10));
 		RTOS_MqttClientTaskStackWaterMark = uxTaskGetStackHighWaterMark(NULL);
-		//uint32_t time = xSystemGetTime(NULL);
-
-		/*if (!MqttClient.Handle && Net.SNTP_Complite)
-		{
-			xMqttRequestCreateClientT request;
-			request.ClientId = MQTT_CLIENT_ID;
-			request.Address = privateBrokerNetAddress.Value;
-			request.Port = MQTT_BROKER_PORT;
-
-			xMqttRequestListener(&MqttClient, xMqttRequestCreate, 0, &request, NULL);
-		}
-
-		if (MqttClient.Handle && MqttClient.State == xMqttClientIdle)
-		{
-			MqttComponentFlags.IsSubscribed = false;
-
-			xMqttRequestListener(&MqttClient, xMqttRequestConnect, 0, NULL, NULL);
-		}
-
-		if (MqttClient.State == xMqttClientConnected && !MqttComponentFlags.IsSubscribed)
-		{
-			xMqttRequestSubscribeToTopicT request;
-			request.Topic = MQTT_TOPIC_RX;
-
-			xMqttRequestListener(&MqttClient, xMqttRequestSubscribe, 0, &request, NULL);
-
-			MqttComponentFlags.IsSubscribed = true;
-		}
-
-		if (MqttClient.Handle)
-		{
-			xMqttHandler(&MqttClient);
-		}*/
-
-		/*if (MqttClientState.IsConnected && (time - privateTimeStamp) > 5000)
-		{
-			privateTimeStamp = time;
-
-			//xPortStartTransmission(&MqttPort);
-			//xPortTransmitString(&MqttPort, "bro ebat zaebal!!! nado sushitsa\r");
-			//xPortEndTransmission(&MqttPort);
-		}
-
-		xPortDirectlyHandler(MqttPort);*/
-
-
 
 		if (!MqttPort.IsOpen)
 		{
@@ -106,12 +67,26 @@ static void privateTask(void* arg)
 		}
 	}
 }
+#endif //privateTask
 //------------------------------------------------------------------------------
+
+#ifndef MqttClientComponentHandler
 void MqttClientComponentHandler()
 {
 
 }
+#endif //MqttClientComponentHandler
+
 //------------------------------------------------------------------------------
+
+#ifndef MqttClientComponentTimeSynchronization
+void MqttClientComponentTimeSynchronization()
+{
+
+}
+#endif
+//------------------------------------------------------------------------------
+
 static void privateEventListener(xPortT* port, int selector, uint32_t description, void* arg)
 {
 	switch((int)selector)
@@ -139,21 +114,9 @@ static MqttPortAdapterT privateMqttPortAdapter =
 
 xResult MqttClientComponentInit(void* parent)
 {
-	/*
-	MqttClientAdapterInitT adapterInit;
-	adapterInit.Buffer = privateMqttTxBuffer;
-	adapterInit.BufferSize = sizeof(privateMqttTxBuffer);
-
-	MqttClientAdapterInit(&MqttClient, &privateMqttClientAdapter, &adapterInit);
-
-	xMqttInitT mqttInit;
-	mqttInit.Parent = parent;
-
-	xMqttInit(&MqttClient, &mqttInit);*/
-
 	MqttPortAdapterInitT portAdapterInit = { 0 };
-	portAdapterInit.TxTopic = MQTT_TOPIC_TX;
-	portAdapterInit.RxTopic = MQTT_TOPIC_RX;
+	portAdapterInit.TxTopic = MQTT_CLIENT_TX_TOPIC;
+	portAdapterInit.RxTopic = MQTT_CLIENT_RX_TOPIC;
 	portAdapterInit.MqttBuffer = privateMqttTxBuffer;
 	portAdapterInit.MqttBufferSize = sizeof(privateMqttTxBuffer);
 	portAdapterInit.TxBuffer = privateMqttPortTxBuffer;
@@ -167,7 +130,7 @@ xResult MqttClientComponentInit(void* parent)
 
 	xPortInit(&MqttPort, &portInit);
 
-
+#if MQTT_CLIENT_COMPONENT_TASK_ENABLE == 1
 	taskHandle = xTaskCreateStatic(privateTask, // Function that implements the task.
 									"mqtt task", // Text name for the task.
 									MQTT_TASK_STACK_SIZE, // Number of indexes in the xStack array.
@@ -175,7 +138,9 @@ xResult MqttClientComponentInit(void* parent)
 									osPriorityNormal, // Priority at which the task is created.
 									taskStack, // Array to use as the task's stack.
 									&taskBuffer);
+#endif
 
 	return xResultAccept;
 }
 //==============================================================================
+#endif //_MQTT_CLIENT_COMPONENT_H_

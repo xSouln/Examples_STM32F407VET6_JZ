@@ -19,7 +19,6 @@ enum
 	ConncetionStateConnectToBroker,
 	ConncetionStateSubscribe,
 	ConncetionStateComplited
-
 };
 //==============================================================================
 //variables:
@@ -44,6 +43,7 @@ static void PrivateHandler(xPortT* port)
 	MQTT_ProcessLoop(&adapter->Internal.MQTTContext);
 }
 //------------------------------------------------------------------------------
+
 static xResult privateConnectHandler(xPortT* port, MqttPortAdapterT* adapter)
 {
 	if (adapter->Internal.Socket == NULL)
@@ -134,6 +134,7 @@ static xResult privateConnectHandler(xPortT* port, MqttPortAdapterT* adapter)
 	return adapter->Internal.ConnectState == ConncetionStateComplited ? xResultAccept : xResultError;
 }
 //------------------------------------------------------------------------------
+
 static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector selector, uint32_t description, void* arg)
 {
 	MqttPortAdapterT* adapter = (MqttPortAdapterT*)port->Adapter.Content;
@@ -222,6 +223,7 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 	return xResultAccept;
 }
 //------------------------------------------------------------------------------
+
 static void PrivateEventListener(xPortT* port, xPortAdapterEventSelector selector, uint32_t description, void* arg)
 {
 	//register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
@@ -232,6 +234,7 @@ static void PrivateEventListener(xPortT* port, xPortAdapterEventSelector selecto
 	}
 }
 //------------------------------------------------------------------------------
+
 static int32_t privateTransportReceive(NetworkContext_t* pNetworkContext, void* pBuffer, size_t bytesToRecv)
 {
 	xPortT* port = (void*)pNetworkContext;
@@ -294,6 +297,7 @@ static int32_t privateTransportSend(NetworkContext_t* pNetworkContext, const voi
 	return sended;
 }
 //------------------------------------------------------------------------------
+
 static void privateMQTTCallback(struct MQTTContext * pContext,
         struct MQTTPacketInfo * pPacketInfo,
         struct MQTTDeserializedInfo * pDeserializedInfo)
@@ -309,8 +313,6 @@ static void privateMQTTCallback(struct MQTTContext * pContext,
 
 		TerminalReceiveData(port, &rxPacket);
 	}
-
-	//MQTT_Publish(pContext, &publishInfo, 0);
 }
 //------------------------------------------------------------------------------
 static uint32_t privateMQTTGetTime(void)

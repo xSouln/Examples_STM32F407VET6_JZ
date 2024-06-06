@@ -62,6 +62,11 @@
 			<location>D:/Repositories/paho.mqtt.embedded-c/MQTTClient-C/src/MQTTClient.h</location>
 		</link>
 		<link>
+			<name>Components/Configurations/FreeRTOSConfig.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Inc/FreeRTOSConfig.h</locationURI>
+		</link>
+		<link>
 			<name>Drivers/CMSIS/system_stm32f4xx.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/system_stm32f4xx.c</locationURI>

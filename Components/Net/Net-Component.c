@@ -38,11 +38,17 @@ extern struct netif gnetif;
 static uint8_t private_rx_operation_buffer[NET_RX_OPERATION_BUFFER_SIZE] NET_RX_OPERATION_BUFFER_MEM_SECTION;
 static uint8_t private_rx_buffer[NET_RX_BUFFER_SIZE] NET_RX_BUFFER_MEM_SECTION;
 static uint8_t private_tx_buffer[NET_RX_BUFFER_SIZE] NET_TX_BUFFER_MEM_SECTION;
+//------------------------------------------------------------------------------
+
+#ifdef INC_FREERTOS_H
 
 static TaskHandle_t taskHandle;
 static StaticTask_t taskBuffer;
 static StackType_t taskStack[NET_TASK_STACK_SIZE] NET_COMPONENT_MAIN_TASK_STACK_SECTION;
+static uint32_t RTOS_NetTcpServerTaskStackWaterMark;
 
+#endif //INC_FREERTOS_H
+//------------------------------------------------------------------------------
 xNetSocketT ListenSocket =
 {
 	.Port = 5000,
@@ -55,7 +61,8 @@ xNetSocketT Socket =
 	.Handle = (void*)-1
 };
 
-int RTOS_NetTcpServerTaskStackWaterMark;
+static NetAdapterT privateNetAdapter;
+static NetPortAdapterT privateNetPortAdapter;
 
 xNetT Net NET_MEM_SECTION = { 0 };
 xPortT NetPort NET_PORT_MEM_SECTION = { 0 };
@@ -113,6 +120,8 @@ static void privateEventListener(ObjectBaseT* object, int selector, uint32_t des
 	}
 }
 //------------------------------------------------------------------------------
+
+#ifdef INC_FREERTOS_H
 static void privateTask(void* arg)
 {
 	char* result;
@@ -143,6 +152,7 @@ static void privateTask(void* arg)
 		RTOS_NetTcpServerTaskStackWaterMark = uxTaskGetStackHighWaterMark(NULL);
 	}
 }
+#endif //privateTask
 //------------------------------------------------------------------------------
 void NetComponentHandler()
 {
@@ -187,11 +197,6 @@ void NetComponentHandler()
 
 	//vTaskDelay(pdMS_TO_TICKS(33));
 }
-//==============================================================================
-//initializations:
-
-static NetAdapterT privateNetAdapter;
-static NetPortAdapterT privateNetPortAdapter;
 //==============================================================================
 //initialization:
 
@@ -250,6 +255,7 @@ xResult NetComponentInit(void* parent)
 
 	xPortSetBinding(&NetPort, &Socket);
 
+#ifdef INC_FREERTOS_H
 	taskHandle = xTaskCreateStatic(privateTask, // Function that implements the task.
 								"net task", // Text name for the task.
 								NET_TASK_STACK_SIZE, // Number of indexes in the xStack array.
@@ -257,6 +263,7 @@ xResult NetComponentInit(void* parent)
 								osPriorityNormal, // Priority at which the task is created.
 								taskStack, // Array to use as the task's stack.
 								&taskBuffer);
+#endif
 
 	return xResultAccept;
 }

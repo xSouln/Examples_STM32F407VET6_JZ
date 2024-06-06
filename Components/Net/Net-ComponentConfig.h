@@ -16,11 +16,16 @@ extern "C" {
 
 #ifdef INC_FREERTOS_H
 
+#ifndef NET_TASK_STACK_SIZE
 #define NET_TASK_STACK_SIZE 0x100
-#define NET_COMPONENT_MAIN_TASK_STACK_SECTION __attribute__((section("._user_heap_stack")))
-
 #endif
 
+#ifndef NET_COMPONENT_MAIN_TASK_STACK_SECTION
+#define NET_COMPONENT_MAIN_TASK_STACK_SECTION __attribute__((section("._user_heap_stack")))
+#endif
+
+#endif //INC_FREERTOS_H
+//------------------------------------------------------------------------------
 #define NET_UNDEFINED_LAYOUT 0
 #define NET_LWIP_LAYOUT 1
 #define NET_FREERTOS_LAYOUT 2
@@ -35,12 +40,19 @@ extern "C" {
 #define NET_MEM_SECTION __attribute__((section("._user_heap_stack")))
 #define NET_PORT_MEM_SECTION __attribute__((section("._user_heap_stack")))
 
+#ifndef NET_RX_OPERATION_BUFFER_SIZE
 #define NET_RX_OPERATION_BUFFER_SIZE 0x200
+#endif
+
+#ifndef NET_RX_BUFFER_SIZE
 #define NET_RX_BUFFER_SIZE 0x200
+#endif
+
+#ifndef NET_TX_BUFFER_SIZE
 #define NET_TX_BUFFER_SIZE 0x400
+#endif
 //==============================================================================
 //import:
-
 
 
 //==============================================================================
