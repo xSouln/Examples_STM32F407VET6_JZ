@@ -77,13 +77,13 @@ static void privateEventListener(ObjectBaseT* object, int selector, uint32_t des
 
 		switch (selector)
 		{
-			case xPortObjectEventRxFoundEndLine:
+			case xPortEventRxFoundEndLine:
 			{
 				TerminalReceiveData(port, arg);
 			}
 			break;
 
-			case xPortObjectEventRxBufferIsFull:
+			case xPortEventRxBufferIsFull:
 			{
 				TerminalReceiveData(port, arg);
 			}
