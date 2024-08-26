@@ -151,17 +151,6 @@ static xResult privateRequestListener(xMqttT* mqtt, xMqttRequestSelector selecto
 }
 //------------------------------------------------------------------------------
 
-static xResult privateEventListener(xMqttT* mqtt, xMqttEventSelector selector, uint32_t mode, void* in, void* out)
-{
-	//register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
-
-	switch((int)selector)
-	{
-		default: return xResultAccept;
-	}
-}
-//------------------------------------------------------------------------------
-
 static int32_t privateTransportReceive(NetworkContext_t* pNetworkContext, void* pBuffer, size_t bytesToRecv)
 {
 	xMqttT* mqtt = pNetworkContext->Context;
@@ -255,16 +244,13 @@ static uint32_t privateMQTTGetTime(void)
 static xMqttInterfaceT privateInterface =
 {
 	.Handler = (xMqttHandlerT)privateHandler,
-
 	.RequestListener = (xMqttRequestListenerT)privateRequestListener,
-	.EventListener = (xMqttEventListenerT)privateEventListener,
 };
 //------------------------------------------------------------------------------
 xResult MqttClientAdapterInit(xMqttT* mqtt, MqttClientAdapterT* adapter, MqttClientAdapterInitT* init)
 {
 	if (mqtt && init)
 	{
-		mqtt->Adapter.Description = nameof(MqttPortAdapterT);
 		mqtt->Adapter.Content = adapter;
 		mqtt->Adapter.Interface = &privateInterface;
 

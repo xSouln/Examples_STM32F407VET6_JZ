@@ -33,6 +33,14 @@ extern "C" {
 #define MQTT_TASK_STACK_SIZE 0x100
 #endif
 
+#ifndef MQTT_TASK_NAME
+#define MQTT_TASK_NAME "mqtt task"
+#endif
+
+#ifndef MQTT_TASK_PRIORITY
+#define MQTT_TASK_PRIORITY osPriorityNormal
+#endif
+
 #endif //MQTT_CLIENT_COMPONENT_TASK_ENABLE
 //------------------------------------------------------------------------------
 #ifndef MQTT_BROKER_IP_ADDR0

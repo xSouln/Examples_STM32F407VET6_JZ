@@ -71,7 +71,7 @@ xPortT NetPort NET_PORT_MEM_SECTION = { 0 };
 
 static void privateEventListener(ObjectBaseT* object, int selector, uint32_t description, void* arg)
 {
-	if (object->Description->ObjectId == xPORT_OBJECT_ID)
+	if (object->Description->ObjectId == xPORT_UID)
 	{
 		xPortT* port = (xPortT*)object;
 
@@ -92,7 +92,7 @@ static void privateEventListener(ObjectBaseT* object, int selector, uint32_t des
 			default : return;
 		}
 	}
-	else if (object->Description->ObjectId == xNET_OBJECT_ID)
+	else if (object->Description->ObjectId == xNET_UID)
 	{
 		xNetT* net = (xNetT*)object;
 

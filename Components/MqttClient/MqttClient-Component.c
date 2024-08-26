@@ -23,7 +23,7 @@
 //==============================================================================
 //variables:
 
-#if MQTT_CLIENT_COMPONENT_TASK_ENABLE == 1
+#if MQTT_CLIENT_COMPONENT_TASK_ENABLE == 1 && OS_TYPE == OS_TYPE_FREERTOS
 
 static TaskHandle_t taskHandle;
 static StaticTask_t taskBuffer;
@@ -130,14 +130,14 @@ xResult MqttClientComponentInit(void* parent)
 
 	xPortInit(&MqttPort, &portInit);
 
-#if MQTT_CLIENT_COMPONENT_TASK_ENABLE == 1
+#if MQTT_CLIENT_COMPONENT_TASK_ENABLE == 1 && OS_TYPE == OS_TYPE_FREERTOS
 	taskHandle = xTaskCreateStatic(privateTask, // Function that implements the task.
-									"mqtt task", // Text name for the task.
-									MQTT_TASK_STACK_SIZE, // Number of indexes in the xStack array.
-									NULL, // Parameter passed into the task.
-									osPriorityNormal, // Priority at which the task is created.
-									taskStack, // Array to use as the task's stack.
-									&taskBuffer);
+			MQTT_TASK_NAME, // Text name for the task.
+			MQTT_TASK_STACK_SIZE, // Number of indexes in the xStack array.
+			NULL, // Parameter passed into the task.
+			MQTT_TASK_PRIORITY, // Priority at which the task is created.
+			taskStack, // Array to use as the task's stack.
+			&taskBuffer);
 #endif
 
 	return xResultAccept;
