@@ -51,6 +51,10 @@ extern "C" {
 #ifndef NET_TX_BUFFER_SIZE
 #define NET_TX_BUFFER_SIZE 0x400
 #endif
+
+#ifndef NET_PORT_START_ID_OFFSET
+#define NET_PORT_START_ID_OFFSET 10
+#endif
 //==============================================================================
 //import:
 

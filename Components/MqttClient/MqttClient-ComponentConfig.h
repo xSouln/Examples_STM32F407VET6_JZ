@@ -94,6 +94,10 @@ extern "C" {
 #ifndef MQTT_CLIENT_PORT_TX_BUFFER_SIZE
 #define MQTT_CLIENT_PORT_TX_BUFFER_SIZE 512
 #endif
+
+#ifndef MQTT_CLIENT_PORT_START_ID_OFFSET
+#define MQTT_CLIENT_PORT_START_ID_OFFSET 60
+#endif
 //==============================================================================
 //import:
 
