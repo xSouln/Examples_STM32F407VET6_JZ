@@ -51,7 +51,11 @@ static void PrivateHandler(xPortT* port)
 	}
 }
 //------------------------------------------------------------------------------
-static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector selector, uint32_t description, void* arg)
+static xResult PrivateRequestListener(xPortT* port,
+		xPortAdapterRequestSelector selector,
+		uint32_t description,
+		void* arg,
+		void* out)
 {
 	NetPortAdapterT* adapter = (NetPortAdapterT*)port->Adapter.Content;
 	xNetSocketT* socket = port->Binding;
@@ -99,6 +103,7 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 			break;
 
 		case xPortAdapterRequestEndTransmission:
+		{
 			if (socket->State == xNetSocketEstablished)
 			{
 				xNetTransmit(socket, adapter->TxBuffer.Data, adapter->TxBuffer.Length);
@@ -106,6 +111,36 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 			}
 			xSemaphoreGive(adapter->TransactionMutex);
 			break;
+		}
+
+		case xPortRequestGetOptions:
+		{
+			xNetOptionsT options = { 0 };
+			options.IsEnabled = true;
+			options.ServerIsEnabled = true;
+			options.DHCP_IsEnabled = !adapter->Net->StaticAddressIsEnabled;
+			options.SNTP_IsEnabled = adapter->Net->SNTP_IsEnabled;
+			options.Address.Value = adapter->Net->LocalAddress.Value;
+			options.NetMask.Value = adapter->Net->NetMask.Value;
+			options.DNSServerAddress.Value = adapter->Net->DNSServerAddress.Value;
+			options.GatewayAddress.Value = adapter->Net->GatewayAddress.Value;
+			options.ServerPort = adapter->Net->ServerPort;
+
+			xDataBufferAdd(out, &options, sizeof(options));
+
+			if (options.SNTP_IsEnabled)
+			{
+				xDataBufferAdd(out, SNTP_SERVER, strlen(SNTP_SERVER) + 1);
+			}
+
+			break;
+		}
+
+		case xPortRequestSetOptions:
+		{
+
+			break;
+		}
 
 		default : return xResultRequestIsNotFound;
 	}
@@ -180,11 +215,18 @@ xResult NetPortAdapterInit(xPortT* port, NetPortAdapterT* adapter, NetPortAdapte
 		port->Adapter.Content = adapter;
 		port->Adapter.Interface = &privatePortInterface;
 
+		port->Interface = xPortInterfaceEthernet;
+		port->TransferLayer = xPortTransferLayerByteStream;
+
+		adapter->Net = adapterInit->Net;
+
 		adapter->RxOperationBuffer = adapterInit->RxOperationBuffer;
 		adapter->RxOperationBufferSize = adapterInit->RxOperationBufferSize;
 
 		adapter->Internal.RxCircleBuffer.SizeMask = 0x1ff;
 		adapter->Internal.RxCircleBuffer.Memory = adapter->Internal.RxCircleBufferMemory;
+
+		adapter->Net->SNTP_IsEnabled = true;
 
 		xRxReceiverInit(&adapter->RxReceiver, 
 						port,

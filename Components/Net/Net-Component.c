@@ -23,7 +23,7 @@
 //==============================================================================
 //defines:
 
-
+uint8_t test_array[100];
 //==============================================================================
 //import:
 
@@ -233,6 +233,8 @@ xResult NetComponentInit(void* parent)
 
 	NetPortAdapterInitT netPortInit =
 	{
+		.Net = &Net,
+
 		.RxOperationBuffer = private_rx_operation_buffer,
 		.RxOperationBufferSize = sizeof(private_rx_operation_buffer),
 
@@ -254,6 +256,8 @@ xResult NetComponentInit(void* parent)
 	xPortInit(&NetPort, &portInit);
 
 	xPortSetBinding(&NetPort, &Socket);
+
+	Net.ServerPort = 5000;
 
 #ifdef INC_FREERTOS_H
 	taskHandle = xTaskCreateStatic(privateTask, // Function that implements the task.

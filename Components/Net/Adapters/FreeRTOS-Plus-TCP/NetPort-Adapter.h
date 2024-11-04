@@ -32,7 +32,9 @@ typedef struct
 //------------------------------------------------------------------------------
 typedef struct
 {
-	xPortAdapterBaseT Base;
+	//xPortAdapterBaseT Base;
+
+	xNetT* Net;
 
 	xRxReceiverT RxReceiver;
 	xDataBufferT TxBuffer;
@@ -48,6 +50,8 @@ typedef struct
 //------------------------------------------------------------------------------
 typedef struct
 {
+	xNetT* Net;
+
 	uint8_t* RxOperationBuffer;
 	int RxOperationBufferSize;
 

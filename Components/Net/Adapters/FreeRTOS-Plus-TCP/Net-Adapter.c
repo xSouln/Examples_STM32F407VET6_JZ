@@ -15,7 +15,6 @@
 //==============================================================================
 //defines:
 
-#define SNTP_SERVER "pool.ntp.org"
 #define SNTP_PORT 123
 #define SOCKET_RX_BLOCK_TIME 500
 #define SOCKET_TX_BLOCK_TIME 1000
@@ -171,7 +170,10 @@ static void PrivateHandler(xNetT* net)
 
 	if (dhcpLastState != net->DHCP_Complite && net->DHCP_Complite)
 	{
-		FreeRTOS_GetAddressConfiguration(&net->LocalAddress.Value, NULL, NULL, NULL);
+		FreeRTOS_GetAddressConfiguration(&net->LocalAddress.Value,
+				&net->NetMask.Value,
+				&net->GatewayAddress.Value,
+				&net->DNSServerAddress.Value);
 
 		privateSendEvent(net, xNetEventDHCP_Complite, 0);
 	}

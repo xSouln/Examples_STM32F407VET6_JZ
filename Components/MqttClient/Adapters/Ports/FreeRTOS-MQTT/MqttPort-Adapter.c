@@ -135,7 +135,11 @@ static xResult privateConnectHandler(xPortT* port, MqttPortAdapterT* adapter)
 }
 //------------------------------------------------------------------------------
 
-static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector selector, uint32_t description, void* arg)
+static xResult PrivateRequestListener(xPortT* port,
+		xPortAdapterRequestSelector selector,
+		uint32_t description,
+		void* arg,
+		void* out)
 {
 	MqttPortAdapterT* adapter = (MqttPortAdapterT*)port->Adapter.Content;
 
@@ -148,6 +152,27 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 		case xPortAdapterRequestGetTxBufferFreeSize:
 			*(uint32_t*)arg = xDataBufferGetFreeSize(&adapter->Internal.TxDataBuffer);
 			break;
+
+		case xPortRequestGetOptions:
+		{
+			uint16_t size = 0;
+
+			size = sizeof(adapter->NetAddress);
+			xDataBufferAdd(out, &adapter->NetAddress, size);
+
+			size = sizeof(adapter->NetPort);
+			xDataBufferAdd(out, &adapter->NetPort, size);
+
+			size = strlen((char*)adapter->Id) + 1;
+			xDataBufferAdd(out, adapter->Id, size);
+
+			size = strlen((char*)adapter->RxTopic) + 1;
+			xDataBufferAdd(out, adapter->RxTopic, size);
+
+			size = strlen((char*)adapter->TxTopic) + 1;
+			xDataBufferAdd(out, adapter->TxTopic, size);
+			break;
+		}
 
 		case xPortAdapterRequestOpen:
 		{
@@ -177,6 +202,16 @@ static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector 
 		{
 			port->IsOpen = false;
 
+			break;
+		}
+
+		case xPortRequestSetOptions:
+		{
+			break;
+		}
+
+		case xPortRequestGetInfo:
+		{
 			break;
 		}
 
@@ -361,6 +396,9 @@ xResult MqttPortAdapterInit(xPortT* port, MqttPortAdapterT* adapter, MqttPortAda
 		port->Adapter.Description = nameof(MqttPortAdapterT);
 		port->Adapter.Content = adapter;
 		port->Adapter.Interface = &privatePortInterface;
+
+		port->Interface = xPortInterfaceEthernet;
+		port->TransferLayer = xPortTransferLayerMQTT;
 
 		memset(&adapter->Internal, 0, sizeof(adapter->Internal));
 

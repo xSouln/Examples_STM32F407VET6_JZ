@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../xLibs"
+		},
+		{
+			"path": "../Repositories-SintezElectro/Sources"
+		}
+	],
+	"settings": {
+		"cortex-debug.openocdPath": "C:/assembly_tools/openocd-20231002/bin",
+		"cortex-debug.gdbPath": "C:/assembly_tools/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-arm-none-eabi/bin/arm-none-eabi-gdb"
+	}
+}
