@@ -7,7 +7,31 @@
 //==============================================================================
 //includes:
 
+#include "Abstractions/xReflection/xReflection.h"
+//==============================================================================
+//types:
 
+typedef struct
+{
+	xPropertyProviderHandleT Base;
+
+	xPortT* Port;
+	xNetT* Net;
+
+} PropertyProviderHandleT;
+//==============================================================================
+//variables:
+
+static const xPropertyDescriptionT privatePropertiesInfo[] =
+{
+	{ .PropertyId = xNetOptionsFlagsProperty, .Info = xPropertyFlagsType, .SizeInfo = xPropertyTypeSizeHalfWord },
+	{ .PropertyId = xNetOptionsServerPortProperty, .Info = xPropertyBaseType, .SizeInfo = xPropertyTypeSizeHalfWord },
+	{ .PropertyId = xNetOptionsAddressProperty, .Info = xPropertyCustomType, .SizeInfo = xPropertyTypeSizeWord },
+	{ .PropertyId = xNetOptionsNetMaskProperty, .Info = xPropertyCustomType, .SizeInfo = xPropertyTypeSizeWord },
+	{ .PropertyId = xNetOptionsGatewayAddressProperty, .Info = xPropertyCustomType, .SizeInfo = xPropertyTypeSizeWord },
+	{ .PropertyId = xNetOptionsDNSServerAddressProperty, .Info = xPropertyCustomType, .SizeInfo = xPropertyTypeSizeWord },
+	{ .PropertyId = xNetOptionsSNTPServerProperty, .Info = xPropertyStringType, .SizeInfo = xPropertyTypeSizeByte },
+};
 //==============================================================================
 //functions:
 
@@ -30,6 +54,7 @@ static void privateRxTask(xPortT* port)
 	}
 }
 //------------------------------------------------------------------------------
+
 static void PrivateHandler(xPortT* port)
 {
 	NetPortAdapterT* adapter = (NetPortAdapterT*)port->Adapter.Content;
@@ -51,6 +76,98 @@ static void PrivateHandler(xPortT* port)
 	}
 }
 //------------------------------------------------------------------------------
+
+static xResult privateOptionsGetter(PropertyProviderHandleT* handle, xPropertyDescriptionT descriptions)
+{
+	switch (descriptions.PropertyId)
+	{
+		case xNetOptionsFlagsProperty:
+		{
+			xNetOptionsFlagsT flags;
+
+			flags.IsEnabled = true;
+			flags.ServerIsEnabled = true;
+			flags.DHCP_IsEnabled = !handle->Net->StaticAddressIsEnabled;
+			flags.SNTP_IsEnabled = handle->Net->SNTP_IsEnabled;
+
+			xDataBufferAdd(handle->Base.Out, &flags, sizeof(flags));
+			break;
+		}
+
+		case xNetOptionsServerPortProperty:
+			xDataBufferAdd(handle->Base.Out, &handle->Net->ServerPort, sizeof(handle->Net->ServerPort));
+			break;
+
+		case xNetOptionsAddressProperty:
+			xDataBufferAdd(handle->Base.Out, &handle->Net->LocalAddress.Value, sizeof(handle->Net->LocalAddress.Value));
+			break;
+
+		case xNetOptionsNetMaskProperty:
+			xDataBufferAdd(handle->Base.Out, &handle->Net->NetMask.Value, sizeof(handle->Net->NetMask.Value));
+			break;
+
+		case xNetOptionsGatewayAddressProperty:
+			xDataBufferAdd(handle->Base.Out, &handle->Net->GatewayAddress.Value, sizeof(handle->Net->GatewayAddress.Value));
+			break;
+
+		case xNetOptionsDNSServerAddressProperty:
+			xDataBufferAdd(handle->Base.Out, &handle->Net->DNSServerAddress.Value, sizeof(handle->Net->DNSServerAddress.Value));
+			break;
+
+		case xNetOptionsSNTPServerProperty:
+			xDataBufferAdd(handle->Base.Out, SNTP_SERVER, sizeof(SNTP_SERVER));
+			break;
+	}
+
+	return xResultAccept;
+}
+//------------------------------------------------------------------------------
+
+static xResult privateOptionsSetter(PropertyProviderHandleT* handle,
+		xPropertyDescriptionT descriptions,
+		xMemoryReaderT* memoryReader)
+{
+	switch (descriptions.PropertyId)
+	{
+		case xNetOptionsFlagsProperty:
+		{
+			xNetOptionsFlagsT flags = { 0 };
+			xResult result = xMemoryReaderRead(memoryReader, &flags, sizeof(flags));
+
+			if (result == xResultAccept)
+			{
+				handle->Net->StaticAddressIsEnabled = !flags.DHCP_IsEnabled;
+				handle->Net->SNTP_IsEnabled = flags.SNTP_IsEnabled;
+			}
+
+			return result;
+		}
+
+		case xNetOptionsServerPortProperty:
+			return xMemoryReaderRead(memoryReader, &handle->Net->ServerPort, sizeof(handle->Net->ServerPort));
+
+		case xNetOptionsAddressProperty:
+			return xMemoryReaderRead(memoryReader, &handle->Net->LocalAddress.Value, sizeof(handle->Net->LocalAddress.Value));
+
+		case xNetOptionsNetMaskProperty:
+			return xMemoryReaderRead(memoryReader, &handle->Net->NetMask.Value, sizeof(handle->Net->NetMask.Value));
+
+		case xNetOptionsGatewayAddressProperty:
+			return xMemoryReaderRead(memoryReader, &handle->Net->GatewayAddress.Value, sizeof(handle->Net->GatewayAddress.Value));
+
+		case xNetOptionsDNSServerAddressProperty:
+			return xMemoryReaderRead(memoryReader, &handle->Net->DNSServerAddress.Value, sizeof(handle->Net->DNSServerAddress.Value));
+
+		case xNetOptionsSNTPServerProperty:
+			xMemoryReaderOffsetString(memoryReader);
+			//xDataBufferAdd(handle->Base.Out, SNTP_SERVER, sizeof(SNTP_SERVER));
+			break;
+	}
+
+	return xResultAccept;
+}
+//------------------------------------------------------------------------------
+
 static xResult PrivateRequestListener(xPortT* port,
 		xPortAdapterRequestSelector selector,
 		uint32_t description,
@@ -115,29 +232,48 @@ static xResult PrivateRequestListener(xPortT* port,
 
 		case xPortRequestGetOptions:
 		{
-			xNetOptionsT options = { 0 };
-			options.IsEnabled = true;
-			options.ServerIsEnabled = true;
-			options.DHCP_IsEnabled = !adapter->Net->StaticAddressIsEnabled;
-			options.SNTP_IsEnabled = adapter->Net->SNTP_IsEnabled;
-			options.Address.Value = adapter->Net->LocalAddress.Value;
-			options.NetMask.Value = adapter->Net->NetMask.Value;
-			options.DNSServerAddress.Value = adapter->Net->DNSServerAddress.Value;
-			options.GatewayAddress.Value = adapter->Net->GatewayAddress.Value;
-			options.ServerPort = adapter->Net->ServerPort;
+			xPropertyProviderArgT* request = arg;
 
-			xDataBufferAdd(out, &options, sizeof(options));
-
-			if (options.SNTP_IsEnabled)
+			if (request == null || request->SizeOfParameters == 0)
 			{
-				xDataBufferAdd(out, SNTP_SERVER, strlen(SNTP_SERVER) + 1);
+				return xResultError;
 			}
+
+			PropertyProviderHandleT providerHandle;
+			providerHandle.Base.Provider = (void*)privateOptionsGetter;
+			providerHandle.Base.Out = request->Out;
+			providerHandle.Net = adapter->Net;
+			providerHandle.Port = port;
+
+			xReflectionGetterProvider(&providerHandle.Base,
+					request->Info,
+					request->SizeOfParameters,
+					privatePropertiesInfo,
+					sizeof_array(privatePropertiesInfo));
 
 			break;
 		}
 
 		case xPortRequestSetOptions:
 		{
+			xPropertyProviderArgT* request = arg;
+
+			if (request == null || request->SizeOfParameters == 0)
+			{
+				return xResultError;
+			}
+
+			PropertyProviderHandleT providerHandle;
+			providerHandle.Base.Provider = (void*)privateOptionsSetter;
+			providerHandle.Base.Out = request->Out;
+			providerHandle.Net = adapter->Net;
+			providerHandle.Port = port;
+
+			xReflectionSetterProvider(&providerHandle.Base,
+					request->Info,
+					request->SizeOfParameters,
+					privatePropertiesInfo,
+					sizeof_array(privatePropertiesInfo));
 
 			break;
 		}
@@ -207,6 +343,7 @@ static xPortAdapterInterfaceT privatePortInterface =
 	.Receive = (xPortAdapterReceiveActionT)PrivateReceive
 };
 //------------------------------------------------------------------------------
+
 xResult NetPortAdapterInit(xPortT* port, NetPortAdapterT* adapter, NetPortAdapterInitT* adapterInit)
 {
 	if (port)

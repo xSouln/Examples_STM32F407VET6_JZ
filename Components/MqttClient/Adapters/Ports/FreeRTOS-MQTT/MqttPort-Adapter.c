@@ -5,6 +5,7 @@
 #include "Components.h"
 #include "Common/xCircleBuffer.h"
 #include "Abstractions/xMQTT/xMQTT.h"
+#include "Abstractions/xReflection/xReflection.h"
 //==============================================================================
 //defines:
 
@@ -20,10 +21,37 @@ enum
 	ConncetionStateSubscribe,
 	ConncetionStateComplited
 };
+//------------------------------------------------------------------------------
+
+enum
+{
+	xMqttOptionsBrokerAddressProperty,
+	xMqttOptionsNetPortProperty,
+	xMqttOptionsClientIdProperty,
+	xMqttOptionsRxTopicProperty,
+	xMqttOptionsTxTopicProperty,
+};
+//------------------------------------------------------------------------------
+
+typedef struct
+{
+	xPropertyProviderHandleT Base;
+
+	xPortT* Port;
+	MqttPortAdapterT* Adapter;
+
+} PropertyProviderHandleT;
 //==============================================================================
 //variables:
 
-
+static const xPropertyDescriptionT privatePropertiesInfo[] =
+{
+	{ .PropertyId = xMqttOptionsBrokerAddressProperty, .Info = xPropertyCustomType, .SizeInfo = xPropertyTypeSizeWord },
+	{ .PropertyId = xMqttOptionsNetPortProperty, .Info = xPropertyBaseType, .SizeInfo = xPropertyTypeSizeHalfWord },
+	{ .PropertyId = xMqttOptionsClientIdProperty, .Info = xPropertyStringType, .SizeInfo = xPropertyTypeSizeByte },
+	{ .PropertyId = xMqttOptionsRxTopicProperty, .Info = xPropertyStringType, .SizeInfo = xPropertyTypeSizeByte },
+	{ .PropertyId = xMqttOptionsTxTopicProperty, .Info = xPropertyStringType, .SizeInfo = xPropertyTypeSizeByte },
+};
 //==============================================================================
 //prototypes:
 
@@ -135,6 +163,61 @@ static xResult privateConnectHandler(xPortT* port, MqttPortAdapterT* adapter)
 }
 //------------------------------------------------------------------------------
 
+static xResult privateOptionsGetter(PropertyProviderHandleT* handle, xPropertyDescriptionT descriptions)
+{
+	switch (descriptions.PropertyId)
+	{
+		case xMqttOptionsNetPortProperty:
+			xDataBufferAdd(handle->Base.Out, &handle->Adapter->NetPort, sizeof(handle->Adapter->NetPort));
+			break;
+
+		case xMqttOptionsBrokerAddressProperty:
+			xDataBufferAdd(handle->Base.Out, &handle->Adapter->NetAddress, sizeof(handle->Adapter->NetAddress));
+			break;
+
+		case xMqttOptionsClientIdProperty:
+			xDataBufferAdd(handle->Base.Out, handle->Adapter->Id, strlen(handle->Adapter->Id) + 1);
+			break;
+
+		case xMqttOptionsRxTopicProperty:
+			xDataBufferAdd(handle->Base.Out, handle->Adapter->RxTopic, strlen(handle->Adapter->RxTopic) + 1);
+			break;
+
+		case xMqttOptionsTxTopicProperty:
+			xDataBufferAdd(handle->Base.Out, handle->Adapter->TxTopic, strlen(handle->Adapter->TxTopic) + 1);
+			break;
+	}
+
+	return xResultAccept;
+}
+//------------------------------------------------------------------------------
+
+static xResult privateOptionsSetter(PropertyProviderHandleT* handle,
+		xPropertyDescriptionT descriptions,
+		xMemoryReaderT* memoryReader)
+{
+	switch (descriptions.PropertyId)
+	{
+		case xMqttOptionsNetPortProperty:
+			return xMemoryReaderRead(memoryReader, &handle->Adapter->NetPort, sizeof(handle->Adapter->NetPort));
+
+		case xMqttOptionsBrokerAddressProperty:
+			return xMemoryReaderRead(memoryReader, &handle->Adapter->NetAddress, sizeof(handle->Adapter->NetAddress));
+
+		case xMqttOptionsClientIdProperty:
+			return xMemoryReaderReadString(memoryReader, handle->Adapter->Id, strlen(handle->Adapter->Id));
+
+		case xMqttOptionsRxTopicProperty:
+			return xMemoryReaderReadString(memoryReader, handle->Adapter->RxTopic, strlen(handle->Adapter->RxTopic));
+
+		case xMqttOptionsTxTopicProperty:
+			return xMemoryReaderReadString(memoryReader, handle->Adapter->TxTopic, strlen(handle->Adapter->TxTopic));
+	}
+
+	return xResultAccept;
+}
+//------------------------------------------------------------------------------
+
 static xResult PrivateRequestListener(xPortT* port,
 		xPortAdapterRequestSelector selector,
 		uint32_t description,
@@ -155,22 +238,48 @@ static xResult PrivateRequestListener(xPortT* port,
 
 		case xPortRequestGetOptions:
 		{
-			uint16_t size = 0;
+			xPropertyProviderArgT* request = arg;
 
-			size = sizeof(adapter->NetAddress);
-			xDataBufferAdd(out, &adapter->NetAddress, size);
+			if (request == null || request->SizeOfParameters == 0)
+			{
+				return xResultError;
+			}
 
-			size = sizeof(adapter->NetPort);
-			xDataBufferAdd(out, &adapter->NetPort, size);
+			PropertyProviderHandleT providerHandle;
+			providerHandle.Base.Provider = (void*)privateOptionsGetter;
+			providerHandle.Base.Out = request->Out;
+			providerHandle.Adapter = adapter;
+			providerHandle.Port = port;
 
-			size = strlen((char*)adapter->Id) + 1;
-			xDataBufferAdd(out, adapter->Id, size);
+			xReflectionGetterProvider(&providerHandle.Base,
+					request->Info,
+					request->SizeOfParameters,
+					privatePropertiesInfo,
+					sizeof_array(privatePropertiesInfo));
+			break;
+		}
 
-			size = strlen((char*)adapter->RxTopic) + 1;
-			xDataBufferAdd(out, adapter->RxTopic, size);
+		case xPortRequestSetOptions:
+		{
+			xPropertyProviderArgT* request = arg;
 
-			size = strlen((char*)adapter->TxTopic) + 1;
-			xDataBufferAdd(out, adapter->TxTopic, size);
+			if (request == null || request->SizeOfParameters == 0)
+			{
+				return xResultError;
+			}
+
+			PropertyProviderHandleT providerHandle;
+			providerHandle.Base.Provider = (void*)privateOptionsSetter;
+			providerHandle.Base.Out = request->Out;
+			providerHandle.Adapter = adapter;
+			providerHandle.Port = port;
+
+			xReflectionSetterProvider(&providerHandle.Base,
+					request->Info,
+					request->SizeOfParameters,
+					privatePropertiesInfo,
+					sizeof_array(privatePropertiesInfo));
+
 			break;
 		}
 
@@ -202,11 +311,6 @@ static xResult PrivateRequestListener(xPortT* port,
 		{
 			port->IsOpen = false;
 
-			break;
-		}
-
-		case xPortRequestSetOptions:
-		{
 			break;
 		}
 
