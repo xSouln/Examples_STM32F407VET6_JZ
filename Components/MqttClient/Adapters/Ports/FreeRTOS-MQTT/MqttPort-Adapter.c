@@ -205,13 +205,16 @@ static xResult privateOptionsSetter(PropertyProviderHandleT* handle,
 			return xMemoryReaderRead(memoryReader, &handle->Adapter->NetAddress, sizeof(handle->Adapter->NetAddress));
 
 		case xMqttOptionsClientIdProperty:
-			return xMemoryReaderReadString(memoryReader, handle->Adapter->Id, strlen(handle->Adapter->Id));
+			xMemoryReaderReadString(memoryReader, handle->Adapter->Id, strlen(handle->Adapter->Id));
+			return xResultAccept;
 
 		case xMqttOptionsRxTopicProperty:
-			return xMemoryReaderReadString(memoryReader, handle->Adapter->RxTopic, strlen(handle->Adapter->RxTopic));
+			xMemoryReaderReadString(memoryReader, handle->Adapter->RxTopic, strlen(handle->Adapter->RxTopic));
+			return xResultAccept;
 
 		case xMqttOptionsTxTopicProperty:
-			return xMemoryReaderReadString(memoryReader, handle->Adapter->TxTopic, strlen(handle->Adapter->TxTopic));
+			xMemoryReaderReadString(memoryReader, handle->Adapter->TxTopic, strlen(handle->Adapter->TxTopic));
+			return xResultAccept;
 	}
 
 	return xResultAccept;

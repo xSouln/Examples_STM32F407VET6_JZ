@@ -161,7 +161,7 @@ static xResult privateOptionsSetter(PropertyProviderHandleT* handle,
 		case xNetOptionsSNTPServerProperty:
 			xMemoryReaderOffsetString(memoryReader);
 			//xDataBufferAdd(handle->Base.Out, SNTP_SERVER, sizeof(SNTP_SERVER));
-			break;
+			return xResultNotSupported;
 	}
 
 	return xResultAccept;
