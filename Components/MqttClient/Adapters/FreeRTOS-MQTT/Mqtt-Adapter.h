@@ -1,7 +1,7 @@
 //==============================================================================
 //header:
 
-#ifndef _MQTT_ADAPTER_H_
+#if !defined(_MQTT_ADAPTER_H_) && PAHO_MQTT_ENABLED == 1
 #define _MQTT_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
@@ -13,7 +13,7 @@ extern "C" {
 #include "Abstractions/xNet/xNet.h"
 #include "Abstractions/xMQTT/xMQTT.h"
 
-#include "MQTTClient.h"
+#include "Paho-MQTT/MQTTClient.h"
 //==============================================================================
 //types:
 

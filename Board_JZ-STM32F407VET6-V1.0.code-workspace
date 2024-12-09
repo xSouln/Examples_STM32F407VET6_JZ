@@ -12,6 +12,25 @@
 	],
 	"settings": {
 		"cortex-debug.openocdPath": "C:/assembly_tools/openocd-20231002/bin",
-		"cortex-debug.gdbPath": "C:/assembly_tools/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-arm-none-eabi/bin/arm-none-eabi-gdb"
+		"cortex-debug.gdbPath": "C:/assembly_tools/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-arm-none-eabi/bin/arm-none-eabi-gdb",
+		"files.associations": {
+			"serializers.h": "c",
+			"xdatabuffer.h": "c",
+			"xtypes.h": "c",
+			"xtypes-config.h": "c",
+			"stm32f4xx_hal.h": "c",
+			"stm32f4xx_hal_conf.h": "c",
+			"eventlogger.h": "c",
+			"xmemoryreader.h": "c",
+			"digitalinputs-comparer.h": "c",
+			"groupcontrol-element.h": "c",
+			"timercontrol-element.h": "c",
+			"hostdevice-component.h": "c",
+			"hosttransferlayer-component.h": "c",
+			"hostrequestcontrol-component.h": "c",
+			"device1-component.h": "c",
+			"components-config.h": "c",
+			"hostdevice-componentconfig.h": "c"
+		}
 	}
 }

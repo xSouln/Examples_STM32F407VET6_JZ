@@ -99,7 +99,6 @@ static void privateEventListener(xPortT* port, int selector, uint32_t descriptio
 
 static MqttPortAdapterT privateMqttPortAdapter =
 {
-	.Id = MQTT_CLIENT_ID,
 	.NetPort = MQTT_BROKER_PORT,
 	.NetAddress =
 	{
@@ -115,6 +114,7 @@ static MqttPortAdapterT privateMqttPortAdapter =
 xResult MqttClientComponentInit(void* parent)
 {
 	MqttPortAdapterInitT portAdapterInit = { 0 };
+	portAdapterInit.ClientId = MQTT_CLIENT_ID;
 	portAdapterInit.TxTopic = MQTT_CLIENT_TX_TOPIC;
 	portAdapterInit.RxTopic = MQTT_CLIENT_RX_TOPIC;
 	portAdapterInit.MqttBuffer = privateMqttTxBuffer;

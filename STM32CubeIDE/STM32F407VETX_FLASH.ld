@@ -50,6 +50,7 @@ MEMORY
   CCMRAM    (xrw)    : ORIGIN = 0x10000000,   LENGTH = 64K
   RAM    (xrw)    : ORIGIN = 0x20000000,   LENGTH = 128K
   FLASH    (rx)    : ORIGIN = 0x8000000,   LENGTH = 512K
+  SETTINGS (rw) : ORIGIN = ORIGIN(FLASH) + LENGTH(FLASH) - 4K, LENGTH = 4K
 }
 
 /* Sections */
@@ -214,6 +215,13 @@ SECTIONS
     _e_user_heap_stack = .;    
     . = ALIGN(8);
   } >CCMRAM
+  
+  .settings (NOLOAD) :
+  {
+    . = ALIGN(4);  /* Выравнивание на границу 4 байт */
+    KEEP(*(.settings));  /* Оставить данные из этой секции */
+    . = ALIGN(4);
+  } >SETTINGS
 
   /* Remove information from the compiler libraries */
   /DISCARD/ :

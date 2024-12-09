@@ -6,6 +6,7 @@
 #include "Common/xCircleBuffer.h"
 #include "Abstractions/xMQTT/xMQTT.h"
 #include "Abstractions/xReflection/xReflection.h"
+#include "MqttClient/Serializers/MqttClient-Serializer.h"
 //==============================================================================
 //defines:
 
@@ -60,6 +61,8 @@ static uint32_t privateMQTTGetTime(void);
 static void privateMQTTCallback(struct MQTTContext * pContext,
         struct MQTTPacketInfo * pPacketInfo,
         struct MQTTDeserializedInfo * pDeserializedInfo);
+
+static xResult privateProvideFunction(xPortT* port, RequestListenerInArgT* in, RequestListenerOutArgT* out);
 //==============================================================================
 //functions:
 
@@ -114,8 +117,8 @@ static xResult privateConnectHandler(xPortT* port, MqttPortAdapterT* adapter)
 			memset(&connectInfo, 0, sizeof(connectInfo));
 			connectInfo.keepAliveSeconds = 0;
 			connectInfo.cleanSession = true;
-			connectInfo.pClientIdentifier = adapter->Id;
-			connectInfo.clientIdentifierLength = strlen(adapter->Id);
+			connectInfo.pClientIdentifier = adapter->ClientId;
+			connectInfo.clientIdentifierLength = strlen(adapter->ClientId);
 
 			bool sessionPresent = false;
 
@@ -176,7 +179,7 @@ static xResult privateOptionsGetter(PropertyProviderHandleT* handle, xPropertyDe
 			break;
 
 		case xMqttOptionsClientIdProperty:
-			xDataBufferAdd(handle->Base.Out, handle->Adapter->Id, strlen(handle->Adapter->Id) + 1);
+			xDataBufferAdd(handle->Base.Out, handle->Adapter->ClientId, strlen(handle->Adapter->ClientId) + 1);
 			break;
 
 		case xMqttOptionsRxTopicProperty:
@@ -205,15 +208,15 @@ static xResult privateOptionsSetter(PropertyProviderHandleT* handle,
 			return xMemoryReaderRead(memoryReader, &handle->Adapter->NetAddress, sizeof(handle->Adapter->NetAddress));
 
 		case xMqttOptionsClientIdProperty:
-			xMemoryReaderReadString(memoryReader, handle->Adapter->Id, strlen(handle->Adapter->Id));
+			xMemoryReaderReadString(memoryReader, handle->Adapter->ClientId, sizeof(handle->Adapter->ClientId));
 			return xResultAccept;
 
 		case xMqttOptionsRxTopicProperty:
-			xMemoryReaderReadString(memoryReader, handle->Adapter->RxTopic, strlen(handle->Adapter->RxTopic));
+			xMemoryReaderReadString(memoryReader, handle->Adapter->RxTopic, sizeof(handle->Adapter->RxTopic));
 			return xResultAccept;
 
 		case xMqttOptionsTxTopicProperty:
-			xMemoryReaderReadString(memoryReader, handle->Adapter->TxTopic, strlen(handle->Adapter->TxTopic));
+			xMemoryReaderReadString(memoryReader, handle->Adapter->TxTopic, sizeof(handle->Adapter->TxTopic));
 			return xResultAccept;
 	}
 
@@ -341,7 +344,7 @@ static xResult PrivateRequestListener(xPortT* port,
 				MQTTPublishInfo_t publishInfo = { 0 };
 				publishInfo.qos = MQTTQoS0;
 				publishInfo.pTopicName = adapter->TxTopic;
-				publishInfo.topicNameLength = adapter->Internal.TxTopicLength;
+				publishInfo.topicNameLength = strlen(adapter->TxTopic);
 				publishInfo.pPayload = adapter->Internal.TxDataBuffer.Data;
 				publishInfo.payloadLength = adapter->Internal.TxDataBuffer.Length;
 
@@ -359,10 +362,29 @@ static xResult PrivateRequestListener(xPortT* port,
 			break;
 		}
 
+		case xPortRequestProvideFunction:
+		{
+			return privateProvideFunction(port, arg, out);
+		}
+
 		default : return xResultRequestIsNotFound;
 	}
 
 	return xResultAccept;
+}
+//------------------------------------------------------------------------------
+
+static xResult privateProvideFunction(xPortT* port, RequestListenerInArgT* in, RequestListenerOutArgT* out)
+{
+	xFunctionProviderArgT* request = in->Content;
+
+	switch (request->Action)
+	{
+		case MqttPortProviderSaveOptions:
+			return MqttSaveObject(port, 0);
+	}
+
+	return xResultNotSupported;
 }
 //------------------------------------------------------------------------------
 
@@ -513,12 +535,9 @@ xResult MqttPortAdapterInit(xPortT* port, MqttPortAdapterT* adapter, MqttPortAda
 		adapter->Internal.TransactionMutex = xSemaphoreCreateMutex();
 		adapter->Internal.TxSemaphore = xSemaphoreCreateBinary();
 #endif
-
-		adapter->TxTopic = init->TxTopic;
-		adapter->Internal.TxTopicLength = strlen(init->TxTopic);
-
-		adapter->RxTopic = init->RxTopic;
-		adapter->Internal.RxTopicLength = strlen(init->RxTopic);
+		memcpy(adapter->TxTopic, init->TxTopic, strlen(init->TxTopic));
+		memcpy(adapter->RxTopic, init->RxTopic, strlen(init->RxTopic));
+		memcpy(adapter->ClientId, init->ClientId, strlen(init->ClientId));
 
 		adapter->Internal.TxDataBuffer.Memory = init->TxBuffer;
 		adapter->Internal.TxDataBuffer.MaxLength = init->TxBufferSize;
@@ -527,6 +546,8 @@ xResult MqttPortAdapterInit(xPortT* port, MqttPortAdapterT* adapter, MqttPortAda
 		adapter->Internal.RxReceiver.Buffer = init->RxBuffer;
 		adapter->Internal.RxReceiver.BufferSize = init->RxBufferSize;
 		adapter->Internal.RxReceiver.EventListener = RxReceiverEventListener;*/
+
+		MqttOpenObject(port, 0);
 
 		adapter->Internal.NetworkContext.Context = port;
 
