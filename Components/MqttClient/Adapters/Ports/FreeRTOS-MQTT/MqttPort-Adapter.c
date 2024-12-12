@@ -100,8 +100,8 @@ static xResult privateConnectHandler(xPortT* port, MqttPortAdapterT* adapter)
 		case ConncetionStateConnectSocket:
 		{
 			struct freertos_sockaddr sAddr;
-			sAddr.sin_port = FreeRTOS_htons(adapter->NetPort);
-			sAddr.sin_addr = adapter->NetAddress.Value;
+			sAddr.sin_port = FreeRTOS_htons(adapter->Options.NetPort);
+			sAddr.sin_addr = adapter->Options.NetAddress.Value;
 
 			if (FreeRTOS_connect(adapter->Internal.Socket, &sAddr, sizeof(sAddr)) < 0)
 			{
@@ -117,8 +117,8 @@ static xResult privateConnectHandler(xPortT* port, MqttPortAdapterT* adapter)
 			memset(&connectInfo, 0, sizeof(connectInfo));
 			connectInfo.keepAliveSeconds = 0;
 			connectInfo.cleanSession = true;
-			connectInfo.pClientIdentifier = adapter->ClientId;
-			connectInfo.clientIdentifierLength = strlen(adapter->ClientId);
+			connectInfo.pClientIdentifier = adapter->Options.ClientId;
+			connectInfo.clientIdentifierLength = strlen(adapter->Options.ClientId);
 
 			bool sessionPresent = false;
 
@@ -140,8 +140,8 @@ static xResult privateConnectHandler(xPortT* port, MqttPortAdapterT* adapter)
 		{
 			MQTTSubscribeInfo_t info;
 			info.qos = MQTTQoS0;
-			info.pTopicFilter = adapter->RxTopic;
-			info.topicFilterLength = strlen(adapter->RxTopic);
+			info.pTopicFilter = adapter->Options.RxTopic;
+			info.topicFilterLength = strlen(adapter->Options.RxTopic);
 
 			uint16_t packetId = MQTT_GetPacketId(&adapter->Internal.MQTTContext);
 
@@ -171,23 +171,23 @@ static xResult privateOptionsGetter(PropertyProviderHandleT* handle, xPropertyDe
 	switch (descriptions.PropertyId)
 	{
 		case xMqttOptionsNetPortProperty:
-			xDataBufferAdd(handle->Base.Out, &handle->Adapter->NetPort, sizeof(handle->Adapter->NetPort));
+			xDataBufferAdd(handle->Base.Out, &handle->Adapter->Options.NetPort, sizeof(handle->Adapter->Options.NetPort));
 			break;
 
 		case xMqttOptionsBrokerAddressProperty:
-			xDataBufferAdd(handle->Base.Out, &handle->Adapter->NetAddress, sizeof(handle->Adapter->NetAddress));
+			xDataBufferAdd(handle->Base.Out, &handle->Adapter->Options.NetAddress, sizeof(handle->Adapter->Options.NetAddress));
 			break;
 
 		case xMqttOptionsClientIdProperty:
-			xDataBufferAdd(handle->Base.Out, handle->Adapter->ClientId, strlen(handle->Adapter->ClientId) + 1);
+			xDataBufferAdd(handle->Base.Out, handle->Adapter->Options.ClientId, strlen(handle->Adapter->Options.ClientId) + 1);
 			break;
 
 		case xMqttOptionsRxTopicProperty:
-			xDataBufferAdd(handle->Base.Out, handle->Adapter->RxTopic, strlen(handle->Adapter->RxTopic) + 1);
+			xDataBufferAdd(handle->Base.Out, handle->Adapter->Options.RxTopic, strlen(handle->Adapter->Options.RxTopic) + 1);
 			break;
 
 		case xMqttOptionsTxTopicProperty:
-			xDataBufferAdd(handle->Base.Out, handle->Adapter->TxTopic, strlen(handle->Adapter->TxTopic) + 1);
+			xDataBufferAdd(handle->Base.Out, handle->Adapter->Options.TxTopic, strlen(handle->Adapter->Options.TxTopic) + 1);
 			break;
 	}
 
@@ -202,21 +202,21 @@ static xResult privateOptionsSetter(PropertyProviderHandleT* handle,
 	switch (descriptions.PropertyId)
 	{
 		case xMqttOptionsNetPortProperty:
-			return xMemoryReaderRead(memoryReader, &handle->Adapter->NetPort, sizeof(handle->Adapter->NetPort));
+			return xMemoryReaderRead(memoryReader, &handle->Adapter->Options.NetPort, sizeof(handle->Adapter->Options.NetPort));
 
 		case xMqttOptionsBrokerAddressProperty:
-			return xMemoryReaderRead(memoryReader, &handle->Adapter->NetAddress, sizeof(handle->Adapter->NetAddress));
+			return xMemoryReaderRead(memoryReader, &handle->Adapter->Options.NetAddress, sizeof(handle->Adapter->Options.NetAddress));
 
 		case xMqttOptionsClientIdProperty:
-			xMemoryReaderReadString(memoryReader, handle->Adapter->ClientId, sizeof(handle->Adapter->ClientId));
+			xMemoryReaderReadString(memoryReader, handle->Adapter->Options.ClientId, sizeof(handle->Adapter->Options.ClientId));
 			return xResultAccept;
 
 		case xMqttOptionsRxTopicProperty:
-			xMemoryReaderReadString(memoryReader, handle->Adapter->RxTopic, sizeof(handle->Adapter->RxTopic));
+			xMemoryReaderReadString(memoryReader, handle->Adapter->Options.RxTopic, sizeof(handle->Adapter->Options.RxTopic));
 			return xResultAccept;
 
 		case xMqttOptionsTxTopicProperty:
-			xMemoryReaderReadString(memoryReader, handle->Adapter->TxTopic, sizeof(handle->Adapter->TxTopic));
+			xMemoryReaderReadString(memoryReader, handle->Adapter->Options.TxTopic, sizeof(handle->Adapter->Options.TxTopic));
 			return xResultAccept;
 	}
 
@@ -343,8 +343,8 @@ static xResult PrivateRequestListener(xPortT* port,
 			{
 				MQTTPublishInfo_t publishInfo = { 0 };
 				publishInfo.qos = MQTTQoS0;
-				publishInfo.pTopicName = adapter->TxTopic;
-				publishInfo.topicNameLength = strlen(adapter->TxTopic);
+				publishInfo.pTopicName = adapter->Options.TxTopic;
+				publishInfo.topicNameLength = strlen(adapter->Options.TxTopic);
 				publishInfo.pPayload = adapter->Internal.TxDataBuffer.Data;
 				publishInfo.payloadLength = adapter->Internal.TxDataBuffer.Length;
 
@@ -535,9 +535,9 @@ xResult MqttPortAdapterInit(xPortT* port, MqttPortAdapterT* adapter, MqttPortAda
 		adapter->Internal.TransactionMutex = xSemaphoreCreateMutex();
 		adapter->Internal.TxSemaphore = xSemaphoreCreateBinary();
 #endif
-		memcpy(adapter->TxTopic, init->TxTopic, strlen(init->TxTopic));
-		memcpy(adapter->RxTopic, init->RxTopic, strlen(init->RxTopic));
-		memcpy(adapter->ClientId, init->ClientId, strlen(init->ClientId));
+		memcpy(adapter->Options.TxTopic, init->TxTopic, strlen(init->TxTopic));
+		memcpy(adapter->Options.RxTopic, init->RxTopic, strlen(init->RxTopic));
+		memcpy(adapter->Options.ClientId, init->ClientId, strlen(init->ClientId));
 
 		adapter->Internal.TxDataBuffer.Memory = init->TxBuffer;
 		adapter->Internal.TxDataBuffer.MaxLength = init->TxBufferSize;
@@ -546,8 +546,6 @@ xResult MqttPortAdapterInit(xPortT* port, MqttPortAdapterT* adapter, MqttPortAda
 		adapter->Internal.RxReceiver.Buffer = init->RxBuffer;
 		adapter->Internal.RxReceiver.BufferSize = init->RxBufferSize;
 		adapter->Internal.RxReceiver.EventListener = RxReceiverEventListener;*/
-
-		MqttOpenObject(port, 0);
 
 		adapter->Internal.NetworkContext.Context = port;
 

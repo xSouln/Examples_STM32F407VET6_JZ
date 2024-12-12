@@ -16,20 +16,11 @@ extern "C" {
 #include "Abstractions/xNet/xNet.h"
 #include "FreeRTOS_IP.h"
 #include "FreeRTOS-Plus-MQTT/include/core_mqtt.h"
+#include "Abstractions/xMQTT/xMQTT.h"
 //==============================================================================
 //defines:
 
-#ifndef MQTT_PORT_RX_TOPIC_MAX_LENGTH
-#define MQTT_PORT_RX_TOPIC_MAX_LENGTH 64
-#endif
 
-#ifndef MQTT_PORT_TX_TOPIC_MAX_LENGTH
-#define MQTT_PORT_TX_TOPIC_MAX_LENGTH 64
-#endif
-
-#ifndef MQTT_PORT_CLIENT_ID_MAX_LENGTH
-#define MQTT_PORT_CLIENT_ID_MAX_LENGTH 64
-#endif
 //==============================================================================
 //types:
 
@@ -70,13 +61,7 @@ typedef struct
 {
 	MqttPortAdapterInternalT Internal;
 
-	char RxTopic[MQTT_PORT_RX_TOPIC_MAX_LENGTH + 1];
-	char TxTopic[MQTT_PORT_TX_TOPIC_MAX_LENGTH + 1];
-
-	char ClientId[MQTT_PORT_CLIENT_ID_MAX_LENGTH + 1];
-
-	xNetAddressT NetAddress;
-	uint16_t NetPort;
+	xMqttPortOptionsT Options;
 
 } MqttPortAdapterT;
 //------------------------------------------------------------------------------

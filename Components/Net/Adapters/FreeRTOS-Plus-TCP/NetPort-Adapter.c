@@ -168,6 +168,20 @@ static xResult privateOptionsSetter(PropertyProviderHandleT* handle,
 }
 //------------------------------------------------------------------------------
 
+static xResult privateProvideFunction(xPortT* port, RequestListenerInArgT* in, RequestListenerOutArgT* out)
+{
+	xFunctionProviderArgT* request = in->Content;
+
+	switch (request->Action)
+	{
+		case NetPortProviderSaveOptions:
+			return MqttSaveObject(port, 0);
+	}
+
+	return xResultNotSupported;
+}
+//------------------------------------------------------------------------------
+
 static xResult PrivateRequestListener(xPortT* port,
 		xPortAdapterRequestSelector selector,
 		uint32_t description,
@@ -277,6 +291,11 @@ static xResult PrivateRequestListener(xPortT* port,
 
 			break;
 		}
+
+		case xPortRequestProvideFunction:
+			{
+				return privateProvideFunction(port, arg, out);
+			}
 
 		default : return xResultRequestIsNotFound;
 	}

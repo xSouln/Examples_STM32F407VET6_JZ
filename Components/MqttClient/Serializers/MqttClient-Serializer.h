@@ -18,8 +18,8 @@ extern "C" {
 //==============================================================================
 //functions:
 
-xResult MqttOpenObject(void* object, uint32_t signatureType);
-xResult MqttSaveObject(void* object, uint32_t signatureType);
+xResult MqttOpenObject(xPortT* port, uint32_t signatureType);
+xResult MqttSaveObject(xPortT* port, uint32_t signatureType);
 //==============================================================================
 #ifdef __cplusplus
 }

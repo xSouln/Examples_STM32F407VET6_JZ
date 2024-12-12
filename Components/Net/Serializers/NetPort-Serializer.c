@@ -28,8 +28,10 @@ typedef struct
 //==============================================================================
 //functions:
 
-int SerializeNetPortOptions(xPortT* port, xDataBufferT* buffer, uint32_t* reservedMemerySize)
-{/*
+int SerializePortOptions(xNetT* net, xDataBufferT* buffer, uint32_t* reservedMemerySize)
+{
+#if FLASH_MEMORY_CONTROL_COMPONENT_ENABLE == 1
+	/*
 	MqttPortAdapterT* adapter = (MqttPortAdapterT*)port->Adapter.Content;
 	HeaderT* header = xDataBufferGetTotalPointer(buffer);
 	header->SerializerType = 0;
@@ -49,11 +51,16 @@ int SerializeNetPortOptions(xPortT* port, xDataBufferT* buffer, uint32_t* reserv
 	header->SizeOfParameters = buffer->Length - offset;*/
 
 	return 0;
+#else
+	return xResultNotSupported;
+#endif
 }
 //------------------------------------------------------------------------------
 
-int DeserializeNetPortOptions(xPortT* port, xMemoryReaderT* reader)
-{/*
+int DeserializeNetOptions(xPortT* port, xMemoryReaderT* reader)
+{
+#if FLASH_MEMORY_CONTROL_COMPONENT_ENABLE == 1
+	/*
 	MqttPortAdapterT* adapter = (MqttPortAdapterT*)port->Adapter.Content;
 	HeaderT* header = xMemoryReaderGetTotalPointer(reader);
 
@@ -75,13 +82,15 @@ int DeserializeNetPortOptions(xPortT* port, xMemoryReaderT* reader)
 	}*/
 
 	return 0;
+#else
+	return xResultNotSupported;
+#endif
 }
 //------------------------------------------------------------------------------
 
-xResult NetPortSaveObject(void* object, uint32_t signatureType)
+xResult NetSaveObject(void* object, uint32_t signatureType)
 {
 #if FLASH_MEMORY_CONTROL_COMPONENT_ENABLE == 1
-	/*
 	int16_t result = 0;
 	uint32_t reservedMemory = 0;
 
@@ -92,7 +101,7 @@ xResult NetPortSaveObject(void* object, uint32_t signatureType)
 	CHECK_ALLOCATION(buffer.Memory);
 
 	xUnitFileHeaderT fileHeader;
-	fileHeader.UID = xMQTT_UID;
+	fileHeader.UID = xNET_UID;
 	fileHeader.ControlId = 0;
 	fileHeader.Signature = signatureType;
 
@@ -100,7 +109,7 @@ xResult NetPortSaveObject(void* object, uint32_t signatureType)
 	{
 		case 0:
 		{
-			result = SerializeMqttClientPortOptions(object, &buffer, &reservedMemory);
+			result = SerializePortOptions(object, &buffer, &reservedMemory);
 			break;
 		}
 
@@ -121,7 +130,7 @@ xResult NetPortSaveObject(void* object, uint32_t signatureType)
 		xMemoryWriteFile(&CommonFileSpace, &requestWrite);
 	}
 
-	xMemoryFree(buffer.Memory);*/
+	xMemoryFree(buffer.Memory);
 
 	return xResultAccept;
 #else
@@ -130,12 +139,11 @@ xResult NetPortSaveObject(void* object, uint32_t signatureType)
 }
 //------------------------------------------------------------------------------
 
-xResult NetPortOpenObject(void* object, uint32_t signatureType)
+xResult NetOpenObject(void* object, uint32_t signatureType)
 {
 #if FLASH_MEMORY_CONTROL_COMPONENT_ENABLE == 1
-	/*
 	xUnitFileHeaderT fileHeader;
-	fileHeader.UID = xMQTT_UID;
+	fileHeader.UID = xNET_UID;
 	fileHeader.ControlId = 0;
 	fileHeader.Signature = signatureType;
 
@@ -157,11 +165,11 @@ xResult NetPortOpenObject(void* object, uint32_t signatureType)
 	switch (signatureType)
 	{
 		case 0:
-			DeserializeMqttClientPortOptions(object, &memoryReader);
+			DeserializeNetOptions(object, &memoryReader);
 			break;
 
 		default: return xResultNotSupported;
-	}*/
+	}
 
 	return xResultAccept;
 #else

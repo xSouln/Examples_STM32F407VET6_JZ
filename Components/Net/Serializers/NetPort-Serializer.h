@@ -18,8 +18,8 @@ extern "C" {
 //==============================================================================
 //functions:
 
-xResult NetPortOpenObject(void* object, uint32_t signatureType);
-xResult NetPortSaveObject(void* object, uint32_t signatureType);
+xResult NetOpenObject(void* object, uint32_t signatureType);
+xResult NetSaveObject(void* object, uint32_t signatureType);
 //==============================================================================
 #ifdef __cplusplus
 }

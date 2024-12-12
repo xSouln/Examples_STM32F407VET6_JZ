@@ -21,6 +21,16 @@ extern "C" {
 //==============================================================================
 //types:
 
+typedef enum
+{
+	NetPortProviderGetOptions,
+	NetPortProviderSetOptions,
+
+	NetPortProviderSaveOptions
+
+} NetPortProviderFunctions;
+//------------------------------------------------------------------------------
+
 typedef struct
 {
 	xCircleBufferT RxCircleBuffer;

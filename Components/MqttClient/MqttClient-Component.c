@@ -99,13 +99,16 @@ static void privateEventListener(xPortT* port, int selector, uint32_t descriptio
 
 static MqttPortAdapterT privateMqttPortAdapter =
 {
-	.NetPort = MQTT_BROKER_PORT,
-	.NetAddress =
+	.Options =
 	{
-		.Octet1 = MQTT_BROKER_IP_ADDR3,
-		.Octet2 = MQTT_BROKER_IP_ADDR2,
-		.Octet3 = MQTT_BROKER_IP_ADDR1,
-		.Octet4 = MQTT_BROKER_IP_ADDR0,
+		.NetPort = MQTT_BROKER_PORT,
+		.NetAddress =
+		{
+			.Octet1 = MQTT_BROKER_IP_ADDR3,
+			.Octet2 = MQTT_BROKER_IP_ADDR2,
+			.Octet3 = MQTT_BROKER_IP_ADDR1,
+			.Octet4 = MQTT_BROKER_IP_ADDR0,
+		}
 	}
 };
 //==============================================================================
@@ -129,6 +132,8 @@ xResult MqttClientComponentInit(void* parent)
 	portInit.EventListener = (void*)privateEventListener;
 
 	xPortInit(&MqttPort, &portInit);
+
+	MqttOpenObject(&MqttPort, 0);
 
 #if MQTT_CLIENT_COMPONENT_TASK_ENABLE == 1 && OS_TYPE == OS_TYPE_FREERTOS
 	taskHandle = xTaskCreateStatic(privateTask, // Function that implements the task.
