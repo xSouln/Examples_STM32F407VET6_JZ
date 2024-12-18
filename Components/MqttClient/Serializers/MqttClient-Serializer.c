@@ -92,7 +92,7 @@ xResult MqttSaveObject(xPortT* port, uint32_t signatureType)
 
 	xUnitFileHeaderT fileHeader = { 0 };
 	fileHeader.UID = xMQTT_UID;
-	fileHeader.ControlId = port->Interface;
+	fileHeader.ControlId = port->InterfaceType;
 	fileHeader.Signature = signatureType;
 
 	switch (signatureType)
@@ -134,7 +134,7 @@ xResult MqttOpenObject(xPortT* port, uint32_t signatureType)
 #if FLASH_MEMORY_CONTROL_COMPONENT_ENABLE == 1
 	xUnitFileHeaderT fileHeader = { 0 };
 	fileHeader.UID = xMQTT_UID;
-	fileHeader.ControlId = port->Interface;
+	fileHeader.ControlId = port->InterfaceType;
 	fileHeader.Signature = signatureType;
 
 	xMemoryFileHeaderT* out = null;

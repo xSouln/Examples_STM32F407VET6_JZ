@@ -371,8 +371,8 @@ xResult NetPortAdapterInit(xPortT* port, NetPortAdapterT* adapter, NetPortAdapte
 		port->Adapter.Content = adapter;
 		port->Adapter.Interface = &privatePortInterface;
 
-		port->Interface = xPortInterfaceEthernet;
-		port->TransferLayer = xPortTransferLayerByteStream;
+		port->InterfaceType = xPortInterfaceEthernet;
+		port->InterfaceMode = xPortTransferLayerByteStream;
 
 		adapter->Net = adapterInit->Net;
 

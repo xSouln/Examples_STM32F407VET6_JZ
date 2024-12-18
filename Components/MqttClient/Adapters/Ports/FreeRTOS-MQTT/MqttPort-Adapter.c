@@ -526,8 +526,8 @@ xResult MqttPortAdapterInit(xPortT* port, MqttPortAdapterT* adapter, MqttPortAda
 		port->Adapter.Content = adapter;
 		port->Adapter.Interface = &privatePortInterface;
 
-		port->Interface = xPortInterfaceEthernet;
-		port->TransferLayer = xPortTransferLayerMQTT;
+		port->InterfaceType = xPortInterfaceEthernet;
+		port->InterfaceMode = xPortTransferLayerMQTT;
 
 		memset(&adapter->Internal, 0, sizeof(adapter->Internal));
 
