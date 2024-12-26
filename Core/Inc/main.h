@@ -92,6 +92,8 @@ void Error_Handler(void);
 #define USB_HS_DM_GPIO_Port GPIOB
 #define USB_HS_DP_Pin GPIO_PIN_15
 #define USB_HS_DP_GPIO_Port GPIOB
+#define GSM_POWER_Pin GPIO_PIN_15
+#define GSM_POWER_GPIO_Port GPIOD
 #define SDIO_D0_Pin GPIO_PIN_8
 #define SDIO_D0_GPIO_Port GPIOC
 #define SDIO_D1_Pin GPIO_PIN_9
